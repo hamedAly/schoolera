@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Schoolera.Api/Schoolera.Api.csproj" />
+    <Project Path="src/Schoolera.Application/Schoolera.Application.csproj" />
+    <Project Path="src/Schoolera.Domain/Schoolera.Domain.csproj" />
+    <Project Path="src/Schoolera.Infrastructure/Schoolera.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Schoolera.Tests/Schoolera.Tests.csproj" />
+  </Folder>
+</Solution>

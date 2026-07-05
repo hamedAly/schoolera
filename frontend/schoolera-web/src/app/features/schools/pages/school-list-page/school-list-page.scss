@@ -1,0 +1,21 @@
+﻿:host {
+  display: grid;
+  gap: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+a {
+  display: inline-grid;
+  min-height: 40px;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 6px;
+  background: #df6b35;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+}

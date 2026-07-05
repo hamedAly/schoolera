@@ -1,0 +1,11 @@
+﻿<nav aria-label="Primary">
+  @for (link of links; track link.route) {
+    <a
+      [routerLink]="link.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: link.route === '/dashboard' }"
+    >
+      {{ link.label }}
+    </a>
+  }
+</nav>

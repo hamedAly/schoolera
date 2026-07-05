@@ -1,0 +1,16 @@
+@Schoolera.Api_HostAddress = http://localhost:5085
+
+GET {{Schoolera.Api_HostAddress}}/api/schools/
+Accept: application/json
+
+###
+
+POST {{Schoolera.Api_HostAddress}}/api/schools/
+Content-Type: application/json
+
+{
+  "name": "Schoolera Academy",
+  "city": "Cairo"
+}
+
+###

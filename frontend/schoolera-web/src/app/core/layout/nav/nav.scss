@@ -1,0 +1,24 @@
+﻿nav {
+  display: grid;
+  gap: 8px;
+}
+
+a {
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #c9d3e1;
+  text-decoration: none;
+}
+
+a.active,
+a:hover {
+  background: #25314a;
+  color: #ffffff;
+}
+
+@media (max-width: 760px) {
+  nav {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+  }
+}

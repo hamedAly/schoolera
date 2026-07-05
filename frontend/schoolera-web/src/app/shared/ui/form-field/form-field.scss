@@ -1,0 +1,26 @@
+﻿:host {
+  display: grid;
+  gap: 6px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+}
+
+span {
+  color: #344054;
+  font-weight: 700;
+}
+
+small {
+  color: #b42318;
+}
+
+::ng-deep input {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cfd8e3;
+  border-radius: 6px;
+  font: inherit;
+}

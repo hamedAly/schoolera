@@ -1,0 +1,16 @@
+# .NET
+bin/
+obj/
+TestResults/
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+
+# Local runtime logs
+*.log
+
+# User/editor files
+.vs/
+.vscode/*.user

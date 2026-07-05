@@ -1,0 +1,18 @@
+﻿<se-page-header
+  title="Schools"
+  description="Route-owned page component backed by the schools data-access layer."
+/>
+
+<div class="actions">
+  <a routerLink="/schools/new">New School</a>
+</div>
+
+@if (loading()) {
+  <se-empty-state title="Loading schools" message="Waiting for the API response." />
+} @else if (errors().length > 0) {
+  <se-empty-state title="Unable to load schools" [message]="errors()[0]" />
+} @else if (schools().length === 0) {
+  <se-empty-state title="No schools yet" message="Create the first school to start using this module." />
+} @else {
+  <se-school-table [schools]="schools()" />
+}

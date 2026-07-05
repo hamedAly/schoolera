@@ -1,0 +1,14 @@
+﻿<se-page-header
+  title="New School"
+  description="The page owns navigation while the form stays reusable and presentation focused."
+/>
+
+@if (errors().length > 0) {
+  <section class="errors" aria-label="Validation errors">
+    @for (error of errors(); track error) {
+      <p>{{ error }}</p>
+    }
+  </section>
+}
+
+<se-school-form [saving]="saving()" (save)="saveSchool($event)" />
