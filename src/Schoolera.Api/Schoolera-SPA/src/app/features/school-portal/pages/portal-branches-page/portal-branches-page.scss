@@ -1,0 +1,59 @@
+.portal-branches__form,
+.portal-branches__list {
+  display: grid;
+  gap: var(--se-space-4);
+}
+
+.portal-branches__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--se-space-4);
+}
+
+.portal-branches__grid select {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+}
+
+.portal-branches__checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--se-space-2);
+  min-block-size: 2.75rem;
+}
+
+.portal-branches__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-branches__item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--se-space-3);
+  padding: var(--se-space-4);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.portal-branches__item.is-inactive {
+  opacity: 0.65;
+}
+
+.portal-branches__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+}
+
+.portal-branches__badge {
+  display: inline-block;
+  margin-top: var(--se-space-2);
+  padding: 0 var(--se-space-2);
+  border-radius: var(--se-radius-pill);
+  background: var(--se-color-brand-soft);
+  font-size: 0.8125rem;
+}

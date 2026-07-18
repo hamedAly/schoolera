@@ -1,0 +1,402 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: 'auth.portals.school.breadcrumb' | transloco, route: '/school' },
+      { label: 'onboarding.wizard.breadcrumb' | transloco },
+    ]"
+  />
+  <se-page-hero
+    [title]="'onboarding.wizard.title' | transloco"
+    [subtitle]="'onboarding.wizard.subtitle' | transloco"
+  />
+
+  @if (loading()) {
+    <p class="onboarding-status" role="status">{{ 'onboarding.common.loading' | transloco }}</p>
+  } @else {
+    <ol class="onboarding-steps" aria-label="{{ 'onboarding.wizard.progressLabel' | transloco }}">
+      @for (step of steps; track step; let index = $index) {
+        <li
+          class="onboarding-steps__item"
+          [class.is-active]="currentStep() === step"
+          [class.is-complete]="isStepComplete(step)"
+        >
+          <button type="button" class="onboarding-steps__button" (click)="goToStep(step)" [disabled]="!isEditable()">
+            <span class="onboarding-steps__index" aria-hidden="true">{{ index + 1 }}</span>
+            <span>{{ stepLabelKey(step) | transloco }}</span>
+          </button>
+        </li>
+      }
+    </ol>
+
+    @if (errorMessage()) {
+      <div class="onboarding-alert" role="alert">{{ errorMessage() }}</div>
+    }
+
+    @if (validationMessages().length) {
+      <div
+        #validationSummary
+        class="onboarding-alert onboarding-alert--validation"
+        role="alert"
+        tabindex="-1"
+      >
+        <p>{{ 'onboarding.validation.summaryTitle' | transloco }}</p>
+        <ul>
+          @for (message of validationMessages(); track message) {
+            <li>{{ message }}</li>
+          }
+        </ul>
+      </div>
+    }
+
+    @if (application()?.status === 'ChangesRequested' && application()?.ownerVisibleReason) {
+      <div class="onboarding-alert onboarding-alert--info" role="status">
+        <strong>{{ 'onboarding.status.changesRequestedReason' | transloco }}</strong>
+        <p>{{ application()?.ownerVisibleReason }}</p>
+      </div>
+    }
+
+    <section class="onboarding-panel" [attr.aria-labelledby]="'step-' + currentStep()">
+      <h2 [id]="'step-' + currentStep()">{{ stepLabelKey(currentStep()) | transloco }}</h2>
+
+      @switch (currentStep()) {
+        @case ('organization') {
+          <form class="onboarding-form" [formGroup]="organizationForm" (ngSubmit)="saveAndNext()">
+            <div class="onboarding-grid">
+              <se-form-field [label]="'onboarding.fields.organizationNameAr' | transloco">
+                <input formControlName="organizationNameAr" autocomplete="organization" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.organizationNameEn' | transloco">
+                <input formControlName="organizationNameEn" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.legalName' | transloco">
+                <input formControlName="legalName" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.countryCode' | transloco">
+                <input formControlName="countryCode" maxlength="2" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.registrationNumber' | transloco">
+                <input formControlName="registrationOrLicenseNumber" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.taxNumber' | transloco">
+                <input formControlName="taxRegistrationNumber" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.legalForm' | transloco">
+                <input formControlName="legalForm" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.organizationWebsite' | transloco">
+                <input formControlName="organizationWebsite" type="url" />
+              </se-form-field>
+            </div>
+            <se-form-field [label]="'onboarding.fields.organizationAddress' | transloco">
+              <textarea formControlName="organizationAddress" rows="3"></textarea>
+            </se-form-field>
+          </form>
+        }
+
+        @case ('representative') {
+          <form class="onboarding-form" [formGroup]="representativeForm" (ngSubmit)="saveAndNext()">
+            <div class="onboarding-grid">
+              <se-form-field [label]="'onboarding.fields.representativeNameAr' | transloco">
+                <input formControlName="fullNameAr" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.representativeNameEn' | transloco">
+                <input formControlName="fullNameEn" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.identityReference' | transloco">
+                <input formControlName="nationalOrIdentityReference" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.jobTitleAr' | transloco">
+                <input formControlName="jobTitleAr" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.jobTitleEn' | transloco">
+                <input formControlName="jobTitleEn" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.representativeEmail' | transloco">
+                <input formControlName="email" type="email" autocomplete="email" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.representativePhone' | transloco">
+                <input formControlName="phone" autocomplete="tel" />
+              </se-form-field>
+            </div>
+          </form>
+        }
+
+        @case ('school') {
+          <form class="onboarding-form" [formGroup]="schoolForm" (ngSubmit)="saveAndNext()">
+            <div class="onboarding-grid">
+              <se-form-field [label]="'onboarding.fields.schoolNameAr' | transloco">
+                <input formControlName="schoolNameAr" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.schoolNameEn' | transloco">
+                <input formControlName="schoolNameEn" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.schoolType' | transloco">
+                <select formControlName="schoolType">
+                  @for (option of schoolTypes; track option.value) {
+                    <option [ngValue]="option.value">{{ option.labelKey | transloco }}</option>
+                  }
+                </select>
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.genderType' | transloco">
+                <select formControlName="genderType">
+                  @for (option of genderTypes; track option.value) {
+                    <option [ngValue]="option.value">{{ option.labelKey | transloco }}</option>
+                  }
+                </select>
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.foundedYear' | transloco">
+                <input formControlName="foundedYear" type="number" min="1800" max="2100" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.schoolWebsite' | transloco">
+                <input formControlName="websiteUrl" type="url" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.requestedSlug' | transloco">
+                <input formControlName="requestedSlug" />
+              </se-form-field>
+            </div>
+            <se-form-field [label]="'onboarding.fields.shortDescriptionAr' | transloco">
+              <textarea formControlName="shortDescriptionAr" rows="3"></textarea>
+            </se-form-field>
+            <se-form-field [label]="'onboarding.fields.shortDescriptionEn' | transloco">
+              <textarea formControlName="shortDescriptionEn" rows="3"></textarea>
+            </se-form-field>
+          </form>
+        }
+
+        @case ('branch') {
+          <form class="onboarding-form" [formGroup]="branchForm" (ngSubmit)="saveAndNext()">
+            <div class="onboarding-grid">
+              <se-form-field [label]="'onboarding.fields.city' | transloco">
+                <select formControlName="cityId">
+                  <option value="">{{ 'onboarding.fields.selectCity' | transloco }}</option>
+                  @for (city of cities(); track city.id) {
+                    <option [value]="city.id">{{ taxonomyName(city) }}</option>
+                  }
+                </select>
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.district' | transloco">
+                <select formControlName="districtId" [disabled]="!branchForm.controls.cityId.value">
+                  <option value="">{{ 'onboarding.fields.selectDistrict' | transloco }}</option>
+                  @for (district of districts(); track district.id) {
+                    <option [value]="district.id">{{ taxonomyName(district) }}</option>
+                  }
+                </select>
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.addressLineAr' | transloco">
+                <input formControlName="addressLineAr" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.addressLineEn' | transloco">
+                <input formControlName="addressLineEn" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.buildingNumber' | transloco">
+                <input formControlName="buildingNumber" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.streetName' | transloco">
+                <input formControlName="streetName" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.landmark' | transloco">
+                <input formControlName="landmark" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.postalCode' | transloco">
+                <input formControlName="postalCode" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.localAddressReference' | transloco">
+                <input formControlName="localAddressReference" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.latitude' | transloco">
+                <input formControlName="latitude" type="number" step="any" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.longitude' | transloco">
+                <input formControlName="longitude" type="number" step="any" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.publicPhone' | transloco">
+                <input formControlName="publicPhone" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.publicEmail' | transloco">
+                <input formControlName="publicEmail" type="email" />
+              </se-form-field>
+              <se-form-field [label]="'onboarding.fields.whatsapp' | transloco">
+                <input formControlName="whatsAppOrAlternatePhone" />
+              </se-form-field>
+            </div>
+          </form>
+        }
+
+        @case ('documents') {
+          <p class="onboarding-help">
+            {{
+              'onboarding.documents.help'
+                | transloco
+                  : {
+                      maxSize: formatBytes(maxFileSizeBytes()),
+                      extensions: allowedExtensions().join(', '),
+                    }
+            }}
+          </p>
+          <ul class="onboarding-docs">
+            @for (type of documentTypes(); track type.id) {
+              <li class="onboarding-docs__item">
+                <div class="onboarding-docs__header">
+                  <div>
+                    <h3>{{ localizedDocName(type) }}</h3>
+                    <span class="onboarding-badge" [class.is-required]="type.isRequired">
+                      {{
+                        (type.isRequired ? 'onboarding.documents.required' : 'onboarding.documents.optional')
+                          | transloco
+                      }}
+                    </span>
+                  </div>
+                  @if (documentForType(type.id); as doc) {
+                    <div class="onboarding-docs__meta">
+                      <span>{{ doc.originalFileName }} ({{ formatBytes(doc.fileSize) }})</span>
+                      <button type="button" class="onboarding-link" (click)="downloadDocument(doc.id, doc.originalFileName)">
+                        {{ 'onboarding.documents.download' | transloco }}
+                      </button>
+                      @if (isEditable()) {
+                        <button type="button" class="onboarding-link" (click)="removeDocument(doc.id)" [disabled]="saving()">
+                          {{ 'onboarding.documents.remove' | transloco }}
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <p class="onboarding-docs__empty">{{ 'onboarding.documents.none' | transloco }}</p>
+                  }
+                </div>
+                @if (isEditable()) {
+                  <label class="onboarding-upload">
+                    <span>{{
+                      (documentForType(type.id) ? 'onboarding.documents.replace' : 'onboarding.documents.upload')
+                        | transloco
+                    }}</span>
+                    <input
+                      type="file"
+                      [attr.accept]="allowedExtensions().join(',')"
+                      (change)="onFileSelected(type.id!, $event)"
+                      [disabled]="!!uploadingTypeId()"
+                    />
+                  </label>
+                  @if (uploadingTypeId() === type.id) {
+                    <p class="onboarding-progress" role="status">
+                      {{ 'onboarding.documents.uploading' | transloco: { percent: uploadPercent() } }}
+                    </p>
+                  }
+                }
+              </li>
+            }
+          </ul>
+        }
+
+        @case ('review') {
+          <div class="onboarding-review">
+            <p>{{ 'onboarding.review.intro' | transloco }}</p>
+            <dl class="onboarding-summary">
+              <div>
+                <dt>{{ 'onboarding.steps.organization' | transloco }}</dt>
+                <dd>
+                  {{ application()?.organizationNameAr || ('onboarding.review.missing' | transloco) }}
+                  @if (!application()?.organizationComplete) {
+                    <button type="button" class="onboarding-link" (click)="goToStep('organization')">
+                      {{ 'onboarding.review.edit' | transloco }}
+                    </button>
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>{{ 'onboarding.steps.representative' | transloco }}</dt>
+                <dd>
+                  {{ application()?.representativeFullNameAr || ('onboarding.review.missing' | transloco) }}
+                  @if (!application()?.representativeComplete) {
+                    <button type="button" class="onboarding-link" (click)="goToStep('representative')">
+                      {{ 'onboarding.review.edit' | transloco }}
+                    </button>
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>{{ 'onboarding.steps.school' | transloco }}</dt>
+                <dd>
+                  {{ application()?.schoolNameAr || ('onboarding.review.missing' | transloco) }}
+                  @if (!application()?.schoolComplete) {
+                    <button type="button" class="onboarding-link" (click)="goToStep('school')">
+                      {{ 'onboarding.review.edit' | transloco }}
+                    </button>
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>{{ 'onboarding.steps.branch' | transloco }}</dt>
+                <dd>
+                  {{ application()?.addressLineAr || ('onboarding.review.missing' | transloco) }}
+                  @if (!application()?.branchComplete) {
+                    <button type="button" class="onboarding-link" (click)="goToStep('branch')">
+                      {{ 'onboarding.review.edit' | transloco }}
+                    </button>
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>{{ 'onboarding.steps.documents' | transloco }}</dt>
+                <dd>
+                  {{
+                    application()?.documentsComplete
+                      ? ('onboarding.review.documentsReady' | transloco)
+                      : ('onboarding.review.documentsMissing' | transloco)
+                  }}
+                  @if (!application()?.documentsComplete) {
+                    <button type="button" class="onboarding-link" (click)="goToStep('documents')">
+                      {{ 'onboarding.review.edit' | transloco }}
+                    </button>
+                  }
+                </dd>
+              </div>
+            </dl>
+
+            <label class="onboarding-confirm">
+              <input
+                type="checkbox"
+                [checked]="confirmAccurate()"
+                (change)="confirmAccurate.set($any($event.target).checked)"
+              />
+              <span>{{ 'onboarding.review.confirmation' | transloco }}</span>
+            </label>
+          </div>
+        }
+      }
+
+      <div class="onboarding-actions">
+        @if (stepIndex() > 0) {
+          <se-button type="button" variant="secondary" (click)="back()" [disabled]="saving()">
+            {{ 'onboarding.actions.back' | transloco }}
+          </se-button>
+        }
+        @if (currentStep() !== 'review' && currentStep() !== 'documents') {
+          <se-button type="button" variant="secondary" (click)="saveDraft()" [disabled]="saving() || !isEditable()">
+            {{ 'onboarding.actions.saveDraft' | transloco }}
+          </se-button>
+          <se-button type="button" (click)="saveAndNext()" [disabled]="saving() || !isEditable()">
+            {{ 'onboarding.actions.saveAndContinue' | transloco }}
+          </se-button>
+        }
+        @if (currentStep() === 'documents') {
+          <se-button type="button" (click)="saveAndNext()" [disabled]="!isEditable()">
+            {{ 'onboarding.actions.continue' | transloco }}
+          </se-button>
+        }
+        @if (currentStep() === 'review') {
+          <se-button type="button" (click)="submitApplication()" [disabled]="saving() || !isEditable()">
+            {{
+              (application()?.status === 'ChangesRequested'
+                ? 'onboarding.actions.resubmit'
+                : 'onboarding.actions.submit'
+              ) | transloco
+            }}
+          </se-button>
+        }
+        <a routerLink="/school/onboarding/status" class="onboarding-link">{{
+          'onboarding.actions.viewStatus' | transloco
+        }}</a>
+      </div>
+    </section>
+  }
+</se-public-page-container>

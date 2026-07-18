@@ -1,0 +1,200 @@
+<se-portal-page-header
+  [titleKey]="isEditMode() ? 'parent.childForm.editTitle' : 'parent.childForm.addTitle'"
+  [subtitleKey]="isEditMode() ? 'parent.childForm.editSubtitle' : 'parent.childForm.addSubtitle'"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <form class="parent-page" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    @if (summaryErrors().length) {
+      <se-form-error-summary
+        [title]="'parent.childForm.errorSummaryTitle' | transloco"
+        [errors]="summaryErrors()"
+      />
+    }
+
+    <div class="parent-form-panel">
+      <se-form-field
+        [label]="'parent.childForm.fields.fullName' | transloco"
+        [error]="fieldError('fullName')"
+        controlId="parent-child-fullName"
+      >
+        <input id="parent-child-fullName" type="text" formControlName="fullName" autocomplete="name" />
+      </se-form-field>
+
+      @if (isEditMode()) {
+        <se-form-field [label]="'parent.childForm.fields.maskedIdentity' | transloco">
+          <div class="parent-readonly-field">{{ maskedIdentity() }}</div>
+        </se-form-field>
+
+        <div class="parent-replace-identity">
+          <label>
+            <input type="checkbox" [checked]="replaceIdentity()" (change)="toggleReplaceIdentity()" />
+            {{ 'parent.childForm.replaceIdentity' | transloco }}
+          </label>
+
+          @if (replaceIdentity()) {
+            <se-form-field
+              [label]="'parent.childForm.fields.identityType' | transloco"
+              controlId="parent-child-replaceIdentityType"
+            >
+              <select id="parent-child-replaceIdentityType" formControlName="replaceIdentityType">
+                @for (type of identityTypes; track type.value) {
+                  <option [value]="type.value">{{ type.labelKey | transloco }}</option>
+                }
+              </select>
+            </se-form-field>
+
+            <se-form-field
+              [label]="'parent.childForm.fields.identityValue' | transloco"
+              [error]="fieldError('replaceIdentityValue')"
+              controlId="parent-child-replaceIdentityValue"
+            >
+              <input id="parent-child-replaceIdentityValue" type="text" formControlName="replaceIdentityValue" />
+            </se-form-field>
+          }
+        </div>
+      } @else {
+        <se-form-field
+          [label]="'parent.childForm.fields.identityType' | transloco"
+          controlId="parent-child-identityType"
+        >
+          <select id="parent-child-identityType" formControlName="identityType">
+            @for (type of identityTypes; track type.value) {
+              <option [value]="type.value">{{ type.labelKey | transloco }}</option>
+            }
+          </select>
+        </se-form-field>
+
+        <se-form-field
+          [label]="'parent.childForm.fields.identityValue' | transloco"
+          [error]="fieldError('identityValue')"
+          controlId="parent-child-identityValue"
+        >
+          <input id="parent-child-identityValue" type="text" formControlName="identityValue" />
+        </se-form-field>
+      }
+
+      <se-form-field
+        [label]="'parent.childForm.fields.birthDate' | transloco"
+        [error]="fieldError('birthDate')"
+        controlId="parent-child-birthDate"
+      >
+        <input id="parent-child-birthDate" type="date" formControlName="birthDate" />
+      </se-form-field>
+
+      <se-form-field [label]="'parent.childForm.fields.gender' | transloco" controlId="parent-child-gender">
+        <select id="parent-child-gender" formControlName="gender">
+          @for (gender of genders; track gender.value) {
+            <option [value]="gender.value">{{ gender.labelKey | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.childForm.fields.educationalStage' | transloco"
+        [error]="fieldError('educationalStageId')"
+        controlId="parent-child-stage"
+      >
+        <select id="parent-child-stage" formControlName="educationalStageId">
+          <option value="">{{ 'parent.common.select' | transloco }}</option>
+          @for (stage of stages(); track stage.id) {
+            <option [value]="stage.id">{{ taxonomyName(stage) }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.childForm.fields.currentGrade' | transloco"
+        [error]="fieldError('currentGradeId')"
+        controlId="parent-child-grade"
+      >
+        <select
+          id="parent-child-grade"
+          formControlName="currentGradeId"
+          [disabled]="!form.controls.educationalStageId.value"
+        >
+          <option value="">{{ 'parent.common.select' | transloco }}</option>
+          @for (grade of grades(); track grade.id) {
+            <option [value]="grade.id">{{ taxonomyName(grade) }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.childForm.fields.currentSchoolName' | transloco"
+        controlId="parent-child-currentSchoolName"
+      >
+        <input id="parent-child-currentSchoolName" type="text" formControlName="currentSchoolName" maxlength="200" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.childForm.fields.preferredStudyLanguage' | transloco"
+        controlId="parent-child-preferredStudyLanguage"
+      >
+        <select id="parent-child-preferredStudyLanguage" formControlName="preferredStudyLanguage">
+          <option [ngValue]="0">{{ 'parent.common.select' | transloco }}</option>
+          @for (language of studyLanguages; track language.value) {
+            <option [ngValue]="language.value">{{ language.labelKey | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'parent.childForm.fields.skills' | transloco" controlId="parent-child-skills">
+        <textarea id="parent-child-skills" formControlName="skills" rows="3" maxlength="2000"></textarea>
+      </se-form-field>
+
+      <se-form-field [label]="'parent.childForm.fields.hobbies' | transloco" controlId="parent-child-hobbies">
+        <textarea id="parent-child-hobbies" formControlName="hobbies" rows="3" maxlength="2000"></textarea>
+      </se-form-field>
+
+      <se-form-field [label]="'parent.childForm.fields.strengths' | transloco" controlId="parent-child-strengths">
+        <textarea id="parent-child-strengths" formControlName="strengths" rows="3" maxlength="2000"></textarea>
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.childForm.fields.improvementAreas' | transloco"
+        controlId="parent-child-improvementAreas"
+      >
+        <textarea id="parent-child-improvementAreas" formControlName="improvementAreas" rows="3" maxlength="2000"></textarea>
+      </se-form-field>
+
+      <label class="parent-checkbox">
+        <input type="checkbox" formControlName="hasSpecialNeeds" />
+        {{ 'parent.childForm.fields.hasSpecialNeeds' | transloco }}
+      </label>
+
+      @if (form.controls.hasSpecialNeeds.value) {
+        <se-form-field
+          [label]="'parent.childForm.fields.specialNeedsNotes' | transloco"
+          [error]="fieldError('specialNeedsNotes')"
+          controlId="parent-child-specialNeedsNotes"
+        >
+          <textarea id="parent-child-specialNeedsNotes" formControlName="specialNeedsNotes" rows="4"></textarea>
+        </se-form-field>
+        <p class="parent-privacy-note">{{ 'parent.childForm.specialNeedsPrivacyNote' | transloco }}</p>
+      }
+
+      <se-form-field [label]="'parent.childForm.fields.healthNotes' | transloco" controlId="parent-child-healthNotes">
+        <textarea id="parent-child-healthNotes" formControlName="healthNotes" rows="4" maxlength="2000"></textarea>
+      </se-form-field>
+      <p class="parent-privacy-note">{{ 'parent.childForm.healthPrivacyNote' | transloco }}</p>
+    </div>
+
+    <div class="parent-actions">
+      <se-button type="submit" variant="primary" [disabled]="saving()">
+        {{ (saving() ? 'parent.common.saving' : 'parent.common.save') | transloco }}
+      </se-button>
+      <a routerLink="/parent/children" class="parent-btn">{{ 'parent.common.cancel' | transloco }}</a>
+    </div>
+  </form>
+
+  @if (isEditMode()) {
+    @if (childId(); as id) {
+      <se-child-document-vault [childId]="id" />
+    }
+  }
+}

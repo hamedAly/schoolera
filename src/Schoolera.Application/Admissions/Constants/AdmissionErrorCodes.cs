@@ -1,0 +1,89 @@
+namespace Schoolera.Application.Admissions.Constants;
+
+/// <summary>Stable admission error codes. Frontends branch on these, never on localized text.</summary>
+public static class AdmissionErrorCodes
+{
+    public const string EvaluationNotFound = "admission.evaluation.notFound";
+    public const string EvaluationInvalidTransition = "admission.evaluation.invalidTransition";
+    public const string EvaluationMissingTemplate = "admission.evaluation.missingTemplate";
+    public const string EvaluationInvalidAttendance = "admission.evaluation.invalidAttendance";
+    public const string EvaluationInvalidAnswers = "admission.evaluation.invalidAnswers";
+    public const string EvaluationInvalidRecommendation = "admission.evaluation.invalidRecommendation";
+    public const string EvaluationTooEarly = "admission.evaluation.tooEarly";
+    public const string EvaluationConcurrencyConflict = "admission.evaluation.concurrencyConflict";
+    public const string EvaluationIdempotencyConflict = "admission.evaluation.idempotencyConflict";
+    public const string EvaluationCorrectionBlocked = "admission.evaluation.correctionBlocked";
+    public const string EvaluationTemplateConflict = "admission.evaluation.templateConflict";
+    public const string EvaluationTemplateInvalidScope = "admission.evaluation.templateInvalidScope";
+    public const string NotFound = "admission.application.notFound";
+    public const string DuplicateActiveApplication = "admission.application.duplicateActiveApplication";
+    public const string InvalidTransition = "admission.application.invalidTransition";
+    public const string ReadOnly = "admission.application.readOnly";
+    public const string StudentNotOwned = "admission.application.studentNotOwned";
+    public const string StudentInactive = "admission.application.studentInactive";
+    public const string SchoolNotAvailable = "admission.application.schoolNotAvailable";
+    public const string BranchNotAvailable = "admission.application.branchNotAvailable";
+    public const string InvalidStageGrade = "admission.application.invalidStageGrade";
+    public const string AdmissionClosed = "admission.application.admissionClosed";
+    public const string InvalidAcademicYear = "admission.application.invalidAcademicYear";
+    public const string Incomplete = "admission.application.incomplete";
+    public const string CancellationNotAllowed = "admission.application.cancellationNotAllowed";
+    public const string AttachmentNotFound = "admission.application.attachmentNotFound";
+    public const string AttachmentTypeInvalid = "admission.application.attachmentTypeInvalid";
+    public const string AttachmentTooLarge = "admission.application.attachmentTooLarge";
+    public const string AttachmentReadOnly = "admission.application.attachmentReadOnly";
+    public const string GenderNotEligible = "admission.application.genderNotEligible";
+    public const string ConcurrentUpdate = "admission.application.concurrentUpdate";
+    public const string Forbidden = "admission.application.forbidden";
+    public const string RequirementsIncomplete = "admission.application.requirementsIncomplete";
+    public const string RequirementSnapshotNotFound = "admission.application.requirementSnapshotNotFound";
+    public const string RequirementDocumentRules = "admission.application.requirementDocumentRules";
+    public const string QuestionsIncomplete = "admission.application.questionsIncomplete";
+    public const string QuestionSnapshotNotFound = "admission.application.questionSnapshotNotFound";
+    public const string QuestionAnswerInvalid = "admission.application.questionAnswerInvalid";
+    public const string QuestionAnswersBlockScopeChange = "admission.application.questionAnswersBlockScopeChange";
+    public const string QuestionFileRules = "admission.application.questionFileRules";
+    public const string PolicySnapshotScopeChangeBlocked = "admission.application.policySnapshotScopeChangeBlocked";
+    public const string AgeNotEligible = "admission.application.ageNotEligible";
+    public const string AgeBirthDateRequired = "admission.application.ageBirthDateRequired";
+    public const string AgeInvalidBirthDate = "admission.application.ageInvalidBirthDate";
+    public const string AgeExceptionNotAllowed = "admission.application.ageExceptionNotAllowed";
+    public const string AgeExceptionConflict = "admission.application.ageExceptionConflict";
+    public const string MissingItemsInvalid = "admission.application.missingItemsInvalid";
+    public const string MissingItemsIncomplete = "admission.application.missingItemsIncomplete";
+    public const string MissingItemNotRequested = "admission.application.missingItemNotRequested";
+    public const string AppointmentInvalid = "admission.application.appointmentInvalid";
+    public const string AppointmentNotFound = "admission.application.appointmentNotFound";
+    public const string SlotFull = "admission.application.slotFull";
+    public const string SlotUnavailable = "admission.slotUnavailable";
+    public const string SlotMismatch = "admission.slotMismatch";
+    public const string DuplicateAppointment = "admission.duplicateAppointment";
+    public const string WaitingListInvalid = "admission.application.waitingListInvalid";
+
+    public const string AppointmentJourneyNotFound = "admission.appointment.notFound";
+    public const string AppointmentInvalidTransition = "admission.appointment.invalidTransition";
+    public const string AppointmentPolicyMismatch = "admission.appointment.policyMismatch";
+    public const string AppointmentRescheduleNotAllowed = "admission.appointment.rescheduleNotAllowed";
+    public const string AppointmentRescheduleLimitReached = "admission.appointment.rescheduleLimitReached";
+    public const string AppointmentDeadlinePassed = "admission.appointment.deadlinePassed";
+    public const string AppointmentCancellationNotAllowed = "admission.appointment.cancellationNotAllowed";
+    public const string AppointmentSlotUnavailable = "admission.appointment.slotUnavailable";
+    public const string AppointmentSlotFull = "admission.appointment.slotFull";
+    public const string AppointmentConcurrencyConflict = "admission.appointment.concurrencyConflict";
+    public const string AppointmentIdempotencyConflict = "admission.appointment.idempotencyConflict";
+    public const string AppointmentJoinTooEarly = "admission.appointment.joinTooEarly";
+    public const string AppointmentJoinExpired = "admission.appointment.joinExpired";
+    public const string AppointmentJoinProviderUnavailable = "admission.appointment.joinProviderUnavailable";
+    public const string MeetingNotFound = "admission.meeting.notFound";
+    public const string MeetingAccessUnavailable = "admission.meeting.accessUnavailable";
+    public const string MeetingRetryRejected = "admission.meeting.retryRejected";
+
+    // School review / admin monitoring
+    public const string ReviewNotFound = "admission.review.notFound";
+    public const string ReviewInvalidTransition = "admission.review.invalidTransition";
+    public const string ReviewRejectionReasonRequired = "admission.review.rejectionReasonRequired";
+    public const string ReviewConcurrentUpdate = "admission.review.concurrentUpdate";
+    public const string ReviewSchoolAccessDenied = "admission.review.schoolAccessDenied";
+    public const string ReviewMissingItemsRequired = "admission.review.missingItemsRequired";
+    public const string ReviewAppointmentRequired = "admission.review.appointmentRequired";
+}

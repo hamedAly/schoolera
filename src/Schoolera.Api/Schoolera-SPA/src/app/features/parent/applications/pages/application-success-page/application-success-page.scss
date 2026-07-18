@@ -1,0 +1,30 @@
+@use '../../../styles/parent-shared';
+
+.application-success__message {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.application-success__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--se-space-3);
+  margin: 0;
+}
+
+.application-success__facts dt {
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.application-success__facts dd {
+  margin: var(--se-space-1) 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.application-success__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+}

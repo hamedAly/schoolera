@@ -1,0 +1,106 @@
+using Schoolera.Domain.Enums;
+
+namespace Schoolera.Application.SchoolPortal.Dtos;
+
+public sealed record SchoolAdmissionQuestionOptionDto(
+    string OptionCode,
+    string LabelAr,
+    string LabelEn,
+    int SortOrder,
+    bool IsActive);
+
+public sealed record SchoolAdmissionQuestionListItemDto(
+    Guid Id,
+    string QuestionCode,
+    AdmissionQuestionType QuestionType,
+    string LabelAr,
+    string LabelEn,
+    bool IsRequired,
+    int SortOrder,
+    AdmissionQuestionPublicationStatus PublicationStatus,
+    bool IsActive,
+    Guid? SchoolBranchId,
+    Guid? EducationalStageId,
+    Guid? GradeId,
+    Guid? AcademicYearId,
+    DateTimeOffset UpdatedAtUtc);
+
+public sealed record SchoolAdmissionQuestionDetailDto(
+    Guid Id,
+    string QuestionCode,
+    AdmissionQuestionType QuestionType,
+    string LabelAr,
+    string LabelEn,
+    string? HelpAr,
+    string? HelpEn,
+    bool IsRequired,
+    int SortOrder,
+    AdmissionQuestionPublicationStatus PublicationStatus,
+    bool IsActive,
+    Guid? SchoolBranchId,
+    Guid? EducationalStageId,
+    Guid? GradeId,
+    Guid? AcademicYearId,
+    string ScopeKey,
+    int SpecificityScore,
+    int? MinLength,
+    int? MaxLength,
+    int? MinSelectedOptions,
+    int? MaxSelectedOptions,
+    DateOnly? MinDate,
+    DateOnly? MaxDate,
+    IReadOnlyList<string> AllowedFileExtensions,
+    long? MaxFileSizeBytes,
+    bool AllowChildVaultCopy,
+    IReadOnlyList<SchoolAdmissionQuestionOptionDto> Options,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc,
+    DateTimeOffset? PublishedAtUtc);
+
+public sealed record CreateSchoolAdmissionQuestionRequest(
+    string QuestionCode,
+    AdmissionQuestionType QuestionType,
+    string LabelAr,
+    string LabelEn,
+    string? HelpAr,
+    string? HelpEn,
+    bool IsRequired,
+    int SortOrder,
+    Guid? SchoolBranchId,
+    Guid? EducationalStageId,
+    Guid? GradeId,
+    Guid? AcademicYearId,
+    int? MinLength,
+    int? MaxLength,
+    int? MinSelectedOptions,
+    int? MaxSelectedOptions,
+    DateOnly? MinDate,
+    DateOnly? MaxDate,
+    IReadOnlyList<string>? AllowedFileExtensions,
+    long? MaxFileSizeBytes,
+    bool AllowChildVaultCopy,
+    IReadOnlyList<SchoolAdmissionQuestionOptionDto>? Options);
+
+public sealed record UpdateSchoolAdmissionQuestionRequest(
+    string LabelAr,
+    string LabelEn,
+    string? HelpAr,
+    string? HelpEn,
+    bool IsRequired,
+    int SortOrder,
+    Guid? SchoolBranchId,
+    Guid? EducationalStageId,
+    Guid? GradeId,
+    Guid? AcademicYearId,
+    int? MinLength,
+    int? MaxLength,
+    int? MinSelectedOptions,
+    int? MaxSelectedOptions,
+    DateOnly? MinDate,
+    DateOnly? MaxDate,
+    IReadOnlyList<string>? AllowedFileExtensions,
+    long? MaxFileSizeBytes,
+    bool AllowChildVaultCopy,
+    IReadOnlyList<SchoolAdmissionQuestionOptionDto>? Options);
+
+public sealed record ReorderSchoolAdmissionQuestionsRequest(IReadOnlyList<Guid> OrderedQuestionIds);

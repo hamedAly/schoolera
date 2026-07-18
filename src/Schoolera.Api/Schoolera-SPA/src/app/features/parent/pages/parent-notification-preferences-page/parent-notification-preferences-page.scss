@@ -1,0 +1,18 @@
+@use '../../styles/parent-shared';
+
+.parent-form {
+  display: grid;
+  gap: var(--se-space-3);
+  max-inline-size: 32rem;
+}
+
+.parent-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--se-space-2);
+  font: inherit;
+}
+
+.parent-check input {
+  margin-block-start: 0.2rem;
+}

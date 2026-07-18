@@ -1,0 +1,114 @@
+<se-portal-page-header titleKey="portal.fees.title" subtitleKey="portal.fees.subtitle">
+  @if (canManageFees()) {
+    <se-button type="button" (click)="showForm.set(true)">{{ 'portal.fees.add' | transloco }}</se-button>
+  }
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  }
+
+  @if (canManageFees()) {
+    <section class="portal-fees__visibility" aria-labelledby="fee-visibility-heading">
+      <h2 id="fee-visibility-heading">{{ 'portal.fees.visibility.title' | transloco }}</h2>
+      <p>{{ 'portal.fees.visibility.help' | transloco }}</p>
+      <form class="portal-fees__visibility-form" [formGroup]="visibilityForm" (ngSubmit)="saveVisibility()">
+        <se-form-field [label]="'portal.fees.visibility.policy' | transloco">
+          <select formControlName="feeVisibilityPolicy">
+            <option value="">{{ 'portal.fees.visibility.unresolved' | transloco }}</option>
+            <option value="1">{{ 'portal.fees.visibility.public' | transloco }}</option>
+            <option value="2">{{ 'portal.fees.visibility.parentsOnly' | transloco }}</option>
+          </select>
+        </se-form-field>
+        <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+      </form>
+    </section>
+  }
+
+  @if (showForm()) {
+    <form class="portal-fees__form" [formGroup]="form" (ngSubmit)="save()">
+      <se-form-field [label]="'portal.fees.fields.branch' | transloco">
+        <select formControlName="branchId">
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branch.nameAr }}</option>
+          }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.fees.fields.stage' | transloco">
+        <select formControlName="educationalStageId">
+          @for (stage of stages(); track stage.id) {
+            <option [value]="stage.id">{{ taxonomyName(stage) }}</option>
+          }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.fees.fields.academicYear' | transloco">
+        <select formControlName="academicYearId">
+          @for (year of academicYears(); track year.id) {
+            <option [value]="year.id">{{ taxonomyName(year) }}</option>
+          }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.fees.fields.category' | transloco">
+        <select formControlName="category">
+          <option [ngValue]="FeeCategory._1">{{ 'portal.fees.categories.tuition' | transloco }}</option>
+          <option [ngValue]="FeeCategory._2">{{ 'portal.fees.categories.application' | transloco }}</option>
+          <option [ngValue]="FeeCategory._3">{{ 'portal.fees.categories.registration' | transloco }}</option>
+          <option [ngValue]="FeeCategory._4">{{ 'portal.fees.categories.transport' | transloco }}</option>
+          <option [ngValue]="FeeCategory._5">{{ 'portal.fees.categories.books' | transloco }}</option>
+          <option [ngValue]="FeeCategory._6">{{ 'portal.fees.categories.other' | transloco }}</option>
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.fees.fields.amount' | transloco">
+        <input type="number" formControlName="amount" min="0" step="0.01" />
+      </se-form-field>
+      <label class="portal-fees__checkbox">
+        <input type="checkbox" formControlName="isStartingFrom" />
+        {{ 'portal.fees.fields.startingFrom' | transloco }}
+      </label>
+      <se-form-field [label]="'portal.fees.fields.notesAr' | transloco">
+        <textarea formControlName="notesAr" rows="2"></textarea>
+      </se-form-field>
+      <se-form-field [label]="'portal.fees.fields.notesEn' | transloco">
+        <textarea formControlName="notesEn" rows="2"></textarea>
+      </se-form-field>
+      <se-form-field [label]="'portal.fees.fields.internalNotesAr' | transloco">
+        <textarea formControlName="internalNotesAr" rows="2"></textarea>
+      </se-form-field>
+      <se-form-field [label]="'portal.fees.fields.internalNotesEn' | transloco">
+        <textarea formControlName="internalNotesEn" rows="2"></textarea>
+      </se-form-field>
+      <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+    </form>
+  }
+
+  @if (!fees().length) {
+    <se-portal-empty-state titleKey="portal.fees.emptyTitle" messageKey="portal.fees.emptyMessage" />
+  } @else {
+    <ul class="portal-fees__list">
+      @for (fee of fees(); track fee.id) {
+        <li [class.is-inactive]="!fee.isActive">
+          <div>
+            <strong>{{ feeLabel(fee) }}</strong>
+            <p>{{ formatAmount(fee) }}</p>
+            <p class="portal-fees__meta">
+              {{ (fee.isPublished ? 'portal.fees.published' : 'portal.fees.unpublished') | transloco }}
+            </p>
+          </div>
+          @if (canManageFees()) {
+            <div class="portal-fees__actions">
+              <se-button type="button" variant="secondary" (click)="toggleActive(fee)">
+                {{ (fee.isActive ? 'portal.common.deactivate' : 'portal.common.activate') | transloco }}
+              </se-button>
+              <se-button type="button" variant="secondary" (click)="togglePublish(fee)">
+                {{ (fee.isPublished ? 'portal.fees.unpublish' : 'portal.fees.publish') | transloco }}
+              </se-button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+}

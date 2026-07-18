@@ -1,0 +1,59 @@
+<se-portal-page-header
+  titleKey="parent.preferences.title"
+  subtitleKey="parent.preferences.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+  <div class="parent-actions">
+    <button type="button" (click)="load()">{{ 'parent.common.retry' | transloco }}</button>
+  </div>
+} @else {
+  <div class="parent-page">
+    @if (availability(); as avail) {
+      <p class="parent-alert parent-alert--info" role="status">
+        {{ 'parent.preferences.availabilityHint' | transloco }}
+        @if (!avail.emailConfigured) {
+          <span>{{ 'parent.preferences.emailUnavailable' | transloco }}</span>
+        }
+        @if (!avail.smsConfigured) {
+          <span>{{ 'parent.preferences.smsUnavailable' | transloco }}</span>
+        }
+        @if (!avail.whatsAppConfigured) {
+          <span>{{ 'parent.preferences.whatsAppUnavailable' | transloco }}</span>
+        }
+      </p>
+    }
+
+    <form class="parent-form" [formGroup]="form" (ngSubmit)="save()">
+      <label class="parent-check">
+        <input type="checkbox" formControlName="inAppEnabled" />
+        <span>{{ 'parent.preferences.fields.inApp' | transloco }}</span>
+      </label>
+      <label class="parent-check">
+        <input type="checkbox" formControlName="emailEnabled" />
+        <span>{{ 'parent.preferences.fields.email' | transloco }}</span>
+      </label>
+      <label class="parent-check">
+        <input type="checkbox" formControlName="smsEnabled" />
+        <span>{{ 'parent.preferences.fields.sms' | transloco }}</span>
+      </label>
+      <label class="parent-check">
+        <input type="checkbox" formControlName="whatsAppEnabled" />
+        <span>{{ 'parent.preferences.fields.whatsApp' | transloco }}</span>
+      </label>
+      <label class="parent-check">
+        <input type="checkbox" formControlName="optionalAdmissionsOpenEnabled" />
+        <span>{{ 'parent.preferences.fields.admissionsOpen' | transloco }}</span>
+      </label>
+
+      <div class="parent-actions">
+        <button type="submit" class="primary" [disabled]="saving()">
+          {{ saving() ? ('parent.common.saving' | transloco) : ('parent.common.save' | transloco) }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

@@ -1,0 +1,18 @@
+<ol class="application-timeline" [attr.aria-label]="'parent.applications.timeline.title' | transloco">
+  @for (item of items(); track item.id) {
+    <li class="application-timeline__item">
+      <div class="application-timeline__action">{{ actionLabel(item.action) }}</div>
+      @if (item.toStatus !== undefined) {
+        <div class="application-timeline__status">{{ statusLabel(item.toStatus) }}</div>
+      }
+      @if (item.parentVisibleNote) {
+        <p class="application-timeline__note">{{ item.parentVisibleNote }}</p>
+      }
+      <time class="application-timeline__time" [attr.datetime]="item.createdAtUtc">
+        {{ formatDate(item.createdAtUtc) }}
+      </time>
+    </li>
+  } @empty {
+    <li class="application-timeline__empty">{{ 'parent.applications.timeline.empty' | transloco }}</li>
+  }
+</ol>

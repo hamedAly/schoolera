@@ -1,0 +1,67 @@
+@use '../../styles/parent-shared';
+
+.parent-actions--spread {
+  justify-content: flex-end;
+}
+
+.parent-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-3);
+  align-items: flex-end;
+}
+
+.parent-filters label {
+  display: grid;
+  gap: var(--se-space-1);
+  font-size: 0.875rem;
+  color: var(--se-color-ink-muted);
+}
+
+.parent-filters select {
+  min-block-size: 2.75rem;
+  padding: 0 var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+  font: inherit;
+}
+
+.parent-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.parent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.parent-table th,
+.parent-table td {
+  padding: var(--se-space-3);
+  text-align: start;
+  border-bottom: 1px solid var(--se-color-border);
+}
+
+.parent-table th {
+  font-size: 0.875rem;
+  color: var(--se-color-ink-muted);
+  font-weight: 600;
+}
+
+.parent-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--se-space-3);
+}
+
+.parent-empty {
+  padding: var(--se-space-5);
+  text-align: center;
+  color: var(--se-color-ink-muted);
+}

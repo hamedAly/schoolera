@@ -1,0 +1,155 @@
+<se-portal-page-header
+  titleKey="support.tickets.list.title"
+  subtitleKey="support.tickets.list.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="support-page">
+    <form class="support-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'support.tickets.filters.search' | transloco }}
+        <input
+          type="search"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          name="search"
+        />
+      </label>
+
+      <label>
+        {{ 'support.tickets.filters.status' | transloco }}
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" name="status">
+          <option value="">{{ 'support.tickets.filters.allStatuses' | transloco }}</option>
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ ('support.' + option.labelKey) | transloco }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'support.tickets.filters.priority' | transloco }}
+        <select
+          [ngModel]="priorityFilter()"
+          (ngModelChange)="priorityFilter.set($event)"
+          name="priority"
+        >
+          <option value="">{{ 'support.tickets.filters.allPriorities' | transloco }}</option>
+          @for (option of priorityOptions; track option.value) {
+            <option [value]="option.value">{{ ('support.' + option.labelKey) | transloco }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'support.tickets.filters.category' | transloco }}
+        <select
+          [ngModel]="categoryFilter()"
+          (ngModelChange)="categoryFilter.set($event)"
+          name="category"
+        >
+          <option value="">{{ 'support.tickets.filters.allCategories' | transloco }}</option>
+          @for (option of categoryOptions; track option.value) {
+            <option [value]="option.value">{{ ('support.' + option.labelKey) | transloco }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="support-filters__check">
+        <input
+          type="checkbox"
+          [ngModel]="unassignedOnly()"
+          (ngModelChange)="unassignedOnly.set($event)"
+          name="unassignedOnly"
+        />
+        {{ 'support.tickets.filters.unassignedOnly' | transloco }}
+      </label>
+
+      <label class="support-filters__check">
+        <input
+          type="checkbox"
+          [ngModel]="firstResponseOverdueOnly()"
+          (ngModelChange)="firstResponseOverdueOnly.set($event)"
+          name="firstResponseOverdueOnly"
+        />
+        {{ 'support.tickets.filters.firstResponseOverdue' | transloco }}
+      </label>
+
+      <label class="support-filters__check">
+        <input
+          type="checkbox"
+          [ngModel]="resolutionOverdueOnly()"
+          (ngModelChange)="resolutionOverdueOnly.set($event)"
+          name="resolutionOverdueOnly"
+        />
+        {{ 'support.tickets.filters.resolutionOverdue' | transloco }}
+      </label>
+
+      <div class="support-actions">
+        <button type="submit">{{ 'support.common.apply' | transloco }}</button>
+        <button type="button" (click)="clearFilters()">{{ 'support.common.clear' | transloco }}</button>
+      </div>
+    </form>
+
+    @if (items().length) {
+      <div class="support-table-wrap">
+        <table class="support-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'support.tickets.columns.reference' | transloco }}</th>
+              <th scope="col">{{ 'support.tickets.columns.subject' | transloco }}</th>
+              <th scope="col">{{ 'support.tickets.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'support.tickets.columns.priority' | transloco }}</th>
+              <th scope="col">{{ 'support.tickets.columns.category' | transloco }}</th>
+              <th scope="col">{{ 'support.tickets.columns.sla' | transloco }}</th>
+              <th scope="col">{{ 'support.tickets.columns.updated' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/support/tickets', item.id]">{{ item.reference }}</a>
+                </td>
+                <td>{{ item.subject }}</td>
+                <td>{{ statusKey(item.status) | transloco }}</td>
+                <td>{{ priorityKey(item.priority) | transloco }}</td>
+                <td>{{ categoryKey(item.category) | transloco }}</td>
+                <td>
+                  @if (item.isFirstResponseOverdue || item.isResolutionOverdue) {
+                    <span class="support-overdue">{{ 'support.tickets.overdue' | transloco }}</span>
+                  } @else {
+                    —
+                  }
+                </td>
+                <td>{{ item.updatedAtUtc | date: 'medium' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="support-pagination">
+        <span>
+          {{
+            'support.common.pageInfo'
+              | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 }
+          }}
+        </span>
+        <div class="support-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'support.common.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'support.common.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="support-empty">{{ 'support.tickets.list.empty' | transloco }}</p>
+    }
+  </div>
+}

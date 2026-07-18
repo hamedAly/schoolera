@@ -1,0 +1,6 @@
+using FluentValidation;
+
+namespace Schoolera.Application.SchoolPortal.Commands.GenerateInterviewAssessmentSlotRecurrence;
+
+public sealed class GenerateInterviewAssessmentSlotRecurrenceCommandValidator
+    : AbstractValidator<GenerateInterviewAssessmentSlotRecurrenceCommand>;

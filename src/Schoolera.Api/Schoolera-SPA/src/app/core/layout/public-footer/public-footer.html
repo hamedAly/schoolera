@@ -1,0 +1,53 @@
+<footer class="public-footer">
+  <div class="public-footer__inner">
+    <section class="public-footer__brand" aria-labelledby="footer-brand-heading">
+      <h2 id="footer-brand-heading" class="public-footer__brand-title">{{ 'footer.brandTitle' | transloco }}</h2>
+      <p>{{ 'footer.brandDescription' | transloco }}</p>
+      <div class="public-footer__social" [attr.aria-label]="'footer.socialLabel' | transloco">
+        <span class="public-footer__social-item" [attr.aria-label]="'footer.socialX' | transloco" [attr.title]="'footer.comingSoon' | transloco">X</span>
+        <span class="public-footer__social-item" [attr.aria-label]="'footer.socialLinkedIn' | transloco" [attr.title]="'footer.comingSoon' | transloco">in</span>
+        <span class="public-footer__social-item" [attr.aria-label]="'footer.socialInstagram' | transloco" [attr.title]="'footer.comingSoon' | transloco">IG</span>
+      </div>
+    </section>
+
+    <nav class="public-footer__group" aria-labelledby="footer-parents-heading">
+      <h2 id="footer-parents-heading">{{ 'footer.parents' | transloco }}</h2>
+      <ul>
+        <li><a routerLink="/schools">{{ 'nav.searchSchools' | transloco }}</a></li>
+        <li><a routerLink="/how-it-works">{{ 'nav.howItWorks' | transloco }}</a></li>
+        <li><a routerLink="/auth/account-type">{{ 'nav.register' | transloco }}</a></li>
+      </ul>
+    </nav>
+
+    <nav class="public-footer__group" aria-labelledby="footer-schools-heading">
+      <h2 id="footer-schools-heading">{{ 'footer.schools' | transloco }}</h2>
+      <ul>
+        <li><a routerLink="/auth/register">{{ 'footer.joinSchools' | transloco }}</a></li>
+        <li><a routerLink="/about">{{ 'nav.about' | transloco }}</a></li>
+        <li><a routerLink="/contact">{{ 'nav.contact' | transloco }}</a></li>
+      </ul>
+    </nav>
+
+    <nav class="public-footer__group" aria-labelledby="footer-links-heading">
+      <h2 id="footer-links-heading">{{ 'footer.importantLinks' | transloco }}</h2>
+      <ul>
+        <li><a routerLink="/faq">{{ 'nav.faq' | transloco }}</a></li>
+        <li><a routerLink="/privacy">{{ 'footer.privacy' | transloco }}</a></li>
+        <li><a routerLink="/terms">{{ 'footer.terms' | transloco }}</a></li>
+        <li><a routerLink="/sla">{{ 'footer.sla' | transloco }}</a></li>
+      </ul>
+    </nav>
+
+    <nav class="public-footer__group" aria-labelledby="footer-support-heading">
+      <h2 id="footer-support-heading">{{ 'footer.support' | transloco }}</h2>
+      <ul>
+        <li><a routerLink="/contact">{{ 'nav.contact' | transloco }}</a></li>
+        <li><a routerLink="/faq">{{ 'footer.helpCenter' | transloco }}</a></li>
+        <li><a routerLink="/sla">{{ 'footer.sla' | transloco }}</a></li>
+        <li><a routerLink="/auth/login">{{ 'nav.login' | transloco }}</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <p class="public-footer__copy">{{ 'footer.copyright' | transloco:{ year } }}</p>
+</footer>

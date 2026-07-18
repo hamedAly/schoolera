@@ -1,0 +1,55 @@
+.portal-interview-faqs__filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.portal-interview-faqs__list {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.portal-interview-faqs__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid var(--se-border-subtle, #e5e7eb);
+  border-radius: 0.5rem;
+}
+
+.portal-interview-faqs__list li.is-inactive {
+  opacity: 0.65;
+}
+
+.portal-interview-faqs__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.portal-interview-faqs__form {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--se-border-subtle, #e5e7eb);
+  border-radius: 0.5rem;
+}
+
+.portal-interview-faqs__form-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.portal-interview-faqs__preview {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}

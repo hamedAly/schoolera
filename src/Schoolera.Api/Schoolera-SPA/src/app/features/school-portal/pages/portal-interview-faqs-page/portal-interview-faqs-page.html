@@ -1,0 +1,217 @@
+<se-portal-page-header
+  titleKey="portal.interviewFaqs.title"
+  subtitleKey="portal.interviewFaqs.subtitle"
+>
+  <se-button type="button" (click)="openCreate()">
+    {{ 'portal.interviewFaqs.add' | transloco }}
+  </se-button>
+</se-portal-page-header>
+
+<form class="portal-interview-faqs__filters" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
+  <se-form-field [label]="'portal.interviewFaqs.filters.category' | transloco">
+    <select formControlName="interviewCategory" data-testid="interview-faq-category-filter">
+      <option value="">{{ 'portal.interviewFaqs.filters.all' | transloco }}</option>
+      <option [value]="InterviewCategory._1">{{ 'portal.interviewFaqs.categories.interview' | transloco }}</option>
+      <option [value]="InterviewCategory._2">{{ 'portal.interviewFaqs.categories.assessment' | transloco }}</option>
+      <option [value]="InterviewCategory._3">{{ 'portal.interviewFaqs.categories.interviewAndAssessment' | transloco }}</option>
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewFaqs.filters.branch' | transloco">
+    <select formControlName="branchId">
+      <option value="">{{ 'portal.interviewFaqs.filters.all' | transloco }}</option>
+      @for (branch of branches(); track branch.id) {
+        <option [value]="branch.id">{{ branch.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewFaqs.filters.stage' | transloco">
+    <select formControlName="educationalStageId">
+      <option value="">{{ 'portal.interviewFaqs.filters.all' | transloco }}</option>
+      @for (stage of stages(); track stage.id) {
+        <option [value]="stage.id">{{ stage.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewFaqs.filters.grade' | transloco">
+    <select formControlName="gradeId">
+      <option value="">{{ 'portal.interviewFaqs.filters.all' | transloco }}</option>
+      @for (grade of grades(); track grade.id) {
+        <option [value]="grade.id">{{ grade.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewFaqs.filters.academicYear' | transloco">
+    <select formControlName="academicYearId">
+      <option value="">{{ 'portal.interviewFaqs.filters.all' | transloco }}</option>
+      @for (year of academicYears(); track year.id) {
+        <option [value]="year.id">{{ year.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewFaqs.filters.publication' | transloco">
+    <select formControlName="isPublished">
+      <option value="">{{ 'portal.interviewFaqs.filters.all' | transloco }}</option>
+      <option value="true">{{ 'portal.interviewFaqs.published' | transloco }}</option>
+      <option value="false">{{ 'portal.interviewFaqs.draft' | transloco }}</option>
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewFaqs.filters.active' | transloco">
+    <select formControlName="isActive">
+      <option value="">{{ 'portal.interviewFaqs.filters.all' | transloco }}</option>
+      <option value="true">{{ 'portal.interviewFaqs.active' | transloco }}</option>
+      <option value="false">{{ 'portal.interviewFaqs.inactive' | transloco }}</option>
+    </select>
+  </se-form-field>
+</form>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!">
+      <se-button type="button" variant="secondary" (click)="retry()">
+        {{ 'portal.interviewFaqs.retry' | transloco }}
+      </se-button>
+    </se-portal-error-state>
+  }
+
+  @if (showForm()) {
+    <form class="portal-interview-faqs__form" [formGroup]="form" (ngSubmit)="save()">
+      <h2>
+        {{ (isEditMode() ? 'portal.interviewFaqs.edit' : 'portal.interviewFaqs.add') | transloco }}
+      </h2>
+
+      <se-form-field [label]="'portal.interviewFaqs.fields.category' | transloco">
+        <select formControlName="interviewCategory" data-testid="interview-faq-category-field">
+          <option [value]="InterviewCategory._1">{{ 'portal.interviewFaqs.categories.interview' | transloco }}</option>
+          <option [value]="InterviewCategory._2">{{ 'portal.interviewFaqs.categories.assessment' | transloco }}</option>
+          <option [value]="InterviewCategory._3">{{ 'portal.interviewFaqs.categories.interviewAndAssessment' | transloco }}</option>
+        </select>
+      </se-form-field>
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="questionAr"
+        englishControlName="questionEn"
+        [arabicLabelKey]="'portal.interviewFaqs.fields.questionAr'"
+        [englishLabelKey]="'portal.interviewFaqs.fields.questionEn'"
+      />
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="answerAr"
+        englishControlName="answerEn"
+        [arabicLabelKey]="'portal.interviewFaqs.fields.answerAr'"
+        [englishLabelKey]="'portal.interviewFaqs.fields.answerEn'"
+        [multiline]="true"
+        [rows]="6"
+      />
+
+      <se-form-field [label]="'portal.interviewFaqs.fields.scopeBranch' | transloco">
+        <select formControlName="schoolBranchId">
+          <option value="">{{ 'portal.interviewFaqs.scopeDefault' | transloco }}</option>
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branch.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.interviewFaqs.fields.scopeStage' | transloco">
+        <select formControlName="educationalStageId">
+          <option value="">{{ 'portal.interviewFaqs.scopeDefault' | transloco }}</option>
+          @for (stage of stages(); track stage.id) {
+            <option [value]="stage.id">{{ stage.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.interviewFaqs.fields.scopeGrade' | transloco">
+        <select formControlName="gradeId">
+          <option value="">{{ 'portal.interviewFaqs.scopeDefault' | transloco }}</option>
+          @for (grade of grades(); track grade.id) {
+            <option [value]="grade.id">{{ grade.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.interviewFaqs.fields.scopeYear' | transloco">
+        <select formControlName="academicYearId">
+          <option value="">{{ 'portal.interviewFaqs.scopeDefault' | transloco }}</option>
+          @for (year of academicYears(); track year.id) {
+            <option [value]="year.id">{{ year.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <div class="portal-interview-faqs__form-actions">
+        <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+        <se-button type="button" variant="secondary" (click)="cancelForm()">
+          {{ 'portal.confirm.cancel' | transloco }}
+        </se-button>
+      </div>
+    </form>
+  }
+
+  @if (!items().length && !errorMessage()) {
+    <se-portal-empty-state
+      titleKey="portal.interviewFaqs.emptyTitle"
+      messageKey="portal.interviewFaqs.emptyMessage"
+    />
+  } @else if (items().length) {
+    <ul class="portal-interview-faqs__list">
+      @for (item of sortedItems(); track item.id; let index = $index) {
+        <li [class.is-inactive]="item.isActive === false">
+          <div>
+            <strong>{{ label(item) }}</strong>
+            <p>
+              {{ categoryLabel(item.interviewCategory) }} · {{ statusKey(item) | transloco }}
+            </p>
+            <div class="cms-content portal-interview-faqs__preview" [innerHTML]="previewAnswer(item)"></div>
+          </div>
+          <div class="portal-interview-faqs__actions">
+            <se-button type="button" variant="secondary" [disabled]="index === 0" (click)="moveItem(item, -1)">
+              {{ 'portal.interviewFaqs.moveUp' | transloco }}
+            </se-button>
+            <se-button
+              type="button"
+              variant="secondary"
+              [disabled]="index === sortedItems().length - 1"
+              (click)="moveItem(item, 1)"
+            >
+              {{ 'portal.interviewFaqs.moveDown' | transloco }}
+            </se-button>
+            @if (!item.isPublished) {
+              <se-button type="button" variant="secondary" (click)="openEdit(item)">
+                {{ 'portal.interviewFaqs.edit' | transloco }}
+              </se-button>
+            }
+            @if (item.isPublished) {
+              <se-button type="button" variant="secondary" (click)="unpublish(item)">
+                {{ 'portal.interviewFaqs.unpublish' | transloco }}
+              </se-button>
+            } @else if (item.isActive !== false) {
+              <se-button type="button" variant="secondary" (click)="publish(item)">
+                {{ 'portal.interviewFaqs.publish' | transloco }}
+              </se-button>
+            }
+            @if (item.isActive === false) {
+              <se-button type="button" variant="secondary" (click)="activate(item)">
+                {{ 'portal.common.activate' | transloco }}
+              </se-button>
+            } @else if (!item.isPublished) {
+              <se-button type="button" variant="secondary" (click)="deactivate(item)">
+                {{ 'portal.interviewFaqs.deactivate' | transloco }}
+              </se-button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+}

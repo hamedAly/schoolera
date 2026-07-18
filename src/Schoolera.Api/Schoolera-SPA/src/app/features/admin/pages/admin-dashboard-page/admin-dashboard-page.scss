@@ -1,0 +1,20 @@
+@use '../../styles/admin-shared';
+
+.admin-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--se-space-3);
+  margin-bottom: var(--se-space-3);
+}
+
+.admin-section-header a {
+  color: var(--se-color-brand-strong);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.admin-section-header a:hover {
+  text-decoration: underline;
+}

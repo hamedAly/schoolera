@@ -1,0 +1,85 @@
+<section class="vault" aria-labelledby="child-document-vault-title">
+  <div class="vault__heading">
+    <div>
+      <h2 id="child-document-vault-title">{{ 'parent.documentVault.title' | transloco }}</h2>
+      <p>{{ 'parent.documentVault.description' | transloco }}</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p role="status">{{ 'parent.documentVault.loading' | transloco }}</p>
+  } @else {
+    @if (errorKey(); as key) {
+      <p class="vault__error" role="alert">{{ key | transloco }}</p>
+    }
+    @if (busy()) {
+      <p class="vault__progress" role="status" aria-live="polite">
+        {{ 'parent.documentVault.progress' | transloco: { percent: uploadPercent() } }}
+      </p>
+    }
+
+    <div class="vault__groups">
+      @for (type of documentTypes; track type.value) {
+        <section class="vault__group" [attr.aria-labelledby]="'vault-type-' + type.value">
+          <div class="vault__group-heading">
+            <h3 [id]="'vault-type-' + type.value">{{ type.labelKey | transloco }}</h3>
+            <label class="parent-btn secondary" [for]="'vault-upload-' + type.value">
+              {{ 'parent.documentVault.upload' | transloco }}
+            </label>
+            <input
+              class="visually-hidden"
+              type="file"
+              [id]="'vault-upload-' + type.value"
+              accept=".pdf,image/jpeg,image/png,image/webp"
+              [disabled]="busy()"
+              (change)="selectUpload(type.value, $event)"
+            />
+          </div>
+
+          <ul class="vault__list">
+            @for (document of documentsOfType(type.value); track document.id) {
+              <li class="vault__item">
+                <div>
+                  <strong>{{ document.originalFileName }}</strong>
+                  <span>{{ formatBytes(document.fileSizeBytes) }}</span>
+                </div>
+                <div class="vault__actions">
+                  <button type="button" class="parent-btn secondary" [disabled]="busy()" (click)="download(document)">
+                    {{ 'parent.documentVault.download' | transloco }}
+                  </button>
+                  <label class="parent-btn secondary" [for]="'vault-replace-' + document.id">
+                    {{ 'parent.documentVault.replace' | transloco }}
+                  </label>
+                  <input
+                    class="visually-hidden"
+                    type="file"
+                    [id]="'vault-replace-' + document.id"
+                    accept=".pdf,image/jpeg,image/png,image/webp"
+                    [disabled]="busy()"
+                    (change)="selectReplacement(document, $event)"
+                  />
+                  <button type="button" class="parent-btn danger" [disabled]="busy()" (click)="pendingDelete.set(document)">
+                    {{ 'parent.common.delete' | transloco }}
+                  </button>
+                </div>
+              </li>
+            } @empty {
+              <li class="vault__empty">{{ 'parent.documentVault.emptyType' | transloco }}</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  }
+</section>
+
+<se-confirmation-dialog
+  [open]="!!pendingDelete()"
+  titleKey="parent.documentVault.deleteConfirmTitle"
+  messageKey="parent.documentVault.deleteConfirmMessage"
+  confirmKey="parent.common.delete"
+  cancelKey="parent.confirm.cancel"
+  [confirming]="busy()"
+  (confirmed)="confirmDelete()"
+  (cancelled)="pendingDelete.set(null)"
+/>

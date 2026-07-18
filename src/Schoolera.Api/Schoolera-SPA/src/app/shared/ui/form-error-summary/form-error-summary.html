@@ -1,0 +1,18 @@
+@if (errors().length) {
+  <div class="se-form-error-summary" role="alert" tabindex="-1">
+    <p class="se-form-error-summary__title">
+      {{ title() || ('formErrors.summaryTitle' | transloco) }}
+    </p>
+    <ul class="se-form-error-summary__list">
+      @for (error of errors(); track $index) {
+        <li>
+          @if (error.fieldId) {
+            <a href="#" (click)="onFieldActivate(error.fieldId, $event)">{{ error.message }}</a>
+          } @else {
+            <span>{{ error.message }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+}

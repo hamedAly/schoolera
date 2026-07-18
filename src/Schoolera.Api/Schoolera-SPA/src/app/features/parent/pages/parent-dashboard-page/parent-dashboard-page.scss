@@ -1,0 +1,36 @@
+@use '../../styles/parent-shared';
+
+.parent-welcome {
+  margin: 0;
+  font-size: 1.125rem;
+  color: var(--se-color-ink-muted);
+}
+
+.parent-activity-list {
+  display: grid;
+  gap: var(--se-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.parent-activity-list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--se-space-2);
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.parent-activity-list time {
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.parent-alert .parent-btn {
+  display: inline-flex;
+  margin-top: var(--se-space-2);
+}

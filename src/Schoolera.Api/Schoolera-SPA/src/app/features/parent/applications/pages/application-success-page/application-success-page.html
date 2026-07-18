@@ -1,0 +1,43 @@
+<se-portal-page-header
+  titleKey="parent.applications.success.title"
+  subtitleKey="parent.applications.success.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as app) {
+  <div class="parent-page application-success">
+    <p class="application-success__message" role="status">
+      {{ 'parent.applications.success.message' | transloco }}
+    </p>
+    <dl class="application-success__facts">
+      <div>
+        <dt>{{ 'parent.applications.summary.applicationNumber' | transloco }}</dt>
+        <dd>{{ app.applicationNumber }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.applications.summary.school' | transloco }}</dt>
+        <dd>{{ app.schoolName }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.applications.summary.child' | transloco }}</dt>
+        <dd>{{ app.childDisplayName }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.applications.detail.submittedAt' | transloco }}</dt>
+        <dd>{{ formatDate(app.submittedAtUtc) }}</dd>
+      </div>
+    </dl>
+    <p>{{ 'parent.applications.success.schoolReviewNote' | transloco }}</p>
+    <div class="application-success__actions">
+      <a [routerLink]="['/parent/applications', app.id]" class="parent-btn primary">
+        {{ 'parent.applications.success.viewDetail' | transloco }}
+      </a>
+      <a routerLink="/parent/applications" class="parent-btn secondary">
+        {{ 'parent.applications.success.viewList' | transloco }}
+      </a>
+    </div>
+  </div>
+}

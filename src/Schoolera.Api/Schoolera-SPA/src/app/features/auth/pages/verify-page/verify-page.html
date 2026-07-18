@@ -1,0 +1,108 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: 'auth.verify.breadcrumb' | transloco },
+    ]"
+  />
+  <se-page-hero
+    [title]="'auth.verify.title' | transloco"
+    [subtitle]="'auth.verify.subtitle' | transloco"
+  />
+
+  <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (deliverySucceeded() === true && maskedEmail()) {
+      <p class="auth-form__success" role="status">
+        {{ 'auth.verify.sentTo' | transloco: { email: maskedEmail() } }}
+      </p>
+    }
+    @if (deliverySucceeded() === false) {
+      <p class="auth-form__alert" role="alert">
+        {{ 'auth.verify.deliveryPending' | transloco }}
+      </p>
+    }
+    @if (deliveryMode() === 'DevelopmentLog') {
+      <p class="auth-form__hint" role="note">
+        {{ 'auth.verify.devLogHint' | transloco }}
+      </p>
+    }
+
+    @if (errorMessage()) {
+      <p class="auth-form__alert" role="alert">{{ errorMessage() }}</p>
+    }
+    @if (successMessage()) {
+      <p class="auth-form__success" role="status">{{ successMessage() }}</p>
+    }
+
+    <se-form-field
+      controlId="email"
+      [label]="'auth.fields.email' | transloco"
+      [error]="fieldError('email')"
+    >
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        [attr.aria-invalid]="hasFieldError('email')"
+        [attr.aria-describedby]="hasFieldError('email') ? 'email-error' : null"
+      />
+    </se-form-field>
+
+    @if (maskedEmail()) {
+      <p class="auth-form__hint">
+        {{ 'auth.verify.maskedEmailLabel' | transloco }}: {{ maskedEmail() }}
+      </p>
+    }
+
+    <se-form-field
+      controlId="code"
+      [label]="'auth.fields.verificationCode' | transloco"
+      [error]="fieldError('code')"
+    >
+      <input
+        id="code"
+        seAutofocus
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="6"
+        autocomplete="one-time-code"
+        formControlName="code"
+        [attr.aria-invalid]="hasFieldError('code')"
+        [attr.aria-describedby]="hasFieldError('code') ? 'code-error' : 'code-hint'"
+      />
+    </se-form-field>
+    <p id="code-hint" class="auth-form__hint">{{ 'auth.verify.codeHint' | transloco }}</p>
+
+    <div class="auth-form__actions">
+      <se-button type="submit" [disabled]="submitting()">
+        {{
+          submitting()
+            ? ('auth.actions.verifying' | transloco)
+            : ('auth.actions.verify' | transloco)
+        }}
+      </se-button>
+      <se-button
+        type="button"
+        variant="secondary"
+        [disabled]="resending() || resendSecondsLeft() > 0"
+        (click)="resend()"
+      >
+        @if (resendSecondsLeft() > 0) {
+          {{ 'auth.verify.resendIn' | transloco: { seconds: resendSecondsLeft() } }}
+        } @else {
+          {{
+            resending()
+              ? ('auth.actions.resending' | transloco)
+              : ('auth.actions.resendCode' | transloco)
+          }}
+        }
+      </se-button>
+    </div>
+
+    <p class="auth-form__links">
+      <a routerLink="/auth/login">{{ 'auth.verify.backToLogin' | transloco }}</a>
+    </p>
+  </form>
+</se-public-page-container>

@@ -1,0 +1,70 @@
+<se-portal-page-header
+  titleKey="parent.notifications.title"
+  subtitleKey="parent.notifications.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+  <div class="parent-actions">
+    <button type="button" (click)="load()">{{ 'parent.common.retry' | transloco }}</button>
+  </div>
+} @else {
+  <div class="parent-page">
+    <div class="parent-actions">
+      <a routerLink="/parent/notification-preferences">
+        {{ 'parent.notifications.preferencesLink' | transloco }}
+      </a>
+      <span class="parent-muted">
+        {{ 'parent.notifications.unreadCount' | transloco: { count: unreadCount() } }}
+      </span>
+      <button type="button" [disabled]="acting() || unreadCount() === 0" (click)="markAllRead()">
+        {{ 'parent.notifications.markAllRead' | transloco }}
+      </button>
+    </div>
+
+    @if (items().length) {
+      <ul class="parent-notification-list">
+        @for (item of items(); track item.id) {
+          <li [class.is-unread]="!item.isRead">
+            <div class="parent-notification-head">
+              <strong>{{ item.subject || ('parent.notifications.noSubject' | transloco) }}</strong>
+              <time>{{ item.createdAtUtc | date: 'medium' }}</time>
+            </div>
+            <p>{{ item.body }}</p>
+            <div class="parent-actions">
+              @if (!item.isRead) {
+                <button type="button" [disabled]="acting()" (click)="markRead(item)">
+                  {{ 'parent.notifications.markRead' | transloco }}
+                </button>
+              }
+              @if (item.actionPath) {
+                <a [routerLink]="item.actionPath">{{ 'parent.notifications.open' | transloco }}</a>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+
+      <div class="parent-pagination">
+        <span>
+          {{
+            'parent.notifications.pageInfo'
+              | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 }
+          }}
+        </span>
+        <div class="parent-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'parent.notifications.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'parent.notifications.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="parent-empty">{{ 'parent.notifications.empty' | transloco }}</p>
+    }
+  </div>
+}

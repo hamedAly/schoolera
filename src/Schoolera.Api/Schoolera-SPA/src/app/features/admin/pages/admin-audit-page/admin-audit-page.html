@@ -1,0 +1,64 @@
+<se-portal-page-header titleKey="admin.audit.title" subtitleKey="admin.audit.subtitle" />
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    <form class="admin-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'admin.audit.actionFilter' | transloco }}
+        <input type="text" [(ngModel)]="actionFilter" name="action" />
+      </label>
+      <label>
+        {{ 'admin.audit.entityTypeFilter' | transloco }}
+        <input type="text" [(ngModel)]="entityTypeFilter" name="entityType" />
+      </label>
+      <button type="submit">{{ 'admin.common.apply' | transloco }}</button>
+    </form>
+
+    @if (items().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.audit.columns.action' | transloco }}</th>
+              <th scope="col">{{ 'admin.audit.columns.entityType' | transloco }}</th>
+              <th scope="col">{{ 'admin.audit.columns.entityId' | transloco }}</th>
+              <th scope="col">{{ 'admin.audit.columns.actor' | transloco }}</th>
+              <th scope="col">{{ 'admin.audit.columns.summary' | transloco }}</th>
+              <th scope="col">{{ 'admin.audit.columns.createdAt' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (event of items(); track event.id) {
+              <tr>
+                <td>{{ event.action }}</td>
+                <td>{{ event.entityType }}</td>
+                <td>{{ event.entityId }}</td>
+                <td>{{ event.actorEmail ?? event.actorUserId }}</td>
+                <td>{{ event.summary }}</td>
+                <td>{{ event.createdAtUtc | date: 'medium' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination">
+        <span>{{ 'admin.common.pageInfo' | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 } }}</span>
+        <div class="admin-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'admin.common.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'admin.common.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.audit.empty' | transloco }}</p>
+    }
+  </div>
+}

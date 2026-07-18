@@ -1,0 +1,30 @@
+<section class="page-hero" aria-labelledby="page-hero-title">
+  <div class="page-hero__glow" aria-hidden="true"></div>
+  <h1 id="page-hero-title">{{ title() }}</h1>
+  @if (subtitle()) {
+    <p class="page-hero__subtitle">{{ subtitle() }}</p>
+  }
+
+  @if (primaryAction() || secondaryAction()) {
+    <div class="page-hero__actions">
+      @if (primaryAction(); as primary) {
+        <a
+          [routerLink]="primary.route"
+          class="page-hero__btn"
+          [class.page-hero__btn--secondary]="primary.variant === 'secondary'"
+        >
+          {{ primary.label }}
+        </a>
+      }
+      @if (secondaryAction(); as secondary) {
+        <a
+          [routerLink]="secondary.route"
+          class="page-hero__btn"
+          [class.page-hero__btn--secondary]="secondary.variant !== 'primary'"
+        >
+          {{ secondary.label }}
+        </a>
+      }
+    </div>
+  }
+</section>

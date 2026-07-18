@@ -1,0 +1,158 @@
+{
+  "accountType": {
+    "title": "Choose account type",
+    "subtitle": "Pick your path to get started on Schoolera.",
+    "parentTitle": "Parent",
+    "parentBody": "Find schools and follow your child's education journey from one place.",
+    "schoolTitle": "Educational institution",
+    "schoolBody": "Create your school profile and welcome parent interest through Schoolera.",
+    "continue": "Continue to registration",
+    "haveAccount": "Already have an account?",
+    "login": "Log in",
+    "breadcrumb": "Account type"
+  },
+  "login": {
+    "title": "Log in",
+    "subtitle": "Sign in with your email and password to continue.",
+    "breadcrumb": "Log in",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create account"
+  },
+  "register": {
+    "title": "Create account",
+    "subtitle": "Complete the form below to create your Schoolera account.",
+    "haveAccount": "Already have an account?",
+    "termsLabel": "I accept the terms and conditions.",
+    "successToast": "Account created. Please verify your email."
+  },
+  "registerParent": {
+    "title": "Parent registration",
+    "subtitle": "Create a parent account to discover schools and prepare for future admission journeys.",
+    "breadcrumb": "Parent registration"
+  },
+  "registerSchoolOwner": {
+    "title": "School registration",
+    "subtitle": "Create an educational-institution account for your school on Schoolera.",
+    "breadcrumb": "School registration"
+  },
+  "verify": {
+    "title": "Verify your email",
+    "subtitle": "Enter the 6-digit verification code sent to your email address.",
+    "breadcrumb": "Verify email",
+    "success": "Your email has been verified. You can now log in.",
+    "resendSuccess": "A new verification code has been sent if the account exists.",
+    "backToLogin": "Back to log in",
+    "sentTo": "A verification code was sent to {{email}}.",
+    "deliveryPending": "Your account was created. The verification code could not be delivered yet — use Resend.",
+    "devLogHint": "Development mode does not send a real email. Check the API console log for the verification code.",
+    "codeHint": "Enter the 6-digit numeric code.",
+    "maskedEmailLabel": "Email",
+    "resendIn": "Resend available in {{seconds}}s",
+    "codeLengthError": "The verification code must be 6 digits."
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "subtitle": "Enter your email and we will send reset instructions if the account exists.",
+    "breadcrumb": "Forgot password",
+    "success": "If an account exists for this email, reset instructions have been sent.",
+    "backToLogin": "Back to log in"
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "subtitle": "Choose a new password for your account.",
+    "breadcrumb": "Reset password",
+    "success": "Your password has been reset. You can now log in.",
+    "backToLogin": "Back to log in"
+  },
+  "unauthorized": {
+    "title": "Access denied",
+    "subtitle": "You do not have permission to view this page.",
+    "breadcrumb": "Access denied",
+    "home": "Back to home",
+    "portal": "Go to your portal"
+  },
+  "fields": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phoneNumber": "Phone number",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "newPassword": "New password",
+    "verificationCode": "Verification code",
+    "resetToken": "Reset token"
+  },
+  "actions": {
+    "signIn": "Log in",
+    "signingIn": "Signing in...",
+    "signOut": "Log out",
+    "createAccount": "Create account",
+    "registering": "Creating account...",
+    "verify": "Verify email",
+    "verifying": "Verifying...",
+    "resendCode": "Resend code",
+    "resending": "Resending...",
+    "sendResetLink": "Send reset link",
+    "sending": "Sending...",
+    "resetPassword": "Reset password",
+    "resetting": "Resetting..."
+  },
+  "validation": {
+    "invalidEmail": "Enter a valid email address.",
+    "passwordMinLength": "Password must be at least 8 characters.",
+    "passwordMismatch": "Passwords do not match."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "validation": "Please check the form and try again.",
+    "invalidCredentials": "Email or password is incorrect.",
+    "accountSuspended": "This account has been suspended.",
+    "accountNotVerified": "Please verify your email before signing in.",
+    "emailAlreadyExists": "An account with this email already exists.",
+    "duplicateEmail": "An account with this email already exists.",
+    "duplicatePhone": "An account with this phone number already exists.",
+    "invalidEmail": "Enter a valid email address.",
+    "invalidVerificationCode": "The verification code is invalid.",
+    "expiredVerificationCode": "The verification code has expired. Request a new code.",
+    "codeAlreadyUsed": "This verification code has already been used.",
+    "emailAlreadyVerified": "This email address is already verified.",
+    "resendTooSoon": "Please wait before requesting another verification code.",
+    "deliveryFailed": "The verification code could not be delivered right now. Please try again.",
+    "rateLimited": "Too many attempts. Please wait and try again.",
+    "invalidResetToken": "The reset link or token is invalid or expired.",
+    "unauthorized": "You must be signed in to continue.",
+    "forbidden": "You do not have permission to perform this action.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordRequiresNonAlphanumeric": "Password must include at least one symbol (for example !@#).",
+    "passwordRequiresLowercase": "Password must include at least one lowercase letter.",
+    "passwordRequiresUppercase": "Password must include at least one uppercase letter.",
+    "passwordRequiresDigit": "Password must include at least one number.",
+    "passwordRequiresUniqueChars": "Password must include more unique characters."
+  },
+  "portals": {
+    "signedInAs": "Signed in as {{name}}.",
+    "parent": {
+      "title": "Parent portal",
+      "subtitle": "Your parent workspace will be expanded in later phases.",
+      "breadcrumb": "Parent portal"
+    },
+    "school": {
+      "title": "School portal",
+      "subtitle": "Your school workspace will be expanded in later phases.",
+      "breadcrumb": "School portal",
+      "onboardingCta": "Educational institution onboarding",
+      "onboardingStatusCta": "Onboarding application status"
+    },
+    "admin": {
+      "title": "Admin portal",
+      "subtitle": "Platform administration tools will be expanded in later phases.",
+      "breadcrumb": "Admin portal"
+    },
+    "support": {
+      "title": "Support portal",
+      "subtitle": "Support tools will be expanded in later phases.",
+      "breadcrumb": "Support portal"
+    }
+  }
+}

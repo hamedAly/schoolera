@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="InvalidCredentials" xml:space="preserve"><value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value></data>
+  <data name="AccountSuspended" xml:space="preserve"><value>هذا الحساب موقوف.</value></data>
+  <data name="AccountNotVerified" xml:space="preserve"><value>يجب تفعيل الحساب قبل تسجيل الدخول.</value></data>
+  <data name="DuplicateEmail" xml:space="preserve"><value>يوجد حساب بهذا البريد الإلكتروني بالفعل.</value></data>
+  <data name="DuplicatePhone" xml:space="preserve"><value>يوجد حساب بهذا رقم الهاتف بالفعل.</value></data>
+  <data name="InvalidEmail" xml:space="preserve"><value>أدخل بريدًا إلكترونيًا صالحًا.</value></data>
+  <data name="PasswordTooShort" xml:space="preserve"><value>يجب أن تكون كلمة المرور 8 أحرف على الأقل.</value></data>
+  <data name="PasswordRequiresNonAlphanumeric" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على رمز واحد على الأقل.</value></data>
+  <data name="PasswordRequiresLowercase" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل.</value></data>
+  <data name="PasswordRequiresUppercase" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل.</value></data>
+  <data name="PasswordRequiresDigit" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على رقم واحد على الأقل.</value></data>
+  <data name="PasswordRequiresUniqueChars" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على أحرف فريدة أكثر.</value></data>
+  <data name="ValidationFailed" xml:space="preserve"><value>يرجى مراجعة النموذج والمحاولة مرة أخرى.</value></data>
+  <data name="InvalidVerificationCode" xml:space="preserve"><value>رمز التحقق غير صحيح.</value></data>
+  <data name="ExpiredVerificationCode" xml:space="preserve"><value>انتهت صلاحية رمز التحقق.</value></data>
+  <data name="CodeAlreadyUsed" xml:space="preserve"><value>تم استخدام رمز التحقق هذا مسبقًا.</value></data>
+  <data name="EmailAlreadyVerified" xml:space="preserve"><value>تم تأكيد هذا البريد الإلكتروني مسبقًا.</value></data>
+  <data name="ResendTooSoon" xml:space="preserve"><value>يرجى الانتظار قبل طلب رمز تحقق جديد.</value></data>
+  <data name="DeliveryFailed" xml:space="preserve"><value>تعذر إرسال رمز التحقق حاليًا. يرجى المحاولة مرة أخرى.</value></data>
+  <data name="RateLimited" xml:space="preserve"><value>محاولات كثيرة. حاول مرة أخرى لاحقًا.</value></data>
+  <data name="InvalidResetToken" xml:space="preserve"><value>رمز إعادة التعيين غير صالح أو منتهي.</value></data>
+  <data name="Unauthorized" xml:space="preserve"><value>يلزم تسجيل الدخول.</value></data>
+  <data name="Forbidden" xml:space="preserve"><value>ليست لديك صلاحية لتنفيذ هذا الإجراء.</value></data>
+  <data name="RegistrationSuccess" xml:space="preserve"><value>تم إنشاء الحساب. تحقق من رمز التفعيل.</value></data>
+  <data name="VerificationSuccess" xml:space="preserve"><value>تم تفعيل الحساب بنجاح.</value></data>
+  <data name="ResendSuccess" xml:space="preserve"><value>إذا كان الحساب موجودًا، فقد أُرسل رمز تحقق جديد.</value></data>
+  <data name="ForgotPasswordSuccess" xml:space="preserve"><value>إذا كان الحساب موجودًا، فقد أُرسلت تعليمات إعادة التعيين.</value></data>
+  <data name="ResetPasswordSuccess" xml:space="preserve"><value>تم تحديث كلمة المرور بنجاح.</value></data>
+  <data name="LogoutSuccess" xml:space="preserve"><value>تم تسجيل الخروج بنجاح.</value></data>
+  <data name="AdminSchoolNotFound" xml:space="preserve"><value>لم يتم العثور على المدرسة.</value></data>
+  <data name="AdminUserNotFound" xml:space="preserve"><value>لم يتم العثور على المستخدم.</value></data>
+  <data name="AdminInvalidSchoolStatus" xml:space="preserve"><value>حالة المدرسة غير صالحة.</value></data>
+  <data name="AdminInvalidAccountStatus" xml:space="preserve"><value>حالة الحساب غير صالحة.</value></data>
+  <data name="AdminCannotModifySelf" xml:space="preserve"><value>لا يمكنك تغيير حالة حسابك بنفسك.</value></data>
+  <data name="ContactLeadSubmitted" xml:space="preserve"><value>تم إرسال رسالتك بنجاح. قد تتواصل معك المدرسة.</value></data>
+  <data name="ContactLeadRejected" xml:space="preserve"><value>تعذر إرسال الطلب. حاول مرة أخرى لاحقًا.</value></data>
+</root>

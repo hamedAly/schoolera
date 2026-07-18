@@ -1,0 +1,101 @@
+<se-public-page-container>
+  <div class="contact-page">
+    <header class="contact-page__header">
+      <h1>{{ introTitle() || ('contact.title' | transloco) }}</h1>
+      @if (introHtml()) {
+        <div class="cms-content contact-page__intro" [innerHTML]="introHtml()"></div>
+      } @else {
+        <p>{{ 'contact.intro' | transloco }}</p>
+      }
+    </header>
+
+    @if (successReference(); as reference) {
+      <div class="contact-page__success" role="status" aria-live="polite">
+        <h2>{{ 'contact.successTitle' | transloco }}</h2>
+        <p>{{ 'contact.successBody' | transloco }}</p>
+        <p class="contact-page__reference">
+          {{ 'contact.referenceLabel' | transloco }}
+          <strong>{{ reference }}</strong>
+        </p>
+      </div>
+    }
+
+    <form class="contact-page__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (summaryErrors().length) {
+        <se-form-error-summary [errors]="summaryErrors()" />
+      }
+
+      <!-- Honeypot: leave empty. Hidden from users and assistive tech. -->
+      <div class="contact-page__honeypot" aria-hidden="true">
+        <label>
+          website
+          <input
+            type="text"
+            formControlName="website"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </label>
+      </div>
+
+      <se-form-field
+        [label]="'contact.fields.name' | transloco"
+        controlId="contact-name"
+      >
+        <input id="contact-name" type="text" formControlName="name" autocomplete="name" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'contact.fields.phone' | transloco"
+        controlId="contact-phone"
+      >
+        <input id="contact-phone" type="tel" formControlName="phone" autocomplete="tel" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'contact.fields.email' | transloco"
+        controlId="contact-email"
+      >
+        <input id="contact-email" type="email" formControlName="email" autocomplete="email" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'contact.fields.category' | transloco"
+        controlId="contact-category"
+      >
+        <select id="contact-category" formControlName="category">
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ categoryLabelKey(cat) | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field
+        [label]="'contact.fields.subject' | transloco"
+        controlId="contact-subject"
+      >
+        <input id="contact-subject" type="text" formControlName="subject" autocomplete="off" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'contact.fields.message' | transloco"
+        controlId="contact-message"
+      >
+        <textarea id="contact-message" formControlName="message" rows="6"></textarea>
+      </se-form-field>
+
+      <label class="contact-page__consent" for="contact-consent">
+        <input id="contact-consent" type="checkbox" formControlName="consentAccepted" />
+        <span>{{ 'contact.fields.consent' | transloco }}</span>
+      </label>
+
+      <button
+        type="submit"
+        class="se-btn se-btn--primary"
+        [disabled]="submitting()"
+      >
+        {{ submitting() ? ('contact.submitting' | transloco) : ('contact.submit' | transloco) }}
+      </button>
+    </form>
+  </div>
+</se-public-page-container>

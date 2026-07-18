@@ -1,0 +1,34 @@
+<se-portal-page-header titleKey="portal.gallery.title" subtitleKey="portal.gallery.subtitle">
+  <label class="portal-gallery__upload">
+    <span>{{ 'portal.gallery.upload' | transloco }}</span>
+    <input type="file" accept="image/*" [disabled]="uploading()" (change)="onFileSelected($event)" />
+  </label>
+</se-portal-page-header>
+
+@if (uploading()) {
+  <p role="status">{{ 'portal.gallery.uploading' | transloco: { percent: uploadPercent() } }}</p>
+}
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else if (errorMessage() && !galleryImages().length) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (!galleryImages().length) {
+  <se-portal-empty-state titleKey="portal.gallery.emptyTitle" messageKey="portal.gallery.emptyMessage" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  }
+  <div class="portal-gallery__grid">
+    @for (image of galleryImages(); track image.id) {
+      <figure class="portal-gallery__item">
+        <img [src]="image.imageUrl" [alt]="image.altTextAr ?? ''" loading="lazy" />
+        <figcaption>
+          <se-button type="button" variant="secondary" (click)="deleteImage(image.id)">
+            {{ 'portal.common.delete' | transloco }}
+          </se-button>
+        </figcaption>
+      </figure>
+    }
+  </div>
+}

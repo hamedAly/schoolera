@@ -1,0 +1,31 @@
+.se-form-error-summary {
+  margin: 0;
+  padding: var(--se-space-3) var(--se-space-4);
+  border-radius: var(--se-radius-md);
+  border: 1px solid color-mix(in srgb, var(--se-color-danger) 35%, var(--se-color-border));
+  background: color-mix(in srgb, var(--se-color-danger) 10%, transparent);
+  color: var(--se-color-danger);
+}
+
+.se-form-error-summary__title {
+  margin: 0 0 var(--se-space-2);
+  font-weight: 700;
+}
+
+.se-form-error-summary__list {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  display: grid;
+  gap: var(--se-space-1);
+}
+
+.se-form-error-summary__list a {
+  color: inherit;
+  font-weight: 600;
+}
+
+.se-form-error-summary__list a:focus-visible {
+  outline: none;
+  box-shadow: var(--se-focus-ring);
+  border-radius: var(--se-radius-sm);
+}

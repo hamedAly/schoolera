@@ -1,0 +1,186 @@
+<se-portal-page-header
+  titleKey="support.tickets.detail.title"
+  subtitleKey="support.tickets.detail.subtitle"
+/>
+
+<p>
+  <a routerLink="/support/tickets">{{ 'support.tickets.detail.back' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="12" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as d) {
+  <div class="support-page">
+    <dl class="support-dl">
+      <div>
+        <dt>{{ 'support.tickets.columns.reference' | transloco }}</dt>
+        <dd>{{ d.reference }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'support.tickets.columns.subject' | transloco }}</dt>
+        <dd>{{ d.subject }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'support.tickets.detail.parent' | transloco }}</dt>
+        <dd>{{ d.parentDisplayName || d.parentEmail || d.parentUserId }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'support.tickets.columns.status' | transloco }}</dt>
+        <dd>{{ statusKey(d.status) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'support.tickets.columns.priority' | transloco }}</dt>
+        <dd>{{ priorityKey(d.priority) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'support.tickets.columns.category' | transloco }}</dt>
+        <dd>{{ categoryKey(d.category) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'support.tickets.detail.assigned' | transloco }}</dt>
+        <dd>{{ d.assignedSupportAgentUserId || ('support.tickets.detail.unassigned' | transloco) }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'support.tickets.columns.sla' | transloco }}</dt>
+        <dd>
+          @if (d.isFirstResponseOverdue || d.isResolutionOverdue) {
+            <span class="support-overdue">{{ 'support.tickets.overdue' | transloco }}</span>
+          } @else {
+            {{ 'support.tickets.detail.slaOk' | transloco }}
+          }
+        </dd>
+      </div>
+    </dl>
+
+    <div class="support-actions">
+      @if (!d.assignedSupportAgentUserId) {
+        <button type="button" class="se-btn se-btn--primary" [disabled]="acting()" (click)="assignToMe()">
+          {{ 'support.tickets.detail.assignToMe' | transloco }}
+        </button>
+      } @else {
+        <button type="button" class="se-btn se-btn--outline" [disabled]="acting()" (click)="unassign()">
+          {{ 'support.tickets.detail.unassign' | transloco }}
+        </button>
+      }
+    </div>
+
+    <section class="support-panel">
+      <h2>{{ 'support.tickets.detail.actions' | transloco }}</h2>
+      <div class="support-filters">
+        <label>
+          {{ 'support.tickets.filters.status' | transloco }}
+          <select [(ngModel)]="statusValue" name="statusValue">
+            @for (option of statusOptions; track option.value) {
+              <option [value]="option.value">{{ ('support.' + option.labelKey) | transloco }}</option>
+            }
+          </select>
+        </label>
+        <button type="button" [disabled]="acting()" (click)="changeStatus()">
+          {{ 'support.tickets.detail.updateStatus' | transloco }}
+        </button>
+
+        <label>
+          {{ 'support.tickets.filters.priority' | transloco }}
+          <select [(ngModel)]="priorityValue" name="priorityValue">
+            @for (option of priorityOptions; track option.value) {
+              <option [value]="option.value">{{ ('support.' + option.labelKey) | transloco }}</option>
+            }
+          </select>
+        </label>
+        <button type="button" [disabled]="acting()" (click)="changePriority()">
+          {{ 'support.tickets.detail.updatePriority' | transloco }}
+        </button>
+
+        <label>
+          {{ 'support.tickets.filters.category' | transloco }}
+          <select [(ngModel)]="categoryValue" name="categoryValue">
+            @for (option of categoryOptions; track option.value) {
+              <option [value]="option.value">{{ ('support.' + option.labelKey) | transloco }}</option>
+            }
+          </select>
+        </label>
+        <button type="button" [disabled]="acting()" (click)="changeCategory()">
+          {{ 'support.tickets.detail.updateCategory' | transloco }}
+        </button>
+      </div>
+    </section>
+
+    <section class="support-thread">
+      <h2>{{ 'support.tickets.detail.messages' | transloco }}</h2>
+      @if (d.messages?.length) {
+        <ul>
+          @for (msg of d.messages; track msg.id) {
+            <li [class.is-internal]="isInternal(msg.visibility)">
+              <div class="support-thread__meta">
+                <strong>
+                  {{
+                    isInternal(msg.visibility)
+                      ? ('support.tickets.detail.internalNote' | transloco)
+                      : ('support.tickets.detail.customerVisible' | transloco)
+                  }}
+                </strong>
+                <time>{{ msg.createdAtUtc | date: 'medium' }}</time>
+              </div>
+              <p>{{ msg.body }}</p>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="support-empty">{{ 'support.tickets.detail.noMessages' | transloco }}</p>
+      }
+    </section>
+
+    <section class="support-panel">
+      <h2>{{ 'support.tickets.detail.replyTitle' | transloco }}</h2>
+      <textarea rows="4" [(ngModel)]="replyBody" name="replyBody"></textarea>
+      <div class="support-actions">
+        <button
+          type="button"
+          class="se-btn se-btn--primary"
+          [disabled]="acting() || !replyBody.trim()"
+          (click)="sendReply()"
+        >
+          {{ 'support.tickets.detail.sendReply' | transloco }}
+        </button>
+      </div>
+    </section>
+
+    <section class="support-panel">
+      <h2>{{ 'support.tickets.detail.noteTitle' | transloco }}</h2>
+      <textarea rows="3" [(ngModel)]="noteBody" name="noteBody"></textarea>
+      <div class="support-actions">
+        <button
+          type="button"
+          class="se-btn se-btn--outline"
+          [disabled]="acting() || !noteBody.trim()"
+          (click)="addNote()"
+        >
+          {{ 'support.tickets.detail.addNote' | transloco }}
+        </button>
+      </div>
+    </section>
+
+    <section class="support-history">
+      <h2>{{ 'support.tickets.detail.history' | transloco }}</h2>
+      @if (d.history?.length) {
+        <ul>
+          @for (entry of d.history; track entry.id) {
+            <li>
+              <div class="support-thread__meta">
+                <strong>{{ entry.summary || entry.action }}</strong>
+                <time>{{ entry.createdAtUtc | date: 'medium' }}</time>
+              </div>
+              @if (entry.fromValue || entry.toValue) {
+                <p>{{ entry.fromValue || '—' }} → {{ entry.toValue || '—' }}</p>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="support-empty">{{ 'support.tickets.detail.noHistory' | transloco }}</p>
+      }
+    </section>
+  </div>
+}

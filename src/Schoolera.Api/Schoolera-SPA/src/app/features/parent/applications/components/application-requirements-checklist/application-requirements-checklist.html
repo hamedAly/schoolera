@@ -1,0 +1,87 @@
+@if (sortedRequirements().length) {
+  <ul class="app-requirements-checklist" role="list">
+    @for (req of sortedRequirements(); track req.snapshotId) {
+      <li
+        class="app-requirements-checklist__item"
+        [class.is-complete]="req.isComplete"
+        [class.is-incomplete]="req.isRequired && !req.isComplete"
+      >
+        <div class="app-requirements-checklist__head">
+          <span class="app-requirements-checklist__status" aria-hidden="true">
+            @if (req.isComplete) {
+              ✓
+            } @else if (req.isRequired) {
+              •
+            }
+          </span>
+          <div>
+            <strong>{{ req.name }}</strong>
+            @if (readOnly()) {
+              <span class="app-requirements-checklist__kind">{{ kindKey(req.kind) | transloco }}</span>
+            }
+            @if (req.description) {
+              <p class="app-requirements-checklist__description">{{ req.description }}</p>
+            }
+            @if (req.kind === RequirementKind.ApplicationDocument) {
+              <p class="app-requirements-checklist__meta">
+                {{ 'parent.applications.wizard.requirements.allowedExtensions' | transloco }}:
+                {{ extensionsLabel(req) }}
+              </p>
+            }
+            @if (req.isRequired && !req.isComplete && reasonKey(req.reasonCode); as reason) {
+              <p class="app-requirements-checklist__reason">{{ reason | transloco }}</p>
+            }
+          </div>
+        </div>
+
+        @if (!readOnly()) {
+          @if (
+            (req.kind === RequirementKind.ParentProfileField ||
+              req.kind === RequirementKind.ChildProfileField) &&
+            !req.isComplete &&
+            profileLink(req);
+            as link
+          ) {
+            <a class="parent-btn secondary" [routerLink]="link.route" [queryParams]="link.queryParams">
+              {{ 'parent.applications.wizard.requirements.completeProfile' | transloco }}
+            </a>
+          }
+
+          @if (req.kind === RequirementKind.ApplicationDocument && canUpload() && !req.isComplete) {
+            <div class="app-requirements-checklist__upload">
+              <label class="parent-btn secondary">
+                {{ 'parent.applications.wizard.requirements.upload' | transloco }}
+                <input type="file" hidden (change)="onFileSelected($event, req)" />
+              </label>
+              @if (req.allowChildVaultCopy && vaultDocuments().length) {
+                <label class="app-requirements-checklist__vault">
+                  {{ 'parent.applications.wizard.copyFromVaultTitle' | transloco }}
+                  <select
+                    #vaultSelect
+                    (change)="copyFromVault(req, vaultSelect.value); vaultSelect.value = ''"
+                    [disabled]="copyingFromVault()"
+                  >
+                    <option value="">{{ 'parent.common.select' | transloco }}</option>
+                    @for (doc of vaultDocuments(); track doc.id) {
+                      <option [value]="doc.id">{{ doc.originalFileName }}</option>
+                    }
+                  </select>
+                </label>
+              }
+            </div>
+          }
+
+          @if (req.kind === RequirementKind.ApplicationDocument && req.linkedAttachmentId) {
+            <span class="app-requirements-checklist__attached">
+              {{ 'parent.applications.wizard.requirements.documentAttached' | transloco }}
+            </span>
+          }
+        } @else if (req.isRequired && !req.isComplete) {
+          <span class="app-requirements-checklist__incomplete">
+            {{ 'parent.applications.wizard.requirements.incomplete' | transloco }}
+          </span>
+        }
+      </li>
+    }
+  </ul>
+}

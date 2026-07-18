@@ -1,0 +1,30 @@
+.portal-fees__form,
+.portal-fees__list {
+  display: grid;
+  gap: var(--se-space-3);
+}
+
+.portal-fees__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-fees__list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+}
+
+.portal-fees__list li.is-inactive {
+  opacity: 0.65;
+}
+
+.portal-fees__form select,
+.portal-fees__form input {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+}

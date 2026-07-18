@@ -1,0 +1,10 @@
+.portal-empty-state {
+  padding: var(--se-space-6) 0;
+}
+
+.portal-empty-state__actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--se-space-3);
+  margin-top: var(--se-space-4);
+}

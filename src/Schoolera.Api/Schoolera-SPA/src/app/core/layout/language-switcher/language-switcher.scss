@@ -1,0 +1,31 @@
+:host {
+  display: inline-flex;
+}
+
+.language-switcher__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--se-space-2);
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding-inline: var(--se-space-4);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-pill);
+  background: var(--se-color-surface-raised);
+  color: var(--se-color-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--se-motion), background var(--se-motion), color var(--se-motion);
+}
+
+.language-switcher__icon {
+  flex: 0 0 auto;
+  color: var(--se-color-brand);
+}
+
+.language-switcher__button:hover {
+  border-color: var(--se-color-brand);
+  color: var(--se-color-brand-strong);
+  background: var(--se-color-brand-050);
+}

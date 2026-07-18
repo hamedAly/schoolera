@@ -1,0 +1,162 @@
+<se-portal-page-header
+  titleKey="parent.applications.list.title"
+  subtitleKey="parent.applications.list.subtitle"
+>
+  <a routerLink="/parent/applications/new" class="parent-btn primary">
+    {{ 'parent.dashboard.startApplication' | transloco }}
+  </a>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="6" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!">
+    <button type="button" class="parent-btn primary" (click)="retry()">
+      {{ 'parent.common.retry' | transloco }}
+    </button>
+  </se-portal-error-state>
+} @else {
+  <div class="parent-page applications-list">
+    <form class="applications-list__filters" (submit)="$event.preventDefault(); applyFilters()">
+      <label>
+        <span>{{ 'parent.applications.list.filters.status' | transloco }}</span>
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" name="status">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.labelKey | transloco }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'parent.applications.list.filters.child' | transloco }}</span>
+        <select [ngModel]="childFilter()" (ngModelChange)="childFilter.set($event)" name="child">
+          <option value="">{{ 'parent.applications.list.filters.allChildren' | transloco }}</option>
+          @for (child of children(); track child.id) {
+            <option [value]="child.id">{{ child.fullName }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'parent.applications.list.filters.search' | transloco }}</span>
+        <input
+          type="search"
+          name="search"
+          [ngModel]="search()"
+          (ngModelChange)="onSearchInput($event)"
+          [attr.placeholder]="'parent.applications.list.filters.searchPlaceholder' | transloco"
+        />
+      </label>
+
+      <div class="applications-list__filter-actions">
+        <button type="submit" class="parent-btn primary">{{ 'parent.applications.list.filters.apply' | transloco }}</button>
+        <button type="button" class="parent-btn secondary" (click)="clearFilters()">
+          {{ 'parent.applications.list.clearFilters' | transloco }}
+        </button>
+      </div>
+    </form>
+
+    <p class="applications-list__count" role="status">
+      {{ 'parent.applications.list.resultCount' | transloco: { count: totalCount() } }}
+    </p>
+
+    @if (!items().length) {
+      <se-portal-empty-state
+        titleKey="parent.applications.list.emptyTitle"
+        messageKey="parent.applications.list.emptyMessage"
+      >
+        <a routerLink="/schools" class="parent-btn primary">{{ 'parent.dashboard.startApplication' | transloco }}</a>
+      </se-portal-empty-state>
+    } @else {
+      <div class="parent-table-wrap applications-list__table">
+        <table class="parent-table">
+          <thead>
+            <tr>
+              <th>{{ 'parent.applications.list.columns.number' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.status' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.child' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.school' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.branch' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.grade' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.year' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.created' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.submitted' | transloco }}</th>
+              <th>{{ 'parent.applications.list.columns.actions' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>{{ item.applicationNumber }}</td>
+                <td><se-application-status-badge [status]="item.status" /></td>
+                <td>{{ item.childDisplayName }}</td>
+                <td>{{ item.schoolName }}</td>
+                <td>{{ item.branchName }}</td>
+                <td>{{ item.gradeName }}</td>
+                <td>{{ item.academicYearName }}</td>
+                <td>{{ formatDate(item.createdAtUtc) }}</td>
+                <td>{{ formatDate(item.submittedAtUtc) }}</td>
+                <td class="applications-list__actions">
+                  <a [routerLink]="['/parent/applications', item.id]" class="parent-btn secondary">
+                    {{ 'parent.applications.list.actions.view' | transloco }}
+                  </a>
+                  @if (isDraft(item.status)) {
+                    <a [routerLink]="['/parent/applications', item.id, 'edit']" class="parent-btn primary">
+                      {{ 'parent.applications.list.actions.continueDraft' | transloco }}
+                    </a>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="applications-list__cards" aria-hidden="false">
+        @for (item of items(); track item.id) {
+          <li class="applications-list__card">
+            <div class="applications-list__card-head">
+              <strong>{{ item.applicationNumber }}</strong>
+              <se-application-status-badge [status]="item.status" />
+            </div>
+            <p>{{ item.childDisplayName }} · {{ item.schoolName }}</p>
+            <p>{{ item.branchName }} · {{ item.gradeName }} · {{ item.academicYearName }}</p>
+            <p>{{ formatDate(item.createdAtUtc) }}</p>
+            <div class="applications-list__actions">
+              <a [routerLink]="['/parent/applications', item.id]" class="parent-btn secondary">
+                {{ 'parent.applications.list.actions.view' | transloco }}
+              </a>
+              @if (isDraft(item.status)) {
+                <a [routerLink]="['/parent/applications', item.id, 'edit']" class="parent-btn primary">
+                  {{ 'parent.applications.list.actions.continueDraft' | transloco }}
+                </a>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+
+      @if (totalPages() > 1) {
+        <nav class="applications-list__pager" [attr.aria-label]="'parent.applications.list.pagination' | transloco">
+          <button
+            type="button"
+            class="parent-btn secondary"
+            [disabled]="pageNumber() <= 1"
+            (click)="goToPage(pageNumber() - 1)"
+          >
+            {{ 'parent.applications.list.prevPage' | transloco }}
+          </button>
+          <span>{{ 'parent.applications.list.pageOf' | transloco: { page: pageNumber(), total: totalPages() } }}</span>
+          <button
+            type="button"
+            class="parent-btn secondary"
+            [disabled]="pageNumber() >= totalPages()"
+            (click)="goToPage(pageNumber() + 1)"
+          >
+            {{ 'parent.applications.list.nextPage' | transloco }}
+          </button>
+        </nav>
+      }
+    }
+  </div>
+}

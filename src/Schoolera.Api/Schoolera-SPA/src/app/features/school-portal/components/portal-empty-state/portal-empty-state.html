@@ -1,0 +1,9 @@
+<div class="portal-empty-state">
+  <se-empty-state
+    [title]="titleKey() | transloco"
+    [message]="messageKey() ? (messageKey()! | transloco) : undefined"
+  />
+  <div class="portal-empty-state__actions">
+    <ng-content />
+  </div>
+</div>

@@ -1,0 +1,126 @@
+<se-portal-page-header titleKey="portal.ageEligibilityRules.title" subtitleKey="portal.ageEligibilityRules.subtitle">
+  <se-button type="button" (click)="openCreate()">{{ 'portal.ageEligibilityRules.add' | transloco }}</se-button>
+</se-portal-page-header>
+
+<form class="age-rules__filters" [formGroup]="filterForm">
+  <se-form-field [label]="'portal.ageEligibilityRules.filters.branch' | transloco">
+    <select formControlName="branchId"><option value="">{{ 'portal.ageEligibilityRules.filters.all' | transloco }}</option>
+      @for (item of branches(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.ageEligibilityRules.filters.stage' | transloco">
+    <select formControlName="educationalStageId"><option value="">{{ 'portal.ageEligibilityRules.filters.all' | transloco }}</option>
+      @for (item of stages(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.ageEligibilityRules.filters.grade' | transloco">
+    <select formControlName="gradeId"><option value="">{{ 'portal.ageEligibilityRules.filters.all' | transloco }}</option>
+      @for (item of grades(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.ageEligibilityRules.filters.year' | transloco">
+    <select formControlName="academicYearId"><option value="">{{ 'portal.ageEligibilityRules.filters.all' | transloco }}</option>
+      @for (item of academicYears(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.ageEligibilityRules.filters.status' | transloco">
+    <select formControlName="publicationStatus"><option value="">{{ 'portal.ageEligibilityRules.filters.all' | transloco }}</option>
+      <option [value]="PublicationStatus._1">{{ 'portal.ageEligibilityRules.draft' | transloco }}</option>
+      <option [value]="PublicationStatus._2">{{ 'portal.ageEligibilityRules.published' | transloco }}</option>
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.ageEligibilityRules.filters.active' | transloco">
+    <select formControlName="isActive"><option value="">{{ 'portal.ageEligibilityRules.filters.all' | transloco }}</option>
+      <option value="true">{{ 'portal.ageEligibilityRules.active' | transloco }}</option>
+      <option value="false">{{ 'portal.ageEligibilityRules.inactive' | transloco }}</option>
+    </select>
+  </se-form-field>
+</form>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!"><se-button type="button" variant="secondary" (click)="retry()">{{ 'portal.ageEligibilityRules.retry' | transloco }}</se-button></se-portal-error-state>
+  }
+  @if (showForm()) {
+    <form class="age-rules__panel" [formGroup]="form" (ngSubmit)="save()">
+      <h2>{{ (editingId() ? 'portal.ageEligibilityRules.edit' : 'portal.ageEligibilityRules.add') | transloco }}</h2>
+      <div class="age-rules__grid">
+        <se-form-field [label]="'portal.ageEligibilityRules.fields.branch' | transloco">
+          <select formControlName="schoolBranchId"><option value="">{{ 'portal.ageEligibilityRules.schoolDefault' | transloco }}</option>
+            @for (item of branches(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+          </select>
+        </se-form-field>
+        <se-form-field [label]="'portal.ageEligibilityRules.fields.stage' | transloco">
+          <select formControlName="educationalStageId"><option value="">{{ 'portal.common.select' | transloco }}</option>
+            @for (item of stages(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+          </select>
+        </se-form-field>
+        <se-form-field [label]="'portal.ageEligibilityRules.fields.grade' | transloco">
+          <select formControlName="gradeId"><option value="">{{ 'portal.ageEligibilityRules.allGrades' | transloco }}</option>
+            @for (item of grades(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+          </select>
+        </se-form-field>
+        <se-form-field [label]="'portal.ageEligibilityRules.fields.year' | transloco">
+          <select formControlName="academicYearId"><option value="">{{ 'portal.common.select' | transloco }}</option>
+            @for (item of academicYears(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+          </select>
+        </se-form-field>
+        <se-form-field [label]="'portal.ageEligibilityRules.fields.minMonths' | transloco"><input type="number" min="0" formControlName="minAgeCompletedMonths" /></se-form-field>
+        <se-form-field [label]="'portal.ageEligibilityRules.fields.maxMonths' | transloco"><input type="number" min="0" formControlName="maxAgeCompletedMonths" /></se-form-field>
+        <se-form-field [label]="'portal.ageEligibilityRules.fields.referenceDateMode' | transloco">
+          <select formControlName="referenceDateMode"><option [value]="ReferenceDateMode._1">{{ 'portal.ageEligibilityRules.academicYearStart' | transloco }}</option></select>
+        </se-form-field>
+        <label class="age-rules__check"><input type="checkbox" formControlName="manualExceptionAllowed" />{{ 'portal.ageEligibilityRules.fields.manualExceptionAllowed' | transloco }}</label>
+      </div>
+      <se-bilingual-field-group [formGroup]="form" arabicControlName="explanationAr" englishControlName="explanationEn"
+        arabicLabelKey="portal.ageEligibilityRules.fields.explanationAr" englishLabelKey="portal.ageEligibilityRules.fields.explanationEn" [multiline]="true" />
+      <div class="age-rules__actions"><se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+        <se-button type="button" variant="secondary" (click)="cancelForm()">{{ 'portal.confirm.cancel' | transloco }}</se-button>
+      </div>
+    </form>
+  }
+  @if (!items().length && !errorMessage()) {
+    <se-portal-empty-state titleKey="portal.ageEligibilityRules.emptyTitle" messageKey="portal.ageEligibilityRules.emptyMessage" />
+  } @else {
+    <ul class="age-rules__list">
+      @for (item of items(); track item.id) {
+        <li [class.is-inactive]="item.isActive === false">
+          <div><strong>{{ item.minAgeCompletedMonths }}–{{ item.maxAgeCompletedMonths }} {{ 'portal.ageEligibilityRules.months' | transloco }}</strong>
+            <p>{{ (item.publicationStatus === PublicationStatus._2 ? 'portal.ageEligibilityRules.published' : 'portal.ageEligibilityRules.draft') | transloco }} · v{{ item.ruleVersion }}</p>
+          </div>
+          <div class="age-rules__actions">
+            @if (item.publicationStatus !== PublicationStatus._2) { <se-button type="button" variant="secondary" (click)="openEdit(item)">{{ 'portal.ageEligibilityRules.edit' | transloco }}</se-button> }
+            @if (item.publicationStatus === PublicationStatus._2) { <se-button type="button" variant="secondary" (click)="unpublish(item)">{{ 'portal.ageEligibilityRules.unpublish' | transloco }}</se-button> }
+            @else if (item.isActive !== false) { <se-button type="button" variant="secondary" (click)="publish(item)">{{ 'portal.ageEligibilityRules.publish' | transloco }}</se-button> }
+            @if (item.isActive !== false && item.publicationStatus !== PublicationStatus._2) { <se-button type="button" variant="secondary" (click)="requestConfirm('deactivate', item)">{{ 'portal.ageEligibilityRules.deactivate' | transloco }}</se-button> }
+            <se-button type="button" variant="secondary" (click)="requestConfirm('clone', item)">{{ 'portal.ageEligibilityRules.clone' | transloco }}</se-button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+}
+
+<section class="age-rules__preview">
+  <h2>{{ 'portal.ageEligibilityRules.preview.title' | transloco }}</h2>
+  <form class="age-rules__grid" [formGroup]="previewForm" (ngSubmit)="preview()">
+    <se-form-field [label]="'portal.ageEligibilityRules.preview.birthDate' | transloco"><input type="date" formControlName="birthDate" /></se-form-field>
+    <se-form-field [label]="'portal.ageEligibilityRules.fields.branch' | transloco"><select formControlName="schoolBranchId"><option value="">{{ 'portal.ageEligibilityRules.schoolDefault' | transloco }}</option>@for (item of branches(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }</select></se-form-field>
+    <se-form-field [label]="'portal.ageEligibilityRules.fields.stage' | transloco"><select formControlName="educationalStageId"><option value="">{{ 'portal.common.select' | transloco }}</option>@for (item of stages(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }</select></se-form-field>
+    <se-form-field [label]="'portal.ageEligibilityRules.fields.grade' | transloco"><select formControlName="gradeId"><option value="">{{ 'portal.ageEligibilityRules.allGrades' | transloco }}</option>@for (item of grades(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }</select></se-form-field>
+    <se-form-field [label]="'portal.ageEligibilityRules.fields.year' | transloco"><select formControlName="academicYearId"><option value="">{{ 'portal.common.select' | transloco }}</option>@for (item of academicYears(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }</select></se-form-field>
+    <se-button type="submit" [disabled]="previewLoading()">{{ 'portal.ageEligibilityRules.preview.run' | transloco }}</se-button>
+  </form>
+  @if (previewResult(); as result) {
+    <div class="age-rules__result" role="status"><strong>{{ resultKey(result.resultCode) | transloco }}</strong>
+      @if (result.calculatedAgeCompletedMonths != null) { <p>{{ 'portal.ageEligibilityRules.preview.ageMonths' | transloco: { months: result.calculatedAgeCompletedMonths } }}</p> }
+    </div>
+  }
+</section>
+
+<se-confirmation-dialog [open]="!!confirmAction()"
+  [titleKey]="confirmAction()?.kind === 'clone' ? 'portal.ageEligibilityRules.cloneConfirmTitle' : 'portal.ageEligibilityRules.deactivateConfirmTitle'"
+  [messageKey]="confirmAction()?.kind === 'clone' ? 'portal.ageEligibilityRules.cloneConfirmMessage' : 'portal.ageEligibilityRules.deactivateConfirmMessage'"
+  (confirmed)="confirm()" (cancelled)="confirmAction.set(null)" />

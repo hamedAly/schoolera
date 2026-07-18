@@ -1,0 +1,126 @@
+<se-portal-page-header
+  titleKey="admin.onboardingDetail.title"
+  subtitleKey="admin.onboardingDetail.subtitle"
+/>
+
+<p class="admin-back">
+  <a routerLink="/admin/onboarding">{{ 'admin.onboardingDetail.backToList' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as d) {
+  <div class="admin-page">
+    @if (actionMessage()) {
+      <div
+        class="admin-alert"
+        [class.admin-alert--error]="actionIsError()"
+        [class.admin-alert--success]="!actionIsError()"
+      >
+        {{ actionMessage() }}
+      </div>
+    }
+
+    <section class="admin-detail-grid">
+      <h2>{{ 'admin.onboardingDetail.summary' | transloco }}</h2>
+      <dl>
+        <div>
+          <dt>{{ 'admin.onboardingDetail.status' | transloco }}</dt>
+          <dd>{{ statusKey(application()?.status) | transloco }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.onboardingDetail.owner' | transloco }}</dt>
+          <dd>{{ d.ownerDisplayName }} ({{ d.ownerEmail }})</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.onboardingDetail.organization' | transloco }}</dt>
+          <dd>{{ localizedName(application()?.organizationNameAr, application()?.organizationNameEn) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.onboardingDetail.school' | transloco }}</dt>
+          <dd>{{ localizedName(application()?.schoolNameAr, application()?.schoolNameEn) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.onboardingDetail.submittedAt' | transloco }}</dt>
+          <dd>{{ application()?.submittedAtUtc ? (application()!.submittedAtUtc! | date: 'medium') : '—' }}</dd>
+        </div>
+        @if (application()?.approvedSchoolId) {
+          <div>
+            <dt>{{ 'admin.onboardingDetail.approvedSchool' | transloco }}</dt>
+            <dd>
+              <a [routerLink]="['/admin/schools', application()!.approvedSchoolId]">
+                {{ application()?.approvedSchoolName ?? application()?.approvedSchoolId }}
+              </a>
+            </dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    @if (canStartReview() || canReview()) {
+      <section class="admin-form-panel">
+        <h2>{{ 'admin.onboardingDetail.actionsTitle' | transloco }}</h2>
+
+        @if (canReview()) {
+          <label>
+            {{ 'admin.onboardingDetail.ownerVisibleReason' | transloco }}
+            <textarea [(ngModel)]="ownerVisibleReason" name="ownerVisibleReason" rows="3"></textarea>
+          </label>
+          <label>
+            {{ 'admin.onboardingDetail.internalNote' | transloco }}
+            <textarea [(ngModel)]="internalNote" name="internalNote" rows="2"></textarea>
+          </label>
+        }
+
+        <div class="admin-actions">
+          @if (canStartReview()) {
+            <button type="button" class="primary" [disabled]="actionLoading()" (click)="startReview()">
+              {{ 'admin.onboardingDetail.startReview' | transloco }}
+            </button>
+          }
+          @if (canReview()) {
+            <button type="button" [disabled]="actionLoading()" (click)="requestChanges()">
+              {{ 'admin.onboardingDetail.requestChanges' | transloco }}
+            </button>
+            <button type="button" class="primary" [disabled]="actionLoading()" (click)="approve()">
+              {{ 'admin.onboardingDetail.approve' | transloco }}
+            </button>
+            <button type="button" class="danger" [disabled]="actionLoading()" (click)="reject()">
+              {{ 'admin.onboardingDetail.reject' | transloco }}
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    @if (d.adminStatusHistory?.length) {
+      <section>
+        <h2>{{ 'admin.onboardingDetail.historyTitle' | transloco }}</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'admin.onboardingDetail.history.from' | transloco }}</th>
+                <th scope="col">{{ 'admin.onboardingDetail.history.to' | transloco }}</th>
+                <th scope="col">{{ 'admin.onboardingDetail.history.reason' | transloco }}</th>
+                <th scope="col">{{ 'admin.onboardingDetail.history.at' | transloco }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of d.adminStatusHistory!; track entry.createdAtUtc) {
+                <tr>
+                  <td>{{ statusKey(entry.previousStatus) | transloco }}</td>
+                  <td>{{ statusKey(entry.newStatus) | transloco }}</td>
+                  <td>{{ entry.ownerVisibleReason ?? entry.internalNote ?? '—' }}</td>
+                  <td>{{ entry.createdAtUtc | date: 'medium' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </div>
+}

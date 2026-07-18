@@ -1,0 +1,210 @@
+<se-portal-page-header titleKey="portal.team.title" subtitleKey="portal.team.subtitle">
+  @if (canTransferOwnership()) {
+    <se-button type="button" variant="secondary" (click)="openTransfer()">
+      {{ 'portal.team.transferOwnership' | transloco }}
+    </se-button>
+  }
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else if (errorMessage() && !team().length) {
+  <se-portal-error-state [message]="errorMessage()!">
+    <se-button type="button" variant="secondary" (click)="retry()">
+      {{ 'portal.team.retry' | transloco }}
+    </se-button>
+  </se-portal-error-state>
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!">
+      <se-button type="button" variant="secondary" (click)="retry()">
+        {{ 'portal.team.retry' | transloco }}
+      </se-button>
+    </se-portal-error-state>
+  }
+
+  @if (canManageTeam()) {
+    <form class="portal-team__add" [formGroup]="addForm" (ngSubmit)="addMember()">
+      <se-form-field [label]="'portal.team.fields.email' | transloco">
+        <input type="email" formControlName="email" autocomplete="email" />
+      </se-form-field>
+
+      <se-form-field [label]="'portal.team.fields.role' | transloco">
+        <select formControlName="role">
+          @for (role of teamRoles; track role) {
+            <option [ngValue]="role">{{ teamRoleLabelKey(role) | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      @if (addNeedsBranchScope()) {
+        <se-form-field [label]="'portal.team.fields.branchScope' | transloco">
+          <select formControlName="branchScopeMode">
+            <option [ngValue]="SchoolBranchScopeMode.AllBranches">
+              {{ 'portal.team.scope.all' | transloco }}
+            </option>
+            <option [ngValue]="SchoolBranchScopeMode.SelectedBranches">
+              {{ 'portal.team.scope.selected' | transloco }}
+            </option>
+          </select>
+        </se-form-field>
+
+        @if (addForm.controls.branchScopeMode.value === SchoolBranchScopeMode.SelectedBranches) {
+          <fieldset class="portal-team__branches">
+            <legend>{{ 'portal.team.fields.branches' | transloco }}</legend>
+            @for (branch of branches(); track branch.id) {
+              <label class="portal-team__branch-option">
+                <input
+                  type="checkbox"
+                  [checked]="isBranchSelected('add', branch.id)"
+                  (change)="toggleAddBranch(branch.id, $any($event.target).checked)"
+                />
+                <span>{{ branchLabel(branch) }}</span>
+              </label>
+            }
+          </fieldset>
+        }
+      }
+
+      <se-button type="submit" [disabled]="saving()">{{ 'portal.team.addMember' | transloco }}</se-button>
+    </form>
+  }
+
+  @if (!team().length) {
+    <se-portal-empty-state titleKey="portal.team.emptyTitle" messageKey="portal.team.emptyMessage" />
+  } @else {
+    <ul class="portal-team__list">
+      @for (member of team(); track member.userId) {
+        <li>
+          <div class="portal-team__member">
+            <strong>{{ member.displayName }}</strong>
+            <p>{{ member.email }}</p>
+            <div class="portal-team__badges">
+              @if (member.isOwner) {
+                <span class="portal-team__badge portal-team__badge--owner">
+                  {{ 'portal.team.ownerBadge' | transloco }}
+                </span>
+              } @else if (member.role != null) {
+                <span class="portal-team__badge">{{ teamRoleLabelKey(member.role) | transloco }}</span>
+              }
+              <span
+                class="portal-team__badge"
+                [class.portal-team__badge--inactive]="member.isActive === false"
+              >
+                {{
+                  (member.isActive === false ? 'portal.team.status.inactive' : 'portal.team.status.active')
+                    | transloco
+                }}
+              </span>
+              <span class="portal-team__badge portal-team__badge--muted">
+                {{ memberBranchSummary(member) }}
+              </span>
+            </div>
+
+            @if (canManageTeam() && editingMemberId() === member.membershipId) {
+              <form class="portal-team__edit" [formGroup]="editForm" (ngSubmit)="requestSaveEdit(member)">
+                <se-form-field [label]="'portal.team.fields.role' | transloco">
+                  <select formControlName="role">
+                    @for (role of teamRoles; track role) {
+                      <option [ngValue]="role">{{ teamRoleLabelKey(role) | transloco }}</option>
+                    }
+                  </select>
+                </se-form-field>
+
+                @if (editNeedsBranchScope()) {
+                  <se-form-field [label]="'portal.team.fields.branchScope' | transloco">
+                    <select formControlName="branchScopeMode">
+                      <option [ngValue]="SchoolBranchScopeMode.AllBranches">
+                        {{ 'portal.team.scope.all' | transloco }}
+                      </option>
+                      <option [ngValue]="SchoolBranchScopeMode.SelectedBranches">
+                        {{ 'portal.team.scope.selected' | transloco }}
+                      </option>
+                    </select>
+                  </se-form-field>
+
+                  @if (editForm.controls.branchScopeMode.value === SchoolBranchScopeMode.SelectedBranches) {
+                    <fieldset class="portal-team__branches">
+                      <legend>{{ 'portal.team.fields.branches' | transloco }}</legend>
+                      @for (branch of branches(); track branch.id) {
+                        <label class="portal-team__branch-option">
+                          <input
+                            type="checkbox"
+                            [checked]="isBranchSelected('edit', branch.id)"
+                            (change)="toggleEditBranch(branch.id, $any($event.target).checked)"
+                          />
+                          <span>{{ branchLabel(branch) }}</span>
+                        </label>
+                      }
+                    </fieldset>
+                  }
+                }
+
+                <label class="portal-team__active-toggle">
+                  <input type="checkbox" formControlName="isActive" />
+                  <span>{{ 'portal.team.fields.isActive' | transloco }}</span>
+                </label>
+
+                <div class="portal-team__edit-actions">
+                  <se-button type="submit" [disabled]="saving()">
+                    {{ 'portal.team.saveMember' | transloco }}
+                  </se-button>
+                  <se-button type="button" variant="secondary" (click)="cancelEdit()">
+                    {{ 'portal.confirm.cancel' | transloco }}
+                  </se-button>
+                </div>
+              </form>
+            }
+          </div>
+
+          @if (canManageTeam() && !member.isOwner && member.membershipId) {
+            <div class="portal-team__actions">
+              @if (editingMemberId() !== member.membershipId) {
+                <se-button type="button" variant="secondary" (click)="startEdit(member)">
+                  {{ 'portal.common.edit' | transloco }}
+                </se-button>
+                <se-button type="button" variant="secondary" (click)="requestToggleActive(member)">
+                  {{
+                    (member.isActive === false ? 'portal.common.activate' : 'portal.common.deactivate')
+                      | transloco
+                  }}
+                </se-button>
+              }
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+}
+
+@if (transferOpen()) {
+  <div class="portal-team__dialog" role="dialog" aria-modal="true">
+    <div class="portal-team__dialog-panel">
+      <h2>{{ 'portal.team.transferTitle' | transloco }}</h2>
+      <p>{{ 'portal.team.transferSubtitle' | transloco }}</p>
+      <form [formGroup]="transferForm" (ngSubmit)="requestTransfer()">
+        <se-form-field [label]="'portal.team.fields.newOwnerEmail' | transloco">
+          <input type="email" formControlName="newOwnerEmail" autocomplete="email" />
+        </se-form-field>
+        <div class="portal-team__edit-actions">
+          <se-button type="submit" [disabled]="saving()">
+            {{ 'portal.team.transferSubmit' | transloco }}
+          </se-button>
+          <se-button type="button" variant="secondary" (click)="closeTransfer()">
+            {{ 'portal.confirm.cancel' | transloco }}
+          </se-button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="!!confirmAction()"
+  [titleKey]="confirmDialogTitleKey()"
+  [messageKey]="confirmDialogMessageKey()"
+  [confirming]="saving()"
+  (confirmed)="runConfirmedAction()"
+  (cancelled)="confirmAction.set(null)"
+/>

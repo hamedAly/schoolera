@@ -1,0 +1,17 @@
+<div class="app-shell">
+  <aside class="sidebar" [attr.aria-label]="'ops.navLabel' | transloco">
+    <div class="brand">
+      <div class="brand-mark">{{ 'app.brandMark' | transloco }}</div>
+      <div>
+        <strong>{{ 'app.name' | transloco }}</strong>
+        <span>{{ 'ops.brandSubtitle' | transloco }}</span>
+      </div>
+    </div>
+
+    <se-nav />
+  </aside>
+
+  <main class="workspace">
+    <router-outlet />
+  </main>
+</div>

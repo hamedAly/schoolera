@@ -1,0 +1,59 @@
+<section class="se-parent-payments">
+  <se-portal-page-header
+    titleKey="parent.payments.title"
+    subtitleKey="parent.payments.subtitle"
+  />
+
+  @if (loading()) {
+    <se-portal-loading-skeleton />
+  } @else if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" (retry)="loadHistory()" />
+  } @else if (summary(); as s) {
+    <div class="se-parent-payments__summary">
+      @if (s.availableProviders?.some((p) => p.isSandbox)) {
+        <p class="se-parent-payments__sandbox" role="status">
+          {{ 'parent.payments.sandboxBadge' | transloco }}
+        </p>
+      }
+      <p class="se-parent-payments__amount" aria-live="polite">
+        <span>{{ 'parent.payments.netAmount' | transloco }}</span>
+        <strong>{{ s.netPayableAmount }} {{ s.currencyCode }}</strong>
+      </p>
+      <p>{{ s.feeNameAr }}</p>
+      <p class="se-parent-payments__note">{{ 'parent.payments.amountLocked' | transloco }}</p>
+
+      <label class="se-parent-payments__check">
+        <input type="checkbox" [ngModel]="termsAccepted()" (ngModelChange)="termsAccepted.set($event)" />
+        {{ 'parent.payments.consentTerms' | transloco }}
+      </label>
+      <label class="se-parent-payments__check">
+        <input type="checkbox" [ngModel]="privacyAccepted()" (ngModelChange)="privacyAccepted.set($event)" />
+        {{ 'parent.payments.consentPrivacy' | transloco }}
+      </label>
+
+      <button
+        type="button"
+        class="se-btn se-btn--primary"
+        [disabled]="submitting() || !termsAccepted() || !privacyAccepted() || !s.isPayable || s.alreadyPaid"
+        (click)="payNow()"
+      >
+        {{ 'parent.payments.payNow' | transloco }}
+      </button>
+    </div>
+  } @else {
+    <ul class="se-parent-payments__list">
+      @for (intent of intents(); track intent.id) {
+        <li>
+          <a [routerLink]="['/parent/payments', intent.id]">
+            {{ intent.reference }} — {{ intent.status }} — {{ intent.amount }} {{ intent.currencyCode }}
+            @if (intent.isSandbox) {
+              <span>{{ 'parent.payments.sandboxBadge' | transloco }}</span>
+            }
+          </a>
+        </li>
+      } @empty {
+        <li>{{ 'parent.payments.empty' | transloco }}</li>
+      }
+    </ul>
+  }
+</section>

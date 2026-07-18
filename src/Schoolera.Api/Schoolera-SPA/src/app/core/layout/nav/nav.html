@@ -1,0 +1,11 @@
+<nav [attr.aria-label]="'ops.navLabel' | transloco">
+  @for (link of links; track link.route) {
+    <a
+      [routerLink]="link.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: link.route === '/dashboard' }"
+    >
+      {{ link.labelKey | transloco }}
+    </a>
+  }
+</nav>

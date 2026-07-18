@@ -1,0 +1,347 @@
+<se-portal-page-header
+  titleKey="admin.cms.faq.title"
+  subtitleKey="admin.cms.faq.subtitle"
+/>
+
+<nav class="admin-faq__tabs" [attr.aria-label]="'admin.cms.faq.tabsLabel' | transloco">
+  <button
+    type="button"
+    class="admin-faq__tab"
+    [class.is-active]="viewMode() === 'general'"
+    (click)="setViewMode('general')"
+  >
+    {{ 'admin.cms.faq.tabs.general' | transloco }}
+  </button>
+  <button
+    type="button"
+    class="admin-faq__tab"
+    [class.is-active]="viewMode() === 'interview'"
+    data-testid="interview-faq-tab"
+    (click)="setViewMode('interview')"
+  >
+    {{ 'admin.cms.faq.tabs.interview' | transloco }}
+  </button>
+</nav>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (viewMode() === 'general') {
+  <div class="admin-page admin-faq">
+    <div class="admin-faq__cols">
+      <section class="admin-faq__panel">
+        <div class="admin-faq__panel-head">
+          <h2>{{ 'admin.cms.faq.categories' | transloco }}</h2>
+          <button type="button" class="se-btn se-btn--outline" (click)="openCreateCategory()">
+            {{ 'admin.cms.faq.addCategory' | transloco }}
+          </button>
+        </div>
+
+        <ul class="admin-faq__list">
+          @for (cat of categories(); track cat.id; let i = $index) {
+            <li [class.is-active]="selectedCategoryId() === cat.id">
+              <button type="button" class="admin-faq__select" (click)="selectCategory(cat.id!)">
+                {{ categoryLabel(cat) }}
+                <span class="admin-faq__pub">
+                  {{
+                    (cat.isPublished ? 'admin.cms.status.published' : 'admin.cms.status.draft')
+                      | transloco
+                  }}
+                </span>
+              </button>
+              <div class="admin-actions">
+                <button type="button" (click)="moveCategory(i, -1)" [disabled]="i === 0">↑</button>
+                <button
+                  type="button"
+                  (click)="moveCategory(i, 1)"
+                  [disabled]="i === categories().length - 1"
+                >
+                  ↓
+                </button>
+                <button type="button" (click)="openEditCategory(cat)">
+                  {{ 'admin.cms.faq.edit' | transloco }}
+                </button>
+                <button type="button" (click)="toggleCategoryPublish(cat)">
+                  {{
+                    (cat.isPublished ? 'admin.cms.faq.unpublish' : 'admin.cms.faq.publish')
+                      | transloco
+                  }}
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <section class="admin-faq__panel">
+        <div class="admin-faq__panel-head">
+          <h2>{{ 'admin.cms.faq.items' | transloco }}</h2>
+          <button
+            type="button"
+            class="se-btn se-btn--outline"
+            [disabled]="!selectedCategoryId()"
+            (click)="openCreateItem()"
+          >
+            {{ 'admin.cms.faq.addItem' | transloco }}
+          </button>
+        </div>
+
+        @if (!selectedCategoryId()) {
+          <p class="admin-empty">{{ 'admin.cms.faq.selectCategory' | transloco }}</p>
+        } @else if (!items().length) {
+          <p class="admin-empty">{{ 'admin.cms.faq.emptyItems' | transloco }}</p>
+        } @else {
+          <ul class="admin-faq__list">
+            @for (item of items(); track item.id; let i = $index) {
+              <li>
+                <div class="admin-faq__item-main">
+                  <strong>{{ itemLabel(item) }}</strong>
+                  <span class="admin-faq__pub">
+                    {{
+                      (item.isPublished ? 'admin.cms.status.published' : 'admin.cms.status.draft')
+                        | transloco
+                    }}
+                  </span>
+                  <div class="cms-content admin-faq__preview" [innerHTML]="previewAnswer(item)"></div>
+                </div>
+                <div class="admin-actions">
+                  <button type="button" (click)="moveItem(i, -1)" [disabled]="i === 0">↑</button>
+                  <button
+                    type="button"
+                    (click)="moveItem(i, 1)"
+                    [disabled]="i === items().length - 1"
+                  >
+                    ↓
+                  </button>
+                  <button type="button" (click)="openEditItem(item)">
+                    {{ 'admin.cms.faq.edit' | transloco }}
+                  </button>
+                  <button type="button" (click)="toggleItemPublish(item)">
+                    {{
+                      (item.isPublished ? 'admin.cms.faq.unpublish' : 'admin.cms.faq.publish')
+                        | transloco
+                    }}
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+
+    @if (panelMode() === 'category') {
+      <section class="admin-faq__editor" [formGroup]="categoryForm">
+        <h3>
+          {{
+            (editingCategoryId() ? 'admin.cms.faq.editCategory' : 'admin.cms.faq.addCategory')
+              | transloco
+          }}
+        </h3>
+        <se-bilingual-field-group
+          [formGroup]="categoryForm"
+          arabicControlName="nameAr"
+          englishControlName="nameEn"
+          arabicLabelKey="admin.cms.faq.nameAr"
+          englishLabelKey="admin.cms.faq.nameEn"
+        />
+        <label class="admin-field">
+          {{ 'admin.cms.faq.slug' | transloco }}
+          <input type="text" formControlName="slug" />
+        </label>
+        <div class="admin-actions">
+          <button
+            type="button"
+            class="se-btn se-btn--primary"
+            [disabled]="saving()"
+            (click)="saveCategory()"
+          >
+            {{ 'admin.cms.faq.save' | transloco }}
+          </button>
+          <button type="button" class="se-btn se-btn--outline" (click)="closePanel()">
+            {{ 'admin.cms.faq.cancel' | transloco }}
+          </button>
+        </div>
+      </section>
+    }
+
+    @if (panelMode() === 'item') {
+      <section class="admin-faq__editor" [formGroup]="itemForm">
+        <h3>
+          {{
+            (editingItemId() ? 'admin.cms.faq.editItem' : 'admin.cms.faq.addItem') | transloco
+          }}
+        </h3>
+        <se-bilingual-field-group
+          [formGroup]="itemForm"
+          arabicControlName="questionAr"
+          englishControlName="questionEn"
+          arabicLabelKey="admin.cms.faq.questionAr"
+          englishLabelKey="admin.cms.faq.questionEn"
+        />
+        <se-bilingual-field-group
+          [formGroup]="itemForm"
+          arabicControlName="answerAr"
+          englishControlName="answerEn"
+          arabicLabelKey="admin.cms.faq.answerAr"
+          englishLabelKey="admin.cms.faq.answerEn"
+          [multiline]="true"
+          [rows]="8"
+        />
+        <div class="admin-actions">
+          <button
+            type="button"
+            class="se-btn se-btn--primary"
+            [disabled]="saving()"
+            (click)="saveItem()"
+          >
+            {{ 'admin.cms.faq.save' | transloco }}
+          </button>
+          <button type="button" class="se-btn se-btn--outline" (click)="closePanel()">
+            {{ 'admin.cms.faq.cancel' | transloco }}
+          </button>
+        </div>
+      </section>
+    }
+  </div>
+} @else {
+  <div class="admin-page admin-faq">
+    <form class="admin-faq__filters" [formGroup]="interviewFilterForm" (ngSubmit)="$event.preventDefault()">
+      <label class="admin-field">
+        {{ 'admin.cms.faq.interview.filters.category' | transloco }}
+        <select formControlName="interviewCategory" data-testid="admin-interview-category-filter">
+          <option value="">{{ 'admin.cms.faq.interview.filters.all' | transloco }}</option>
+          <option [value]="InterviewCategory._1">{{ 'admin.cms.faq.interview.categories.interview' | transloco }}</option>
+          <option [value]="InterviewCategory._2">{{ 'admin.cms.faq.interview.categories.assessment' | transloco }}</option>
+          <option [value]="InterviewCategory._3">{{ 'admin.cms.faq.interview.categories.interviewAndAssessment' | transloco }}</option>
+        </select>
+      </label>
+      <label class="admin-field">
+        {{ 'admin.cms.faq.interview.filters.published' | transloco }}
+        <select formControlName="isPublished">
+          <option value="">{{ 'admin.cms.faq.interview.filters.all' | transloco }}</option>
+          <option value="true">{{ 'admin.cms.status.published' | transloco }}</option>
+          <option value="false">{{ 'admin.cms.status.draft' | transloco }}</option>
+        </select>
+      </label>
+      <label class="admin-field">
+        {{ 'admin.cms.faq.interview.filters.active' | transloco }}
+        <select formControlName="isActive">
+          <option value="">{{ 'admin.cms.faq.interview.filters.all' | transloco }}</option>
+          <option value="true">{{ 'admin.cms.faq.interview.active' | transloco }}</option>
+          <option value="false">{{ 'admin.cms.faq.interview.inactive' | transloco }}</option>
+        </select>
+      </label>
+      <label class="admin-field">
+        {{ 'admin.cms.faq.interview.filters.search' | transloco }}
+        <input type="search" formControlName="search" data-testid="admin-interview-search" />
+      </label>
+    </form>
+
+    <div class="admin-faq__panel-head">
+      <h2>{{ 'admin.cms.faq.interview.items' | transloco }}</h2>
+      <button type="button" class="se-btn se-btn--outline" (click)="openCreateInterviewItem()">
+        {{ 'admin.cms.faq.interview.addItem' | transloco }}
+      </button>
+    </div>
+
+    @if (!interviewItems().length) {
+      <p class="admin-empty">{{ 'admin.cms.faq.interview.emptyItems' | transloco }}</p>
+    } @else {
+      <ul class="admin-faq__list">
+        @for (item of interviewItems(); track item.id) {
+          <li>
+            <div class="admin-faq__item-main">
+              <strong>{{ itemLabel(item) }}</strong>
+              <span class="admin-faq__pub">
+                {{ interviewCategoryLabel(item.interviewCategory) }} ·
+                {{
+                  (item.isPublished ? 'admin.cms.status.published' : 'admin.cms.status.draft')
+                    | transloco
+                }}
+                ·
+                {{
+                  (item.isActive === false
+                    ? 'admin.cms.faq.interview.inactive'
+                    : 'admin.cms.faq.interview.active'
+                  ) | transloco
+                }}
+              </span>
+              <div class="cms-content admin-faq__preview" [innerHTML]="previewAnswer(item)"></div>
+            </div>
+            <div class="admin-actions">
+              <button type="button" (click)="openEditInterviewItem(item)">
+                {{ 'admin.cms.faq.edit' | transloco }}
+              </button>
+              <button type="button" (click)="toggleItemPublish(item)">
+                {{
+                  (item.isPublished ? 'admin.cms.faq.unpublish' : 'admin.cms.faq.publish')
+                    | transloco
+                }}
+              </button>
+              <button type="button" (click)="toggleItemActive(item)">
+                {{
+                  (item.isActive === false
+                    ? 'admin.cms.faq.interview.activate'
+                    : 'admin.cms.faq.interview.deactivate'
+                  ) | transloco
+                }}
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (panelMode() === 'interviewItem') {
+      <section class="admin-faq__editor" [formGroup]="interviewItemForm">
+        <h3>
+          {{
+            (editingItemId()
+              ? 'admin.cms.faq.interview.editItem'
+              : 'admin.cms.faq.interview.addItem'
+            ) | transloco
+          }}
+        </h3>
+        <label class="admin-field">
+          {{ 'admin.cms.faq.interview.fields.category' | transloco }}
+          <select formControlName="interviewCategory" data-testid="admin-interview-category-field">
+            <option [value]="InterviewCategory._1">{{ 'admin.cms.faq.interview.categories.interview' | transloco }}</option>
+            <option [value]="InterviewCategory._2">{{ 'admin.cms.faq.interview.categories.assessment' | transloco }}</option>
+            <option [value]="InterviewCategory._3">{{ 'admin.cms.faq.interview.categories.interviewAndAssessment' | transloco }}</option>
+          </select>
+        </label>
+        <se-bilingual-field-group
+          [formGroup]="interviewItemForm"
+          arabicControlName="questionAr"
+          englishControlName="questionEn"
+          arabicLabelKey="admin.cms.faq.questionAr"
+          englishLabelKey="admin.cms.faq.questionEn"
+        />
+        <se-bilingual-field-group
+          [formGroup]="interviewItemForm"
+          arabicControlName="answerAr"
+          englishControlName="answerEn"
+          arabicLabelKey="admin.cms.faq.answerAr"
+          englishLabelKey="admin.cms.faq.answerEn"
+          [multiline]="true"
+          [rows]="8"
+        />
+        <div class="admin-actions">
+          <button
+            type="button"
+            class="se-btn se-btn--primary"
+            [disabled]="saving()"
+            (click)="saveInterviewItem()"
+          >
+            {{ 'admin.cms.faq.save' | transloco }}
+          </button>
+          <button type="button" class="se-btn se-btn--outline" (click)="closePanel()">
+            {{ 'admin.cms.faq.cancel' | transloco }}
+          </button>
+        </div>
+      </section>
+    }
+  </div>
+}

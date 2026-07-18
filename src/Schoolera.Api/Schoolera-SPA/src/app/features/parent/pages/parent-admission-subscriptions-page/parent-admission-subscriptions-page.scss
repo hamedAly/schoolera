@@ -1,0 +1,32 @@
+@use '../../styles/parent-shared';
+
+.parent-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.parent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.parent-table th,
+.parent-table td {
+  padding: var(--se-space-3);
+  border-bottom: 1px solid var(--se-color-border);
+  text-align: start;
+}
+
+.parent-table th {
+  font-size: 0.875rem;
+  color: var(--se-color-ink-muted);
+  background: var(--se-color-surface);
+}
+
+.parent-empty {
+  padding: var(--se-space-5);
+  text-align: center;
+  color: var(--se-color-ink-muted);
+}

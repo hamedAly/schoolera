@@ -1,0 +1,28 @@
+<ol class="portal-application-timeline" [attr.aria-label]="'portal.applications.timeline.title' | transloco">
+  @for (item of items(); track item.id) {
+    <li class="portal-application-timeline__item">
+      <div class="portal-application-timeline__action">{{ actionLabel(item.action) }}</div>
+      @if (item.toStatus !== undefined) {
+        <div class="portal-application-timeline__status">{{ statusLabel(item.toStatus) }}</div>
+      }
+      @if (item.parentVisibleNote) {
+        <p class="portal-application-timeline__note">
+          <strong>{{ 'portal.applications.timeline.parentNote' | transloco }}:</strong>
+          {{ item.parentVisibleNote }}
+        </p>
+      }
+      @if (item.internalNote) {
+        <p class="portal-application-timeline__note portal-application-timeline__note--internal">
+          <strong>{{ 'portal.applications.timeline.internalNote' | transloco }}:</strong>
+          {{ item.internalNote }}
+        </p>
+      }
+      <div class="portal-application-timeline__meta">
+        <span>{{ item.actorRole }}</span>
+        <time [attr.datetime]="item.createdAtUtc">{{ formatDate(item.createdAtUtc) }}</time>
+      </div>
+    </li>
+  } @empty {
+    <li class="portal-application-timeline__empty">{{ 'portal.applications.timeline.empty' | transloco }}</li>
+  }
+</ol>

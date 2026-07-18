@@ -1,0 +1,59 @@
+<se-portal-page-header titleKey="portal.stages.title" subtitleKey="portal.stages.subtitle">
+  <se-button type="button" (click)="showForm.set(true)">{{ 'portal.stages.add' | transloco }}</se-button>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  }
+
+  @if (showForm()) {
+    <form class="portal-stages__form" [formGroup]="form" (ngSubmit)="save()">
+      <se-form-field [label]="'portal.stages.fields.branch' | transloco">
+        <select formControlName="branchId">
+          <option value="">{{ 'portal.common.select' | transloco }}</option>
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branch.nameAr }}</option>
+          }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.stages.fields.stage' | transloco">
+        <select formControlName="educationalStageId">
+          <option value="">{{ 'portal.common.select' | transloco }}</option>
+          @for (stage of stages(); track stage.id) {
+            <option [value]="stage.id">{{ taxonomyName(stage) }}</option>
+          }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.stages.fields.gender' | transloco">
+        <select formControlName="genderType">
+          @for (type of genderTypes; track type.value) {
+            <option [value]="type.value">{{ type.labelKey | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+      <label class="portal-stages__checkbox">
+        <input type="checkbox" formControlName="isAdmissionOpen" />
+        {{ 'portal.stages.fields.admissionOpen' | transloco }}
+      </label>
+      <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+    </form>
+  }
+
+  @if (!offerings().length) {
+    <se-portal-empty-state titleKey="portal.stages.emptyTitle" messageKey="portal.stages.emptyMessage" />
+  } @else {
+    <ul class="portal-stages__list">
+      @for (offering of offerings(); track offering.id) {
+        <li [class.is-inactive]="!offering.isActive">
+          <strong>{{ stageName(offering) }}</strong>
+          <se-button type="button" variant="secondary" (click)="toggleActive(offering)">
+            {{ (offering.isActive ? 'portal.common.deactivate' : 'portal.common.activate') | transloco }}
+          </se-button>
+        </li>
+      }
+    </ul>
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "layout": {
+    "brand": "بوابة الدعم",
+    "mainNav": "تنقل بوابة الدعم",
+    "openNav": "فتح القائمة",
+    "closeNav": "إغلاق القائمة",
+    "logout": "تسجيل الخروج"
+  },
+  "nav": {
+    "tickets": "التذاكر"
+  },
+  "common": {
+    "apply": "تطبيق",
+    "clear": "مسح",
+    "previous": "السابق",
+    "next": "التالي",
+    "pageInfo": "الصفحة {{page}} من {{total}}"
+  },
+  "errors": {
+    "generic": "حدث خطأ. حاول مرة أخرى."
+  },
+  "tickets": {
+    "list": {
+      "title": "قائمة التذاكر",
+      "subtitle": "إدارة تذاكر دعم العملاء.",
+      "empty": "لا توجد تذاكر مطابقة."
+    },
+    "detail": {
+      "title": "تفاصيل التذكرة",
+      "subtitle": "الرد والإسناد وتغيير الحالة.",
+      "back": "العودة للقائمة",
+      "parent": "ولي الأمر",
+      "assigned": "المُسند",
+      "unassigned": "غير مسند",
+      "slaOk": "ضمن المهلة",
+      "assignToMe": "إسناد لي",
+      "unassign": "إلغاء الإسناد",
+      "assignSuccess": "تم الإسناد.",
+      "unassignSuccess": "تم إلغاء الإسناد.",
+      "actions": "إجراءات التذكرة",
+      "updateStatus": "تحديث الحالة",
+      "updatePriority": "تحديث الأولوية",
+      "updateCategory": "تحديث التصنيف",
+      "statusSuccess": "تم تحديث الحالة.",
+      "prioritySuccess": "تم تحديث الأولوية.",
+      "categorySuccess": "تم تحديث التصنيف.",
+      "messages": "الرسائل والملاحظات",
+      "noMessages": "لا رسائل.",
+      "internalNote": "ملاحظة داخلية",
+      "customerVisible": "مرئية للعميل",
+      "replyTitle": "رد للعميل",
+      "sendReply": "إرسال الرد",
+      "replySuccess": "تم إرسال الرد.",
+      "noteTitle": "ملاحظة داخلية",
+      "addNote": "إضافة ملاحظة",
+      "noteSuccess": "تمت إضافة الملاحظة.",
+      "history": "السجل",
+      "noHistory": "لا يوجد سجل."
+    },
+    "filters": {
+      "search": "بحث",
+      "status": "الحالة",
+      "priority": "الأولوية",
+      "category": "التصنيف",
+      "allStatuses": "كل الحالات",
+      "allPriorities": "كل الأولويات",
+      "allCategories": "كل التصنيفات",
+      "unassignedOnly": "غير المسندة فقط",
+      "firstResponseOverdue": "تأخر الرد الأول",
+      "resolutionOverdue": "تأخر الحل"
+    },
+    "columns": {
+      "reference": "المرجع",
+      "subject": "الموضوع",
+      "status": "الحالة",
+      "priority": "الأولوية",
+      "category": "التصنيف",
+      "sla": "SLA",
+      "updated": "آخر تحديث"
+    },
+    "overdue": "متأخر"
+  },
+  "status": {
+    "open": "مفتوحة",
+    "inProgress": "قيد المعالجة",
+    "waitingForCustomer": "بانتظار العميل",
+    "resolved": "تم الحل",
+    "closed": "مغلقة",
+    "unknown": "غير معروف"
+  },
+  "priority": {
+    "low": "منخفضة",
+    "normal": "عادية",
+    "high": "عالية",
+    "urgent": "عاجلة",
+    "unknown": "غير معروف"
+  },
+  "category": {
+    "generalSupport": "دعم عام",
+    "account": "الحساب",
+    "schoolInformation": "معلومات المدرسة",
+    "admissionApplication": "طلب قبول",
+    "documents": "المستندات",
+    "technicalIssue": "مشكلة تقنية",
+    "other": "أخرى",
+    "unknown": "غير معروف"
+  }
+}

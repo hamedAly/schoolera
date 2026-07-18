@@ -1,0 +1,309 @@
+<se-portal-page-header
+  titleKey="portal.admissionQuestions.title"
+  subtitleKey="portal.admissionQuestions.subtitle"
+>
+  <se-button type="button" (click)="openCreate()">
+    {{ 'portal.admissionQuestions.add' | transloco }}
+  </se-button>
+</se-portal-page-header>
+
+<form class="portal-requirements__filters" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
+  <se-form-field [label]="'portal.admissionQuestions.filters.branch' | transloco">
+    <select formControlName="branchId">
+      <option value="">{{ 'portal.admissionQuestions.filters.all' | transloco }}</option>
+      @for (branch of branches(); track branch.id) {
+        <option [value]="branch.id">{{ branch.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.admissionQuestions.filters.stage' | transloco">
+    <select formControlName="educationalStageId">
+      <option value="">{{ 'portal.admissionQuestions.filters.all' | transloco }}</option>
+      @for (stage of stages(); track stage.id) {
+        <option [value]="stage.id">{{ stage.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.admissionQuestions.filters.grade' | transloco">
+    <select formControlName="gradeId">
+      <option value="">{{ 'portal.admissionQuestions.filters.all' | transloco }}</option>
+      @for (grade of grades(); track grade.id) {
+        <option [value]="grade.id">{{ grade.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.admissionQuestions.filters.academicYear' | transloco">
+    <select formControlName="academicYearId">
+      <option value="">{{ 'portal.admissionQuestions.filters.all' | transloco }}</option>
+      @for (year of academicYears(); track year.id) {
+        <option [value]="year.id">{{ year.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.admissionQuestions.filters.type' | transloco">
+    <select formControlName="questionType">
+      <option value="">{{ 'portal.admissionQuestions.filters.all' | transloco }}</option>
+      <option [value]="QuestionType.ShortText">{{ 'portal.admissionQuestions.types.shortText' | transloco }}</option>
+      <option [value]="QuestionType.LongText">{{ 'portal.admissionQuestions.types.longText' | transloco }}</option>
+      <option [value]="QuestionType.SingleChoice">{{ 'portal.admissionQuestions.types.singleChoice' | transloco }}</option>
+      <option [value]="QuestionType.MultipleChoice">{{ 'portal.admissionQuestions.types.multipleChoice' | transloco }}</option>
+      <option [value]="QuestionType.Date">{{ 'portal.admissionQuestions.types.date' | transloco }}</option>
+      <option [value]="QuestionType.YesNo">{{ 'portal.admissionQuestions.types.yesNo' | transloco }}</option>
+      <option [value]="QuestionType.File">{{ 'portal.admissionQuestions.types.file' | transloco }}</option>
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.admissionQuestions.filters.publication' | transloco">
+    <select formControlName="publicationStatus">
+      <option value="">{{ 'portal.admissionQuestions.filters.all' | transloco }}</option>
+      <option [value]="PublicationStatus.Draft">{{ 'portal.admissionQuestions.draft' | transloco }}</option>
+      <option [value]="PublicationStatus.Published">{{ 'portal.admissionQuestions.published' | transloco }}</option>
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.admissionQuestions.filters.active' | transloco">
+    <select formControlName="isActive">
+      <option value="">{{ 'portal.admissionQuestions.filters.all' | transloco }}</option>
+      <option value="true">{{ 'portal.admissionQuestions.active' | transloco }}</option>
+      <option value="false">{{ 'portal.admissionQuestions.inactive' | transloco }}</option>
+    </select>
+  </se-form-field>
+</form>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!">
+      <se-button type="button" variant="secondary" (click)="retry()">
+        {{ 'portal.admissionQuestions.retry' | transloco }}
+      </se-button>
+    </se-portal-error-state>
+  }
+
+  @if (showForm()) {
+    <form class="portal-requirements__form" [formGroup]="form" (ngSubmit)="save()">
+      <h2>
+        {{ (isEditMode() ? 'portal.admissionQuestions.edit' : 'portal.admissionQuestions.add') | transloco }}
+      </h2>
+
+      <se-form-field [label]="'portal.admissionQuestions.fields.code' | transloco">
+        <input formControlName="questionCode" />
+      </se-form-field>
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="labelAr"
+        englishControlName="labelEn"
+        [arabicLabelKey]="'portal.admissionQuestions.fields.labelAr'"
+        [englishLabelKey]="'portal.admissionQuestions.fields.labelEn'"
+      />
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="helpAr"
+        englishControlName="helpEn"
+        [arabicLabelKey]="'portal.admissionQuestions.fields.helpAr'"
+        [englishLabelKey]="'portal.admissionQuestions.fields.helpEn'"
+        [multiline]="true"
+      />
+
+      <se-form-field [label]="'portal.admissionQuestions.fields.type' | transloco">
+        <select formControlName="questionType">
+          <option [value]="QuestionType.ShortText">{{ 'portal.admissionQuestions.types.shortText' | transloco }}</option>
+          <option [value]="QuestionType.LongText">{{ 'portal.admissionQuestions.types.longText' | transloco }}</option>
+          <option [value]="QuestionType.SingleChoice">{{ 'portal.admissionQuestions.types.singleChoice' | transloco }}</option>
+          <option [value]="QuestionType.MultipleChoice">{{ 'portal.admissionQuestions.types.multipleChoice' | transloco }}</option>
+          <option [value]="QuestionType.Date">{{ 'portal.admissionQuestions.types.date' | transloco }}</option>
+          <option [value]="QuestionType.YesNo">{{ 'portal.admissionQuestions.types.yesNo' | transloco }}</option>
+          <option [value]="QuestionType.File">{{ 'portal.admissionQuestions.types.file' | transloco }}</option>
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.admissionQuestions.fields.scopeBranch' | transloco">
+        <select formControlName="schoolBranchId">
+          <option value="">{{ 'portal.admissionQuestions.scopeDefault' | transloco }}</option>
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branch.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.admissionQuestions.fields.scopeStage' | transloco">
+        <select formControlName="educationalStageId">
+          <option value="">{{ 'portal.admissionQuestions.scopeDefault' | transloco }}</option>
+          @for (stage of stages(); track stage.id) {
+            <option [value]="stage.id">{{ stage.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.admissionQuestions.fields.scopeGrade' | transloco">
+        <select formControlName="gradeId">
+          <option value="">{{ 'portal.admissionQuestions.scopeDefault' | transloco }}</option>
+          @for (grade of grades(); track grade.id) {
+            <option [value]="grade.id">{{ grade.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.admissionQuestions.fields.scopeYear' | transloco">
+        <select formControlName="academicYearId">
+          <option value="">{{ 'portal.admissionQuestions.scopeDefault' | transloco }}</option>
+          @for (year of academicYears(); track year.id) {
+            <option [value]="year.id">{{ year.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      @if (showTextFields()) {
+        <se-form-field [label]="'portal.admissionQuestions.fields.minLength' | transloco">
+          <input type="number" formControlName="minLength" min="0" />
+        </se-form-field>
+        <se-form-field [label]="'portal.admissionQuestions.fields.maxLength' | transloco">
+          <input type="number" formControlName="maxLength" min="0" />
+        </se-form-field>
+      }
+
+      @if (showChoiceFields()) {
+        <se-form-field [label]="'portal.admissionQuestions.fields.minSelected' | transloco">
+          <input type="number" formControlName="minSelectedOptions" min="0" />
+        </se-form-field>
+        <se-form-field [label]="'portal.admissionQuestions.fields.maxSelected' | transloco">
+          <input type="number" formControlName="maxSelectedOptions" min="0" />
+        </se-form-field>
+
+        <div class="portal-requirements__options">
+          <h3>{{ 'portal.admissionQuestions.options.title' | transloco }}</h3>
+          @for (optionCtrl of optionsArray.controls; track $index; let optIndex = $index) {
+            <div class="portal-requirements__option-row" [formGroup]="$any(optionCtrl)">
+              <se-form-field [label]="'portal.admissionQuestions.options.code' | transloco">
+                <input formControlName="optionCode" />
+              </se-form-field>
+              <se-bilingual-field-group
+                [formGroup]="$any(optionCtrl)"
+                arabicControlName="labelAr"
+                englishControlName="labelEn"
+                [arabicLabelKey]="'portal.admissionQuestions.options.labelAr'"
+                [englishLabelKey]="'portal.admissionQuestions.options.labelEn'"
+              />
+              <div class="portal-requirements__option-actions">
+                <se-button type="button" variant="secondary" [disabled]="optIndex === 0" (click)="moveOption(optIndex, -1)">
+                  {{ 'portal.admissionQuestions.options.moveUp' | transloco }}
+                </se-button>
+                <se-button
+                  type="button"
+                  variant="secondary"
+                  [disabled]="optIndex === optionsArray.length - 1"
+                  (click)="moveOption(optIndex, 1)"
+                >
+                  {{ 'portal.admissionQuestions.options.moveDown' | transloco }}
+                </se-button>
+                <se-button type="button" variant="secondary" (click)="removeOption(optIndex)">
+                  {{ 'portal.admissionQuestions.options.remove' | transloco }}
+                </se-button>
+              </div>
+            </div>
+          }
+          <se-button type="button" variant="secondary" (click)="addOption()">
+            {{ 'portal.admissionQuestions.options.add' | transloco }}
+          </se-button>
+        </div>
+      }
+
+      @if (showDateFields()) {
+        <se-form-field [label]="'portal.admissionQuestions.fields.minDate' | transloco">
+          <input type="date" formControlName="minDate" />
+        </se-form-field>
+        <se-form-field [label]="'portal.admissionQuestions.fields.maxDate' | transloco">
+          <input type="date" formControlName="maxDate" />
+        </se-form-field>
+      }
+
+      @if (showFileFields()) {
+        <se-form-field [label]="'portal.admissionQuestions.fields.allowedExtensions' | transloco">
+          <input formControlName="allowedFileExtensions" />
+        </se-form-field>
+        <se-form-field [label]="'portal.admissionQuestions.fields.maxFileSize' | transloco">
+          <input type="number" formControlName="maxFileSizeBytes" min="1" />
+        </se-form-field>
+        <label class="portal-requirements__checkbox">
+          <input type="checkbox" formControlName="allowChildVaultCopy" />
+          <span>{{ 'portal.admissionQuestions.fields.allowVaultCopy' | transloco }}</span>
+        </label>
+      }
+
+      <se-form-field [label]="'portal.admissionQuestions.fields.sortOrder' | transloco">
+        <input type="number" formControlName="sortOrder" min="0" />
+      </se-form-field>
+
+      <label class="portal-requirements__checkbox">
+        <input type="checkbox" formControlName="isRequired" />
+        <span>{{ 'portal.admissionQuestions.fields.isRequired' | transloco }}</span>
+      </label>
+
+      <div class="portal-requirements__form-actions">
+        <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+        <se-button type="button" variant="secondary" (click)="cancelForm()">
+          {{ 'portal.confirm.cancel' | transloco }}
+        </se-button>
+      </div>
+    </form>
+  }
+
+  @if (!items().length && !errorMessage()) {
+    <se-portal-empty-state
+      titleKey="portal.admissionQuestions.emptyTitle"
+      messageKey="portal.admissionQuestions.emptyMessage"
+    />
+  } @else if (items().length) {
+    <ul class="portal-requirements__list">
+      @for (item of sortedItems(); track item.id; let index = $index) {
+        <li [class.is-inactive]="item.isActive === false">
+          <div>
+            <strong>{{ label(item) }}</strong>
+            <p>
+              {{ item.questionCode }} · {{ typeLabel(item.questionType) }} · {{ statusKey(item) | transloco }}
+            </p>
+          </div>
+          <div class="portal-requirements__actions">
+            <se-button type="button" variant="secondary" [disabled]="index === 0" (click)="moveItem(item, -1)">
+              {{ 'portal.admissionQuestions.moveUp' | transloco }}
+            </se-button>
+            <se-button
+              type="button"
+              variant="secondary"
+              [disabled]="index === sortedItems().length - 1"
+              (click)="moveItem(item, 1)"
+            >
+              {{ 'portal.admissionQuestions.moveDown' | transloco }}
+            </se-button>
+            @if (item.publicationStatus !== PublicationStatus.Published) {
+              <se-button type="button" variant="secondary" (click)="openEdit(item)">
+                {{ 'portal.admissionQuestions.edit' | transloco }}
+              </se-button>
+            }
+            @if (item.publicationStatus === PublicationStatus.Published) {
+              <se-button type="button" variant="secondary" (click)="unpublish(item)">
+                {{ 'portal.admissionQuestions.unpublish' | transloco }}
+              </se-button>
+            } @else if (item.isActive !== false) {
+              <se-button type="button" variant="secondary" (click)="publish(item)">
+                {{ 'portal.admissionQuestions.publish' | transloco }}
+              </se-button>
+            }
+            @if (item.isActive !== false && item.publicationStatus !== PublicationStatus.Published) {
+              <se-button type="button" variant="secondary" (click)="deactivate(item)">
+                {{ 'portal.admissionQuestions.deactivate' | transloco }}
+              </se-button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+}

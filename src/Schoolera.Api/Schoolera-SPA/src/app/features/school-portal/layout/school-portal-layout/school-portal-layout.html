@@ -1,0 +1,85 @@
+<div class="school-portal">
+  <header class="school-portal__header">
+    <div class="school-portal__header-start">
+      <button
+        type="button"
+        class="school-portal__menu-toggle"
+        [attr.aria-expanded]="mobileNavOpen()"
+        [attr.aria-label]="(mobileNavOpen() ? 'portal.layout.closeNav' : 'portal.layout.openNav') | transloco"
+        (click)="toggleMobileNav()"
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
+
+      <a routerLink="/school" class="school-portal__brand">{{ 'portal.layout.brand' | transloco }}</a>
+
+      @if (logoUrl()) {
+        <img [src]="logoUrl()!" [alt]="schoolName()" class="school-portal__logo" width="40" height="40" />
+      }
+
+      <div class="school-portal__identity">
+        <strong class="school-portal__school-name">{{ schoolName() }}</strong>
+        @if (dashboard(); as dash) {
+          @if (dash.status != null) {
+            <se-status-badge [status]="dash.status" />
+          }
+        }
+      </div>
+    </div>
+
+    <div class="school-portal__header-end">
+      @if (schools().length > 1) {
+        <label class="school-portal__selector">
+          <span class="visually-hidden">{{ 'portal.layout.schoolSelector' | transloco }}</span>
+          <select [value]="schoolId()" (change)="onSchoolChange($event)">
+            @for (school of schools(); track school.id) {
+              <option [value]="school.id">{{ schoolLabel(school.nameAr, school.nameEn) }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      <se-language-switcher />
+
+      <div class="school-portal__user-menu">
+        <button
+          type="button"
+          class="school-portal__user-trigger"
+          [attr.aria-expanded]="userMenuOpen()"
+          (click)="toggleUserMenu()"
+        >
+          {{ authUser()?.displayName }}
+        </button>
+        @if (userMenuOpen()) {
+          <div class="school-portal__user-dropdown" role="menu">
+            <button type="button" role="menuitem" (click)="logout()">
+              {{ 'portal.layout.logout' | transloco }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </header>
+
+  <div class="school-portal__body">
+    <nav
+      class="school-portal__nav"
+      [class.school-portal__nav--open]="mobileNavOpen()"
+      [attr.aria-label]="'portal.layout.mainNav' | transloco"
+    >
+      @for (item of navItems(); track item.path) {
+        <a
+          [routerLink]="navLink(schoolId(), item.path)"
+          routerLinkActive="is-active"
+          (click)="closeMobileNav()"
+        >
+          {{ item.labelKey | transloco }}
+        </a>
+      }
+    </nav>
+
+    <main class="school-portal__main" id="portal-main">
+      <router-outlet />
+    </main>
+  </div>
+</div>

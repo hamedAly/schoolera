@@ -1,0 +1,289 @@
+<se-portal-page-header titleKey="portal.slots.title" subtitleKey="portal.slots.subtitle">
+  <div class="slot-actions">
+    <se-button type="button" variant="secondary" (click)="openRecurrence()">
+      {{ 'portal.slots.recurrence.open' | transloco }}
+    </se-button>
+    <se-button type="button" (click)="openCreate()">{{ 'portal.slots.add' | transloco }}</se-button>
+  </div>
+</se-portal-page-header>
+
+<form class="slot-filters" [formGroup]="filterForm">
+  <se-form-field [label]="'portal.slots.filters.branch' | transloco">
+    <select formControlName="branchId">
+      <option value="">{{ 'portal.slots.filters.all' | transloco }}</option>
+      @for (branch of branches(); track branch.id) { <option [value]="branch.id">{{ branch.name }}</option> }
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.slots.filters.kind' | transloco">
+    <select formControlName="kind">
+      <option value="">{{ 'portal.slots.filters.all' | transloco }}</option>
+      <option [value]="Kind._1">{{ 'portal.slots.kinds.interview' | transloco }}</option>
+      <option [value]="Kind._2">{{ 'portal.slots.kinds.assessment' | transloco }}</option>
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.slots.filters.mode' | transloco">
+    <select formControlName="mode">
+      <option value="">{{ 'portal.slots.filters.all' | transloco }}</option>
+      <option [value]="Mode._1">{{ 'portal.slots.modes.online' | transloco }}</option>
+      <option [value]="Mode._2">{{ 'portal.slots.modes.onSite' | transloco }}</option>
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.slots.filters.status' | transloco">
+    <select formControlName="status">
+      <option value="">{{ 'portal.slots.filters.all' | transloco }}</option>
+      <option [value]="Status._1">{{ 'portal.slots.status.draft' | transloco }}</option>
+      <option [value]="Status._2">{{ 'portal.slots.status.open' | transloco }}</option>
+      <option [value]="Status._3">{{ 'portal.slots.status.closed' | transloco }}</option>
+      <option [value]="Status._4">{{ 'portal.slots.status.cancelled' | transloco }}</option>
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.slots.filters.resource' | transloco">
+    <select formControlName="resourceId">
+      <option value="">{{ 'portal.slots.filters.all' | transloco }}</option>
+      @for (member of team(); track member.userId) {
+        <option [value]="member.userId">{{ member.displayName }}</option>
+      }
+    </select>
+  </se-form-field>
+  <se-form-field [label]="'portal.slots.filters.from' | transloco">
+    <input type="date" formControlName="from" />
+  </se-form-field>
+  <se-form-field [label]="'portal.slots.filters.to' | transloco">
+    <input type="date" formControlName="to" />
+  </se-form-field>
+</form>
+
+<div class="slot-view-toggle" role="group" [attr.aria-label]="'portal.slots.view.label' | transloco">
+  <button type="button" [attr.aria-pressed]="viewMode() === 'list'" (click)="setView('list')">
+    {{ 'portal.slots.view.list' | transloco }}
+  </button>
+  <button type="button" [attr.aria-pressed]="viewMode() === 'calendar'" (click)="setView('calendar')">
+    {{ 'portal.slots.view.calendar' | transloco }}
+  </button>
+</div>
+
+@if (showSlotForm()) {
+  <form class="slot-form" [formGroup]="slotForm" (ngSubmit)="saveSlot()">
+    <h2>{{ (editingSlot() ? 'portal.slots.form.editTitle' : 'portal.slots.form.createTitle') | transloco }}</h2>
+    <div class="slot-form__grid">
+      <se-form-field [label]="'portal.slots.form.branch' | transloco">
+        <select formControlName="schoolBranchId">
+          <option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+          @for (branch of branches(); track branch.id) { <option [value]="branch.id">{{ branch.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.stage' | transloco">
+        <select formControlName="educationalStageId">
+          <option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+          @for (item of stages(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.grade' | transloco">
+        <select formControlName="gradeId">
+          <option value="">{{ 'portal.slots.form.optional' | transloco }}</option>
+          @for (item of grades(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.year' | transloco">
+        <select formControlName="academicYearId">
+          <option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+          @for (item of years(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.kind' | transloco">
+        <select formControlName="kind" data-testid="slot-kind">
+          <option [value]="Kind._1">{{ 'portal.slots.kinds.interview' | transloco }}</option>
+          <option [value]="Kind._2">{{ 'portal.slots.kinds.assessment' | transloco }}</option>
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.mode' | transloco">
+        <select formControlName="deliveryMode" data-testid="slot-mode">
+          <option [value]="Mode._1">{{ 'portal.slots.modes.online' | transloco }}</option>
+          <option [value]="Mode._2">{{ 'portal.slots.modes.onSite' | transloco }}</option>
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.date' | transloco"><input type="date" formControlName="localDate" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.start' | transloco"><input type="time" formControlName="localStartTime" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.end' | transloco"><input type="time" formControlName="localEndTime" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.timezone' | transloco"><input type="text" formControlName="timeZoneId" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.capacity' | transloco"><input type="number" min="1" formControlName="capacity" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.resource' | transloco">
+        <select formControlName="resourceReferenceId">
+          <option value="">{{ 'portal.slots.form.optional' | transloco }}</option>
+          @for (member of team(); track member.userId) { <option [value]="member.userId">{{ member.displayName }}</option> }
+        </select>
+      </se-form-field>
+      @if (slotForm.controls.deliveryMode.value === Mode._1) {
+        <se-form-field [label]="'portal.slots.form.provider' | transloco">
+          <select formControlName="meetingProviderCode">
+            <option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+            @for (provider of providers(); track provider.providerCode) {
+              <option [value]="provider.providerCode">{{ provider.displayNameEn || provider.displayNameAr }}</option>
+            }
+          </select>
+        </se-form-field>
+      }
+    </div>
+    <se-bilingual-field-group
+      [formGroup]="slotForm"
+      arabicControlName="instructionsAr"
+      englishControlName="instructionsEn"
+      [arabicLabelKey]="'portal.slots.form.instructionsAr'"
+      [englishLabelKey]="'portal.slots.form.instructionsEn'"
+      [multiline]="true"
+    />
+    <div class="slot-actions">
+      <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+      <se-button type="button" variant="secondary" (click)="showSlotForm.set(false)">{{ 'portal.confirm.cancel' | transloco }}</se-button>
+    </div>
+  </form>
+}
+
+@if (showRecurrenceForm()) {
+  <form class="slot-form" [formGroup]="recurrenceForm" (ngSubmit)="previewRecurrence()">
+    <h2>{{ 'portal.slots.recurrence.title' | transloco }}</h2>
+    <div class="slot-form__grid">
+      <se-form-field [label]="'portal.slots.form.branch' | transloco">
+        <select formControlName="schoolBranchId">
+          <option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+          @for (branch of branches(); track branch.id) { <option [value]="branch.id">{{ branch.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.stage' | transloco">
+        <select formControlName="educationalStageId">
+          <option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+          @for (item of stages(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.grade' | transloco">
+        <select formControlName="gradeId"><option value="">{{ 'portal.slots.form.optional' | transloco }}</option>
+          @for (item of grades(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.year' | transloco">
+        <select formControlName="academicYearId"><option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+          @for (item of years(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+        </select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.kind' | transloco">
+        <select formControlName="kind"><option [value]="Kind._1">{{ 'portal.slots.kinds.interview' | transloco }}</option><option [value]="Kind._2">{{ 'portal.slots.kinds.assessment' | transloco }}</option></select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.form.mode' | transloco">
+        <select formControlName="deliveryMode"><option [value]="Mode._1">{{ 'portal.slots.modes.online' | transloco }}</option><option [value]="Mode._2">{{ 'portal.slots.modes.onSite' | transloco }}</option></select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.recurrence.frequency' | transloco">
+        <select formControlName="frequency"><option [value]="Frequency._1">{{ 'portal.slots.recurrence.daily' | transloco }}</option><option [value]="Frequency._2">{{ 'portal.slots.recurrence.weekly' | transloco }}</option></select>
+      </se-form-field>
+      <se-form-field [label]="'portal.slots.recurrence.startDate' | transloco"><input type="date" formControlName="localStartDate" /></se-form-field>
+      <se-form-field [label]="'portal.slots.recurrence.endDate' | transloco"><input type="date" formControlName="localEndDate" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.start' | transloco"><input type="time" formControlName="localStartTime" /></se-form-field>
+      <se-form-field [label]="'portal.slots.recurrence.duration' | transloco"><input type="number" min="1" formControlName="durationMinutes" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.timezone' | transloco"><input type="text" formControlName="timeZoneId" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.capacity' | transloco"><input type="number" min="1" formControlName="capacity" /></se-form-field>
+      <se-form-field [label]="'portal.slots.form.resource' | transloco">
+        <select formControlName="resourceReferenceId"><option value="">{{ 'portal.slots.form.optional' | transloco }}</option>
+          @for (member of team(); track member.userId) { <option [value]="member.userId">{{ member.displayName }}</option> }
+        </select>
+      </se-form-field>
+      @if (recurrenceForm.controls.deliveryMode.value === Mode._1) {
+        <se-form-field [label]="'portal.slots.form.provider' | transloco">
+          <select formControlName="meetingProviderCode"><option value="">{{ 'portal.slots.form.select' | transloco }}</option>
+            @for (provider of providers(); track provider.providerCode) { <option [value]="provider.providerCode">{{ provider.displayNameEn || provider.displayNameAr }}</option> }
+          </select>
+        </se-form-field>
+      }
+    </div>
+    @if (recurrenceForm.controls.frequency.value === Frequency._2) {
+      <fieldset class="slot-weekdays">
+        <legend>{{ 'portal.slots.recurrence.weekdaysLabel' | transloco }}</legend>
+        @for (day of weekdays; track day) {
+          <label><input type="checkbox" [checked]="weekdaySelected(day)" (change)="toggleWeekday(day, $any($event.target).checked)" /> {{ weekdayKey(day) | transloco }}</label>
+        }
+      </fieldset>
+    }
+    <se-bilingual-field-group [formGroup]="recurrenceForm" arabicControlName="instructionsAr" englishControlName="instructionsEn" [arabicLabelKey]="'portal.slots.form.instructionsAr'" [englishLabelKey]="'portal.slots.form.instructionsEn'" [multiline]="true" />
+    <div class="slot-actions">
+      <se-button type="submit" [disabled]="previewLoading()">{{ 'portal.slots.recurrence.preview' | transloco }}</se-button>
+      <se-button type="button" variant="secondary" (click)="showRecurrenceForm.set(false)">{{ 'portal.confirm.cancel' | transloco }}</se-button>
+    </div>
+    @if (previewReady()) {
+      <section class="slot-preview" aria-live="polite">
+        <h3>{{ 'portal.slots.recurrence.previewTitle' | transloco }}: {{ previewCount() }}</h3>
+        <ul>
+          @for (occurrence of previewOccurrences(); track occurrence.startAtUtc) {
+            <li [class.has-conflict]="occurrence.hasConflict">{{ formatDate(occurrence.startAtUtc) }} – {{ formatDate(occurrence.endAtUtc) }} @if (occurrence.hasConflict) { · {{ 'portal.slots.recurrence.conflict' | transloco }} }</li>
+          }
+        </ul>
+        <se-button type="button" [disabled]="previewHasConflicts() || generating()" (click)="generateRecurrence()">{{ 'portal.slots.recurrence.generate' | transloco }}</se-button>
+      </section>
+    }
+  </form>
+}
+
+<div aria-live="polite" class="visually-hidden">{{ loading() ? ('portal.slots.loading' | transloco) : '' }}</div>
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="6" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!"><se-button type="button" (click)="retry()">{{ 'portal.slots.retry' | transloco }}</se-button></se-portal-error-state>
+} @else if (!slots().length) {
+  <se-portal-empty-state titleKey="portal.slots.empty.title" messageKey="portal.slots.empty.message" />
+} @else if (viewMode() === 'list') {
+  <div class="slot-table-wrap">
+    <table class="slot-table">
+      <thead><tr><th>{{ 'portal.slots.columns.date' | transloco }}</th><th>{{ 'portal.slots.columns.kindMode' | transloco }}</th><th>{{ 'portal.slots.columns.capacity' | transloco }}</th><th>{{ 'portal.slots.columns.affected' | transloco }}</th><th>{{ 'portal.slots.columns.status' | transloco }}</th><th>{{ 'portal.slots.columns.actions' | transloco }}</th></tr></thead>
+      <tbody>
+        @for (slot of slots(); track slot.id) {
+          <tr>
+            <td>{{ formatDate(slot.startAtUtc) }}<br /><small>{{ slot.timeZoneId }}</small></td>
+            <td>{{ kindKey(slot.kind) | transloco }} · {{ modeKey(slot.deliveryMode) | transloco }}</td>
+            <td>{{ slot.activeAppointmentCount ?? 0 }}/{{ slot.capacity ?? 0 }}</td>
+            <td>{{ slot.affectedApplicationCount ?? 0 }}</td>
+            <td>{{ statusKey(slot.status) | transloco }}</td>
+            <td><div class="slot-actions">
+              @if (slot.capabilities?.canEdit) { <button type="button" (click)="openEdit(slot)">{{ 'portal.slots.actions.edit' | transloco }}</button> }
+              @if (slot.capabilities?.canOpen) { <button type="button" (click)="confirmAction.set({ action: 'open', slot })">{{ 'portal.slots.actions.open' | transloco }}</button> }
+              @if (slot.capabilities?.canClose) { <button type="button" (click)="confirmAction.set({ action: 'close', slot })">{{ 'portal.slots.actions.close' | transloco }}</button> }
+              @if (slot.capabilities?.canReopen) { <button type="button" (click)="confirmAction.set({ action: 'reopen', slot })">{{ 'portal.slots.actions.reopen' | transloco }}</button> }
+              @if (slot.capabilities?.canCancel) { <button type="button" (click)="openCancel(slot)">{{ 'portal.slots.actions.cancel' | transloco }}</button> }
+              <button type="button" (click)="showAudit(slot)">{{ 'portal.slots.actions.audit' | transloco }}</button>
+            </div></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="slot-calendar">
+    @for (group of calendarGroups(); track group[0]) {
+      <section><h2>{{ group[0] }}</h2>
+        <ul>@for (slot of group[1]; track slot.id) { <li><strong>{{ kindKey(slot.kind) | transloco }}</strong><span>{{ formatDate(slot.startAtUtc) }}</span><span>{{ slot.activeAppointmentCount ?? 0 }}/{{ slot.capacity ?? 0 }}</span></li> }</ul>
+      </section>
+    }
+  </div>
+}
+
+@if (confirmAction(); as pending) {
+  <se-confirmation-dialog [open]="true" [titleKey]="'portal.slots.confirm.' + pending.action + 'Title'" [messageKey]="'portal.slots.confirm.' + pending.action + 'Message'" confirmKey="portal.confirm.confirm" (confirmed)="confirmLifecycle()" (cancelled)="confirmAction.set(null)" />
+}
+
+@if (cancellingSlot(); as slot) {
+  <div class="slot-dialog" role="dialog" aria-modal="true" aria-labelledby="slot-cancel-title">
+    <form class="slot-dialog__panel" [formGroup]="cancelForm" (ngSubmit)="confirmCancel()">
+      <h2 id="slot-cancel-title">{{ 'portal.slots.cancel.title' | transloco }}</h2>
+      <p>{{ 'portal.slots.cancel.affected' | transloco: { count: slot.affectedApplicationCount ?? 0 } }}</p>
+      <se-bilingual-field-group [formGroup]="cancelForm" arabicControlName="cancellationReasonAr" englishControlName="cancellationReasonEn" [arabicLabelKey]="'portal.slots.cancel.reasonAr'" [englishLabelKey]="'portal.slots.cancel.reasonEn'" [multiline]="true" />
+      <div class="slot-actions"><se-button type="submit">{{ 'portal.slots.actions.cancel' | transloco }}</se-button><se-button type="button" variant="secondary" (click)="cancellingSlot.set(null)">{{ 'portal.confirm.cancel' | transloco }}</se-button></div>
+    </form>
+  </div>
+}
+
+@if (auditSlot()) {
+  <div class="slot-dialog" role="dialog" aria-modal="true" aria-labelledby="slot-audit-title">
+    <div class="slot-dialog__panel">
+      <h2 id="slot-audit-title">{{ 'portal.slots.audit.title' | transloco }}</h2>
+      @if (auditLoading()) { <p>{{ 'portal.slots.loading' | transloco }}</p> }
+      <ol class="slot-audit">@for (item of auditItems(); track item.id) { <li><strong>{{ item.action }}</strong><time>{{ formatDate(item.createdAtUtc) }}</time><p>{{ safeMetadata(item.metadata) }}</p></li> }</ol>
+      <se-button type="button" variant="secondary" (click)="auditSlot.set(null)">{{ 'portal.slots.audit.close' | transloco }}</se-button>
+    </div>
+  </div>
+}

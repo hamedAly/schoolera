@@ -1,0 +1,427 @@
+<se-portal-page-header
+  [titleKey]="titleKey()"
+  subtitleKey="parent.applications.wizard.subtitle"
+>
+  <a routerLink="/parent/applications" class="parent-btn secondary">
+    {{ 'parent.applications.detail.backToList' | transloco }}
+  </a>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!">
+    <a routerLink="/schools" class="parent-btn primary">{{ 'parent.dashboard.startApplication' | transloco }}</a>
+  </se-portal-error-state>
+} @else {
+  <div class="parent-page application-wizard">
+    <se-application-stepper
+      [steps]="steps"
+      [currentStep]="currentStep()"
+      [maxReachableStep]="maxReachableStep()"
+      (stepSelect)="goToStep($event)"
+    />
+
+    <se-form-error-summary
+      [title]="'parent.applications.wizard.errorSummaryTitle' | transloco"
+      [errors]="summaryErrors()"
+    />
+
+    @if (saveState() === 'saving') {
+      <p class="application-wizard__save" role="status">{{ 'parent.applications.wizard.saving' | transloco }}</p>
+    } @else if (saveState() === 'saved') {
+      <p class="application-wizard__save" role="status">{{ 'parent.applications.wizard.saved' | transloco }}</p>
+    } @else if (saveState() === 'error') {
+      <p class="application-wizard__save application-wizard__save--error" role="alert">
+        {{ 'parent.applications.wizard.saveError' | transloco }}
+      </p>
+    }
+
+    <form [formGroup]="schoolForm" (ngSubmit)="$event.preventDefault()">
+      @switch (currentStep()) {
+        @case (0) {
+          <section aria-labelledby="wizard-student-heading">
+            <h2 id="wizard-student-heading">{{ 'parent.applications.wizard.steps.student' | transloco }}</h2>
+            @if (!children().length) {
+              <div class="parent-empty">
+                <p>{{ 'parent.applications.wizard.noChildren' | transloco }}</p>
+                <a
+                  class="parent-btn primary"
+                  [routerLink]="['/parent/children/new']"
+                  [queryParams]="{ returnUrl: addChildReturnUrl() }"
+                >
+                  {{ 'parent.applications.wizard.addChild' | transloco }}
+                </a>
+              </div>
+            } @else {
+              <div class="application-wizard__children" role="listbox" [attr.aria-label]="'parent.applications.wizard.selectChild' | transloco" id="application-child">
+                @for (child of children(); track child.id) {
+                  <button
+                    type="button"
+                    class="application-wizard__child-card"
+                    role="option"
+                    [attr.aria-selected]="schoolForm.controls.childProfileId.value === child.id"
+                    [class.is-selected]="schoolForm.controls.childProfileId.value === child.id"
+                    (click)="selectChild(child.id)"
+                  >
+                    <strong>{{ child.fullName }}</strong>
+                    <span>{{ child.maskedIdentity }}</span>
+                    <span>{{ formatBirthDate(child.birthDate) }} · {{ genderLabel(child.gender) }}</span>
+                    <span>{{ child.currentGradeName }}</span>
+                  </button>
+                }
+              </div>
+              <a
+                class="parent-btn secondary"
+                [routerLink]="['/parent/children/new']"
+                [queryParams]="{ returnUrl: addChildReturnUrl() }"
+              >
+                {{ 'parent.applications.wizard.addChild' | transloco }}
+              </a>
+            }
+          </section>
+        }
+
+        @case (1) {
+          <section aria-labelledby="wizard-school-heading">
+            <h2 id="wizard-school-heading">{{ 'parent.applications.wizard.steps.school' | transloco }}</h2>
+            @if (profile(); as school) {
+              <div class="application-wizard__school-head">
+                @if (school.logoUrl) {
+                  <img [src]="school.logoUrl" alt="" width="64" height="64" />
+                }
+                <div>
+                  <h3>{{ school.name }}</h3>
+                  <p>
+                    {{ school.isAdmissionOpen
+                      ? ('schools.search.admissionOpen' | transloco)
+                      : ('schools.profile.admissionClosed' | transloco) }}
+                  </p>
+                </div>
+              </div>
+
+              <se-form-field
+                [label]="'parent.applications.wizard.fields.branch' | transloco"
+                controlId="application-branch"
+              >
+                <select id="application-branch" formControlName="schoolBranchId">
+                  <option value="">{{ 'parent.common.select' | transloco }}</option>
+                  @for (branch of branchOptions(); track branch.id) {
+                    <option [value]="branch.id">{{ branch.name }}</option>
+                  }
+                </select>
+              </se-form-field>
+
+              <se-form-field
+                [label]="'parent.applications.wizard.fields.stage' | transloco"
+                controlId="application-stage"
+              >
+                <select id="application-stage" formControlName="educationalStageId">
+                  <option value="">{{ 'parent.common.select' | transloco }}</option>
+                  @for (stage of stageOptions(); track stage.id) {
+                    <option [value]="stage.id">{{ stage.name }}</option>
+                  }
+                </select>
+              </se-form-field>
+
+              <se-form-field
+                [label]="'parent.applications.wizard.fields.grade' | transloco"
+                controlId="application-grade"
+              >
+                <select id="application-grade" formControlName="gradeId">
+                  <option value="">{{ 'parent.common.select' | transloco }}</option>
+                  @for (grade of gradeOptions(); track grade.id) {
+                    <option [value]="grade.id">{{ grade.name }}</option>
+                  }
+                </select>
+              </se-form-field>
+
+              <se-form-field
+                [label]="'parent.applications.wizard.fields.academicYear' | transloco"
+                controlId="application-year"
+              >
+                <select id="application-year" formControlName="academicYearId">
+                  <option value="">{{ 'parent.common.select' | transloco }}</option>
+                  @for (year of academicYears(); track year.id) {
+                    <option [value]="year.id">{{ year.name }}</option>
+                  }
+                </select>
+              </se-form-field>
+
+              @if (ageEligibility(); as eligibility) {
+                <div class="parent-alert" [class.parent-alert--success]="eligibility.canContinue" [class.parent-alert--warning]="!eligibility.canContinue" role="status">
+                  <h3>{{ 'parent.applications.ageEligibility.title' | transloco }}</h3>
+                  <p>{{ ageEligibilityKey(eligibility.resultCode) | transloco }}</p>
+                  @if (eligibility.explanation) { <p>{{ eligibility.explanation }}</p> }
+                  @if (needsBirthDate() && selectedChild()?.id) {
+                    <a class="parent-btn secondary" [routerLink]="['/parent/children', selectedChild()!.id, 'edit']" [queryParams]="{ returnUrl: addChildReturnUrl() }">
+                      {{ 'parent.applications.ageEligibility.updateBirthDate' | transloco }}
+                    </a>
+                  }
+                </div>
+              }
+            }
+          </section>
+        }
+
+        @case (2) {
+          <section aria-labelledby="wizard-parent-heading">
+            <h2 id="wizard-parent-heading">{{ 'parent.applications.wizard.steps.parent' | transloco }}</h2>
+            @if (parentProfile(); as parent) {
+              @if (!parent.isComplete) {
+                <div class="parent-alert parent-alert--warning" role="status">
+                  <p>{{ 'parent.applications.wizard.parentIncomplete' | transloco }}</p>
+                  <a
+                    class="parent-btn primary"
+                    [routerLink]="['/parent/profile']"
+                    [queryParams]="{ returnUrl: sanitizeProfileLink() }"
+                  >
+                    {{ 'parent.applications.wizard.parentIncompleteLink' | transloco }}
+                  </a>
+                </div>
+              }
+              <dl class="application-wizard__parent-facts">
+                <div>
+                  <dt>{{ 'parent.profile.fields.firstName' | transloco }}</dt>
+                  <dd>{{ parent.firstName }} {{ parent.lastName }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'parent.profile.fields.email' | transloco }}</dt>
+                  <dd>{{ parent.email }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'parent.profile.fields.phone' | transloco }}</dt>
+                  <dd>{{ parent.phone || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'parent.profile.fields.alternatePhone' | transloco }}</dt>
+                  <dd>{{ parent.alternatePhone || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'parent.profile.fields.addressLine' | transloco }}</dt>
+                  <dd>{{ parent.addressLine || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'parent.profile.fields.city' | transloco }}</dt>
+                  <dd>{{ parent.cityName || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'parent.profile.fields.district' | transloco }}</dt>
+                  <dd>{{ parent.districtName || '—' }}</dd>
+                </div>
+              </dl>
+              <p class="application-wizard__hint">{{ 'parent.applications.wizard.parentLiveNote' | transloco }}</p>
+
+              @if (application(); as app) {
+                @if (requirementsForStep().length) {
+                  <div class="application-wizard__requirements">
+                    <h3>{{ 'parent.applications.wizard.requirements.title' | transloco }}</h3>
+                    <se-application-requirements-checklist
+                      [requirements]="requirementsForStep()"
+                      [childProfileId]="app.childProfileId ?? null"
+                      [returnUrl]="profileReturnUrl()"
+                      [canUpload]="canUploadAttachments()"
+                      [uploading]="uploading()"
+                      [vaultDocuments]="vaultDocuments()"
+                      [copyingFromVault]="copyingFromVault()"
+                      (uploadRequested)="onRequirementUpload($event)"
+                      (copyFromVaultRequested)="onRequirementCopyFromVault($event)"
+                    />
+                  </div>
+                }
+              }
+            }
+          </section>
+        }
+
+        @case (3) {
+          <section aria-labelledby="wizard-notes-heading">
+            <h2 id="wizard-notes-heading">{{ 'parent.applications.wizard.steps.notes' | transloco }}</h2>
+            <se-form-field
+              [label]="'parent.applications.wizard.notesLabel' | transloco"
+              controlId="application-notes"
+            >
+              <textarea id="application-notes" rows="5" formControlName="parentNotes" maxlength="2000"></textarea>
+            </se-form-field>
+
+            @if (application(); as app) {
+              @if (requirementsForStep().length) {
+                <div class="application-wizard__requirements">
+                  <h3>{{ 'parent.applications.wizard.requirements.title' | transloco }}</h3>
+                  <se-application-requirements-checklist
+                    [requirements]="requirementsForStep()"
+                    [childProfileId]="app.childProfileId ?? null"
+                    [returnUrl]="profileReturnUrl()"
+                    [canUpload]="canUploadAttachments()"
+                    [uploading]="uploading()"
+                    [vaultDocuments]="vaultDocuments()"
+                    [copyingFromVault]="copyingFromVault()"
+                    (uploadRequested)="onRequirementUpload($event)"
+                    (copyFromVaultRequested)="onRequirementCopyFromVault($event)"
+                  />
+                </div>
+              }
+
+              <se-attachment-list
+                [attachments]="app.attachments ?? []"
+                [canUpload]="!!app.capabilities?.canUploadAttachments"
+                [canRemove]="!!app.capabilities?.canRemoveAttachments"
+                [uploading]="uploading()"
+                [uploadPercent]="uploadPercent()"
+                [canCopyFromVault]="!!app.capabilities?.canUploadAttachments && !!app.childProfileId"
+                [vaultDocuments]="vaultDocuments()"
+                [copyingFromVault]="copyingFromVault()"
+                (uploadRequested)="onUpload($event)"
+                (removeRequested)="onRemoveAttachment($event)"
+                (downloadRequested)="onDownloadAttachment($event)"
+                (copyFromVaultRequested)="copyFromVault($event)"
+              />
+            }
+          </section>
+        }
+
+        @case (4) {
+          <section aria-labelledby="wizard-questions-heading">
+            <h2 id="wizard-questions-heading">{{ 'parent.applications.wizard.steps.questions' | transloco }}</h2>
+            @if (application(); as app) {
+              <se-application-questions-form
+                [applicationId]="app.id!"
+                [questions]="app.questions ?? []"
+                [canEdit]="!!app.capabilities?.canEdit"
+                [canUpload]="canUploadAttachments()"
+                (applicationUpdated)="onQuestionsUpdated($event)"
+              />
+            }
+          </section>
+        }
+
+        @case (5) {
+          <section aria-labelledby="wizard-review-heading">
+            <h2 id="wizard-review-heading">{{ 'parent.applications.wizard.steps.review' | transloco }}</h2>
+            <se-application-summary
+              [applicationNumber]="application()?.applicationNumber"
+              [childName]="selectedChild()?.fullName || application()?.childDisplayName"
+              [schoolName]="profile()?.name || application()?.schoolName"
+              [branchName]="branchOptions().find(b => b.id === schoolForm.controls.schoolBranchId.value)?.name || application()?.branchName"
+              [stageName]="stageOptions().find(s => s.id === schoolForm.controls.educationalStageId.value)?.name || application()?.stageName"
+              [gradeName]="gradeOptions().find(g => g.id === schoolForm.controls.gradeId.value)?.name || application()?.gradeName"
+              [academicYearName]="academicYears().find(y => y.id === schoolForm.controls.academicYearId.value)?.name || application()?.academicYearName"
+              [parentNotes]="schoolForm.controls.parentNotes.value"
+              [attachmentCount]="application()?.attachments?.length ?? 0"
+            />
+
+            @if (ageEligibility(); as eligibility) {
+              <div class="parent-alert" [class.parent-alert--success]="eligibility.canContinue" [class.parent-alert--warning]="!eligibility.canContinue" role="status">
+                <h3>{{ 'parent.applications.ageEligibility.title' | transloco }}</h3>
+                <p>{{ ageEligibilityKey(eligibility.resultCode) | transloco }}</p>
+                @if (eligibility.explanation) { <p>{{ eligibility.explanation }}</p> }
+              </div>
+            }
+
+            @if (application()?.requirements?.length) {
+              <div class="application-wizard__requirements">
+                <h3>{{ 'parent.applications.wizard.requirements.reviewTitle' | transloco }}</h3>
+                <se-application-requirements-checklist
+                  [requirements]="application()?.requirements ?? []"
+                  [childProfileId]="application()?.childProfileId ?? null"
+                  [returnUrl]="profileReturnUrl()"
+                  [readOnly]="true"
+                />
+              </div>
+            }
+
+            @if (application()?.questions?.length) {
+              <div class="application-wizard__requirements">
+                <h3>{{ 'parent.applications.wizard.questions.reviewTitle' | transloco }}</h3>
+                <se-application-questions-form
+                  [applicationId]="application()!.id!"
+                  [questions]="application()?.questions ?? []"
+                  [readOnly]="true"
+                />
+              </div>
+            }
+
+            @if (selectedTuition(); as fee) {
+              <div class="parent-alert parent-alert--info">
+                <p>
+                  {{ 'parent.applications.wizard.tuitionDisplay' | transloco: {
+                    amount: fee.amount,
+                    currency: fee.currencyCode,
+                    year: fee.academicYearName
+                  } }}
+                </p>
+                <p>{{ 'parent.applications.wizard.tuitionInfoDisclaimer' | transloco }}</p>
+              </div>
+            }
+
+            <p class="application-wizard__hint">{{ 'parent.applications.wizard.termsPhase1Note' | transloco }}</p>
+
+            <label class="application-wizard__consent">
+              <input type="checkbox" formControlName="consentAccurate" />
+              <span>{{ 'parent.applications.wizard.consentAccurate' | transloco }}</span>
+            </label>
+            <label class="application-wizard__consent">
+              <input type="checkbox" formControlName="consentTerms" />
+              <span>{{ 'parent.applications.wizard.consentTerms' | transloco }}</span>
+            </label>
+          </section>
+        }
+      }
+    </form>
+
+    <div class="application-wizard__actions">
+      @if (currentStep() > 0) {
+        <button type="button" class="parent-btn secondary" (click)="back()" [disabled]="creating() || saving() || submitting()">
+          {{ 'parent.applications.wizard.back' | transloco }}
+        </button>
+      }
+
+      @if (currentStep() < 5) {
+        <button
+          type="button"
+          class="parent-btn primary"
+          (click)="next()"
+          [disabled]="creating() || saving() || submitting()"
+        >
+          @if (creating()) {
+            {{ 'parent.applications.wizard.creatingDraft' | transloco }}
+          } @else if (currentStep() === 1 && !application()) {
+            {{ 'parent.applications.wizard.createDraft' | transloco }}
+          } @else {
+            {{ 'parent.applications.wizard.next' | transloco }}
+          }
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="parent-btn primary"
+          (click)="openSubmitDialog()"
+          [disabled]="submitting() || !application()?.capabilities?.canSubmit"
+        >
+          {{ 'parent.applications.wizard.submit' | transloco }}
+        </button>
+      }
+    </div>
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="showScopeChangeDialog()"
+  titleKey="parent.applications.wizard.questions.scopeChangeTitle"
+  messageKey="parent.applications.wizard.questions.scopeChangeMessage"
+  confirmKey="parent.applications.wizard.questions.scopeChangeConfirm"
+  cancelKey="parent.confirm.cancel"
+  (confirmed)="confirmScopeChange()"
+  (cancelled)="showScopeChangeDialog.set(false)"
+/>
+
+<se-confirmation-dialog
+  [open]="showSubmitDialog()"
+  titleKey="parent.applications.wizard.submitConfirmTitle"
+  messageKey="parent.applications.wizard.submitConfirmMessage"
+  confirmKey="parent.applications.wizard.submitConfirm"
+  cancelKey="parent.confirm.cancel"
+  [confirming]="submitting()"
+  (confirmed)="confirmSubmit()"
+  (cancelled)="showSubmitDialog.set(false)"
+/>

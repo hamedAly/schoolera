@@ -1,0 +1,95 @@
+using Schoolera.Domain.Enums;
+
+namespace Schoolera.Application.Admissions.Dtos;
+
+public sealed record AdminAdmissionApplicationListQuery(
+    string? Search,
+    Guid? SchoolId,
+    Guid? CityId,
+    AdmissionApplicationStatus? Status,
+    Guid? BranchId,
+    Guid? GradeId,
+    Guid? AcademicYearId,
+    DateTimeOffset? DateFrom,
+    DateTimeOffset? DateTo,
+    string Sort,
+    int PageNumber,
+    int PageSize);
+
+public sealed record AdminAdmissionApplicationListItemDto(
+    Guid Id,
+    string ApplicationNumber,
+    AdmissionApplicationStatus Status,
+    Guid SchoolId,
+    string SchoolName,
+    string? CityName,
+    string BranchName,
+    string StudentName,
+    string ParentName,
+    string GradeName,
+    string AcademicYearName,
+    DateTimeOffset? SubmittedAtUtc,
+    DateTimeOffset? ReviewStartedAtUtc,
+    DateTimeOffset? DecisionAtUtc);
+
+public sealed record AdminAdmissionApplicationDetailDto(
+    Guid Id,
+    string ApplicationNumber,
+    AdmissionApplicationStatus Status,
+    Guid SchoolId,
+    string SchoolName,
+    string? CityName,
+    string BranchName,
+    string StageName,
+    string GradeName,
+    string AcademicYearName,
+    string StudentName,
+    string? StudentMaskedIdentity,
+    DateOnly? StudentBirthDate,
+    ChildGender? StudentGender,
+    string ParentName,
+    string? ParentEmail,
+    string? ParentPhone,
+    string? ParentNotes,
+    string? SchoolNotes,
+    string? RejectionReason,
+    string? ParentVisibleRejectionReason,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset? SubmittedAtUtc,
+    DateTimeOffset? ReviewStartedAtUtc,
+    DateTimeOffset? AcceptedAtUtc,
+    DateTimeOffset? RejectedAtUtc,
+    DateTimeOffset? CancelledAtUtc,
+    IReadOnlyList<AdmissionAttachmentDto> Attachments,
+    IReadOnlyList<SchoolAdmissionHistoryDto> Timeline);
+
+public sealed record AdminAdmissionExportRowDto(
+    string ApplicationNumber,
+    string Status,
+    string SchoolName,
+    string CityName,
+    string BranchName,
+    string StudentName,
+    string ParentName,
+    string GradeName,
+    string AcademicYearName,
+    string SubmittedAtUtc,
+    string ReviewStartedAtUtc,
+    string DecisionAtUtc,
+    IReadOnlyList<string> AnswerValues);
+
+public sealed record AdminAdmissionDashboardMetricsDto(
+    int TotalApplications,
+    int Draft,
+    int Submitted,
+    int UnderReview,
+    int MissingDocuments,
+    int InterviewRequired,
+    int AssessmentRequired,
+    int WaitingList,
+    int Accepted,
+    int Rejected,
+    int Cancelled,
+    int Registered,
+    int ApplicationsToday,
+    int PendingSchoolReview);

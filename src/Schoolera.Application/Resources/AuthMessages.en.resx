@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="InvalidCredentials" xml:space="preserve"><value>Invalid email or password.</value></data>
+  <data name="AccountSuspended" xml:space="preserve"><value>This account is suspended.</value></data>
+  <data name="AccountNotVerified" xml:space="preserve"><value>Verify your account before signing in.</value></data>
+  <data name="DuplicateEmail" xml:space="preserve"><value>An account with this email already exists.</value></data>
+  <data name="DuplicatePhone" xml:space="preserve"><value>An account with this phone number already exists.</value></data>
+  <data name="InvalidEmail" xml:space="preserve"><value>Enter a valid email address.</value></data>
+  <data name="PasswordTooShort" xml:space="preserve"><value>Password must be at least 8 characters.</value></data>
+  <data name="PasswordRequiresNonAlphanumeric" xml:space="preserve"><value>Password must include at least one symbol.</value></data>
+  <data name="PasswordRequiresLowercase" xml:space="preserve"><value>Password must include at least one lowercase letter.</value></data>
+  <data name="PasswordRequiresUppercase" xml:space="preserve"><value>Password must include at least one uppercase letter.</value></data>
+  <data name="PasswordRequiresDigit" xml:space="preserve"><value>Password must include at least one number.</value></data>
+  <data name="PasswordRequiresUniqueChars" xml:space="preserve"><value>Password must include more unique characters.</value></data>
+  <data name="ValidationFailed" xml:space="preserve"><value>Please check the form and try again.</value></data>
+  <data name="InvalidVerificationCode" xml:space="preserve"><value>Invalid verification code.</value></data>
+  <data name="ExpiredVerificationCode" xml:space="preserve"><value>Verification code has expired.</value></data>
+  <data name="CodeAlreadyUsed" xml:space="preserve"><value>This verification code has already been used.</value></data>
+  <data name="EmailAlreadyVerified" xml:space="preserve"><value>This email address is already verified.</value></data>
+  <data name="ResendTooSoon" xml:space="preserve"><value>Please wait before requesting another verification code.</value></data>
+  <data name="DeliveryFailed" xml:space="preserve"><value>The verification code could not be delivered. Please try again.</value></data>
+  <data name="RateLimited" xml:space="preserve"><value>Too many attempts. Please try again later.</value></data>
+  <data name="InvalidResetToken" xml:space="preserve"><value>Invalid or expired reset token.</value></data>
+  <data name="Unauthorized" xml:space="preserve"><value>Authentication is required.</value></data>
+  <data name="Forbidden" xml:space="preserve"><value>You do not have permission to perform this action.</value></data>
+  <data name="RegistrationSuccess" xml:space="preserve"><value>Account created. Check your verification code.</value></data>
+  <data name="VerificationSuccess" xml:space="preserve"><value>Account verified successfully.</value></data>
+  <data name="ResendSuccess" xml:space="preserve"><value>If the account exists, a new verification code was sent.</value></data>
+  <data name="ForgotPasswordSuccess" xml:space="preserve"><value>If the account exists, password reset instructions were sent.</value></data>
+  <data name="ResetPasswordSuccess" xml:space="preserve"><value>Password updated successfully.</value></data>
+  <data name="LogoutSuccess" xml:space="preserve"><value>Signed out successfully.</value></data>
+  <data name="AdminSchoolNotFound" xml:space="preserve"><value>The school was not found.</value></data>
+  <data name="AdminUserNotFound" xml:space="preserve"><value>The user was not found.</value></data>
+  <data name="AdminInvalidSchoolStatus" xml:space="preserve"><value>The school status is not valid.</value></data>
+  <data name="AdminInvalidAccountStatus" xml:space="preserve"><value>The account status is not valid.</value></data>
+  <data name="AdminCannotModifySelf" xml:space="preserve"><value>You cannot change your own account status.</value></data>
+  <data name="ContactLeadSubmitted" xml:space="preserve"><value>Your message was sent successfully. The school may contact you.</value></data>
+  <data name="ContactLeadRejected" xml:space="preserve"><value>Unable to submit the request. Please try again later.</value></data>
+</root>

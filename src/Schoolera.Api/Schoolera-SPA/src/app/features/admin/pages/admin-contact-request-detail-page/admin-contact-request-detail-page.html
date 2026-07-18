@@ -1,0 +1,102 @@
+<se-portal-page-header
+  titleKey="admin.contactRequests.detail.title"
+  subtitleKey="admin.contactRequests.detail.subtitle"
+/>
+
+<p>
+  <a routerLink="/admin/contact-requests">{{ 'admin.contactRequests.detail.back' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="10" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as d) {
+  <div class="admin-page admin-contact-detail">
+    <dl class="admin-dl">
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.reference' | transloco }}</dt>
+        <dd>{{ d.reference }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.status' | transloco }}</dt>
+        <dd>{{ statusKey(d.status) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.name' | transloco }}</dt>
+        <dd>{{ d.name }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.email' | transloco }}</dt>
+        <dd>{{ d.email }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.phone' | transloco }}</dt>
+        <dd>{{ d.phone }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.category' | transloco }}</dt>
+        <dd>{{ categoryKey(d.category) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.subject' | transloco }}</dt>
+        <dd>{{ d.subject }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.source' | transloco }}</dt>
+        <dd>{{ d.source }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.contactRequests.detail.created' | transloco }}</dt>
+        <dd>{{ d.createdAtUtc ? (d.createdAtUtc | date: 'medium') : '—' }}</dd>
+      </div>
+    </dl>
+
+    <section>
+      <h2>{{ 'admin.contactRequests.detail.message' | transloco }}</h2>
+      <p class="admin-contact-detail__message">{{ d.message }}</p>
+    </section>
+
+    <label class="admin-field">
+      {{ 'admin.contactRequests.detail.adminNote' | transloco }}
+      <textarea [(ngModel)]="adminNote" name="adminNote" rows="4"></textarea>
+    </label>
+
+    <div class="admin-actions">
+      @if (d.status === newStatus) {
+        <button type="button" class="se-btn se-btn--primary" (click)="requestAction('startReview')">
+          {{ 'admin.contactRequests.detail.startReview' | transloco }}
+        </button>
+      }
+      @if (d.status === newStatus || d.status === inReviewStatus) {
+        <button type="button" class="se-btn se-btn--outline" (click)="requestAction('resolve')">
+          {{ 'admin.contactRequests.detail.resolve' | transloco }}
+        </button>
+        <button type="button" class="se-btn se-btn--outline" (click)="requestAction('close')">
+          {{ 'admin.contactRequests.detail.close' | transloco }}
+        </button>
+      }
+      <button
+        type="button"
+        class="se-btn se-btn--outline"
+        [disabled]="converting()"
+        (click)="convertToTicket()"
+      >
+        {{
+          converting()
+            ? ('admin.contactRequests.detail.converting' | transloco)
+            : ('admin.contactRequests.detail.convertToTicket' | transloco)
+        }}
+      </button>
+    </div>
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="!!confirmAction()"
+  [titleKey]="confirmTitleKey()"
+  [messageKey]="confirmMessageKey()"
+  [confirming]="confirming()"
+  (confirmed)="confirmPending()"
+  (cancelled)="cancelConfirm()"
+/>

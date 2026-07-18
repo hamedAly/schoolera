@@ -1,0 +1,41 @@
+.portal-gallery__upload {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding: 0 var(--se-space-3);
+  border: 1px dashed var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  cursor: pointer;
+}
+
+.portal-gallery__upload input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+}
+
+.portal-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: var(--se-space-3);
+}
+
+.portal-gallery__item {
+  margin: 0;
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  overflow: hidden;
+  background: var(--se-color-surface-raised);
+}
+
+.portal-gallery__item img {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.portal-gallery__item figcaption {
+  padding: var(--se-space-2);
+}

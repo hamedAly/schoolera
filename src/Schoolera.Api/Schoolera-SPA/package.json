@@ -1,0 +1,46 @@
+{
+  "name": "schoolera-web",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "i18n:extract": "transloco-keys-manager extract",
+    "i18n:find": "node tools/i18n-find.mjs",
+    "i18n:check": "node tools/i18n-parity.mjs",
+    "i18n:validate": "npm run i18n:check && npm run i18n:find",
+    "i18n:all": "npm run i18n:extract && npm run i18n:validate"
+  },
+  "private": true,
+  "packageManager": "npm@11.13.0",
+  "dependencies": {
+    "@angular/common": "^22.0.0",
+    "@angular/compiler": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@jsverse/transloco": "^8.4.0",
+    "@jsverse/transloco-locale": "^8.4.0",
+    "@jsverse/transloco-persist-lang": "^8.4.0",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.0.0",
+    "@angular/cli": "^22.0.0",
+    "@angular/compiler-cli": "^22.0.0",
+    "@jsverse/transloco-keys-manager": "^8.1.0",
+    "@types/leaflet": "^1.9.15",
+    "@types/leaflet.markercluster": "^1.5.5",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^4.0.8"
+  }
+}

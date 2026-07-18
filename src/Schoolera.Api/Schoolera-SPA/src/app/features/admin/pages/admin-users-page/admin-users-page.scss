@@ -1,0 +1,20 @@
+@use '../../styles/admin-shared';
+
+.admin-muted {
+  font-size: 0.875rem;
+  color: var(--se-color-ink-muted);
+}
+
+.admin-row-message {
+  margin-top: var(--se-space-1);
+  font-size: 0.875rem;
+  color: var(--se-color-success, #067647);
+}
+
+.admin-row-message--error {
+  color: var(--se-color-danger, #b42318);
+}
+
+.admin-badge + .admin-badge {
+  margin-inline-start: var(--se-space-1);
+}

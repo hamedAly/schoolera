@@ -1,27 +1,28 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Schoolera.Application.Common.Interfaces;
+using Schoolera.Application.Common.Models;
 using Schoolera.Application.Schools.Dtos;
+using Schoolera.Application.Schools.Queries.GetPublicSchools;
 
 namespace Schoolera.Application.Schools.Queries.GetSchools;
 
-public sealed record GetSchoolsQuery : IRequest<IReadOnlyCollection<SchoolDto>>;
+public sealed record GetSchoolsQuery(
+    int PageNumber = 1,
+    int PageSize = PagedRequest.DefaultPageSize) : IRequest<PagedResult<PublicSchoolListItemDto>>;
 
 public sealed class GetSchoolsQueryHandler(
-    ISchoolRepository schoolRepository,
+    IMediator mediator,
     ILogger<GetSchoolsQueryHandler> logger)
-    : IRequestHandler<GetSchoolsQuery, IReadOnlyCollection<SchoolDto>>
+    : IRequestHandler<GetSchoolsQuery, PagedResult<PublicSchoolListItemDto>>
 {
-    public async Task<IReadOnlyCollection<SchoolDto>> Handle(
+    public Task<PagedResult<PublicSchoolListItemDto>> Handle(
         GetSchoolsQuery request,
         CancellationToken cancellationToken)
     {
-        logger.LogInformation("Getting schools.");
+        logger.LogInformation("Getting schools via public paged query.");
 
-        var schools = await schoolRepository.ListAsync(cancellationToken);
-
-        return schools
-            .Select(SchoolDto.FromEntity)
-            .ToArray();
+        return mediator.Send(
+            new GetPublicSchoolsQuery(new PagedRequest(request.PageNumber, request.PageSize)),
+            cancellationToken);
     }
 }

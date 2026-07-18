@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+.status-loading {
+  color: var(--se-color-ink-muted);
+}
+
+.status-card {
+  display: grid;
+  gap: var(--se-space-4);
+  max-width: 42rem;
+  padding: clamp(var(--se-space-5), 4vw, var(--se-space-7));
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-xl, var(--se-radius-lg));
+  background: var(--se-color-surface-raised);
+  box-shadow: var(--se-shadow-card, var(--se-shadow-sm));
+}
+
+.status-card h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+}
+
+.status-card p {
+  margin: 0;
+  color: var(--se-color-ink-muted);
+}
+
+.status-card--error {
+  border-color: rgb(180 35 24 / 0.3);
+  background: #fff5f4;
+  color: var(--se-color-danger);
+}
+
+.status-meta,
+.status-note {
+  font-size: 0.95rem;
+}
+
+.status-reason {
+  padding: var(--se-space-4);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-brand-050, #f1faf8);
+  border: 1px solid rgb(11 129 119 / 0.25);
+}
+
+.status-reason p {
+  margin: var(--se-space-2) 0 0;
+  color: var(--se-color-ink);
+}
+
+.status-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding-inline: var(--se-space-5);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-brand);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.status-card[data-status='Approved'] {
+  border-color: rgb(11 129 119 / 0.4);
+}
+
+.status-card[data-status='Rejected'] {
+  border-color: rgb(180 35 24 / 0.35);
+}

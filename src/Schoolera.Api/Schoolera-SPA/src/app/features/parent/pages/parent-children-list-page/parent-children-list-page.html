@@ -1,0 +1,106 @@
+<div class="parent-section-header">
+  <se-portal-page-header
+    titleKey="parent.children.title"
+    subtitleKey="parent.children.subtitle"
+  />
+  <a routerLink="/parent/children/new" class="parent-btn primary">{{ 'parent.children.addChild' | transloco }}</a>
+</div>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="5" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!">
+    <button type="button" class="parent-btn primary" (click)="retry()">{{ 'parent.common.retry' | transloco }}</button>
+  </se-portal-error-state>
+} @else if (!children().length) {
+  <se-portal-empty-state
+    titleKey="parent.children.emptyTitle"
+    messageKey="parent.children.emptyMessage"
+  />
+  <div class="parent-actions">
+    <a routerLink="/parent/children/new" class="parent-btn primary">{{ 'parent.children.addChild' | transloco }}</a>
+  </div>
+} @else {
+  <div class="parent-page">
+    <div class="parent-table-wrap">
+      <table class="parent-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'parent.children.columns.name' | transloco }}</th>
+            <th scope="col">{{ 'parent.children.columns.identity' | transloco }}</th>
+            <th scope="col">{{ 'parent.children.columns.age' | transloco }}</th>
+            <th scope="col">{{ 'parent.children.columns.gender' | transloco }}</th>
+            <th scope="col">{{ 'parent.children.columns.grade' | transloco }}</th>
+            <th scope="col">{{ 'parent.children.columns.specialNeeds' | transloco }}</th>
+            <th scope="col">{{ 'parent.children.columns.actions' | transloco }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (child of children(); track child.id) {
+            <tr>
+              <td>{{ child.fullName }}</td>
+              <td><span class="parent-readonly-field">{{ child.maskedIdentity }}</span></td>
+              <td>{{ child.ageYears }}</td>
+              <td>{{ genderLabel(child.gender) }}</td>
+              <td>{{ child.currentGradeName }}</td>
+              <td>
+                @if (child.hasSpecialNeeds) {
+                  <span class="parent-badge parent-badge--special">{{ 'parent.children.specialNeedsYes' | transloco }}</span>
+                } @else {
+                  {{ 'parent.children.specialNeedsNo' | transloco }}
+                }
+              </td>
+              <td>
+                <div class="parent-actions">
+                  <a [routerLink]="['/parent/children', child.id, 'edit']" class="parent-btn">{{ 'parent.common.edit' | transloco }}</a>
+                  <button type="button" class="danger" (click)="openDeleteDialog(child)">{{ 'parent.common.delete' | transloco }}</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="parent-card-grid parent-card-grid--mobile">
+      @for (child of children(); track child.id) {
+        <article class="parent-child-card">
+          <h3>{{ child.fullName }}</h3>
+          <dl>
+            <div>
+              <dt>{{ 'parent.children.columns.identity' | transloco }}</dt>
+              <dd><span class="parent-readonly-field">{{ child.maskedIdentity }}</span></dd>
+            </div>
+            <div>
+              <dt>{{ 'parent.children.columns.age' | transloco }}</dt>
+              <dd>{{ child.ageYears }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'parent.children.columns.gender' | transloco }}</dt>
+              <dd>{{ genderLabel(child.gender) }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'parent.children.columns.grade' | transloco }}</dt>
+              <dd>{{ child.currentGradeName }}</dd>
+            </div>
+          </dl>
+          <div class="parent-actions">
+            <a [routerLink]="['/parent/children', child.id, 'edit']" class="parent-btn">{{ 'parent.common.edit' | transloco }}</a>
+            <button type="button" class="danger" (click)="openDeleteDialog(child)">{{ 'parent.common.delete' | transloco }}</button>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="showDeleteDialog()"
+  titleKey="parent.children.deleteConfirmTitle"
+  messageKey="parent.children.deleteConfirmMessage"
+  confirmKey="parent.confirm.confirm"
+  cancelKey="parent.confirm.cancel"
+  [confirming]="deleting()"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+/>

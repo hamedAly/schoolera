@@ -1,0 +1,30 @@
+@import '../../styles/admin-shared';
+
+.admin-application-detail {
+  display: grid;
+  gap: var(--se-space-5);
+}
+
+.admin-application-detail__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--se-space-3);
+  margin: 0;
+}
+
+.admin-application-detail__summary div {
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.admin-application-detail__summary dt {
+  margin: 0;
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.admin-application-detail__summary dd {
+  margin: var(--se-space-1) 0 0;
+}

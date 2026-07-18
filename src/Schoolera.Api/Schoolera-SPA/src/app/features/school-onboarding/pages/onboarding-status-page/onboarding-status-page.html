@@ -1,0 +1,96 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: 'auth.portals.school.breadcrumb' | transloco, route: '/school' },
+      { label: 'onboarding.status.breadcrumb' | transloco },
+    ]"
+  />
+  <se-page-hero
+    [title]="'onboarding.status.title' | transloco"
+    [subtitle]="'onboarding.status.subtitle' | transloco"
+  />
+
+  @if (loading()) {
+    <p class="status-loading" role="status">{{ 'onboarding.common.loading' | transloco }}</p>
+  } @else if (errorMessage()) {
+    <div class="status-card status-card--error" role="alert">{{ errorMessage() }}</div>
+  } @else if (!application()) {
+    <section class="status-card">
+      <h2>{{ 'onboarding.status.draftTitle' | transloco }}</h2>
+      <p>{{ 'onboarding.status.noApplication' | transloco }}</p>
+      <se-button type="button" (click)="continueOnboarding()">
+        {{ 'onboarding.status.startCta' | transloco }}
+      </se-button>
+    </section>
+  } @else {
+    <section class="status-card" [attr.data-status]="status()">
+      @switch (status()) {
+        @case ('Draft') {
+          <h2>{{ 'onboarding.status.draftTitle' | transloco }}</h2>
+          <p>{{ 'onboarding.status.draftBody' | transloco }}</p>
+          <se-button type="button" (click)="continueOnboarding()">
+            {{ 'onboarding.status.continueCta' | transloco }}
+          </se-button>
+        }
+        @case ('Submitted') {
+          <h2>{{ 'onboarding.status.submittedTitle' | transloco }}</h2>
+          <p>{{ 'onboarding.status.submittedBody' | transloco }}</p>
+          @if (application()?.submittedAtUtc) {
+            <p class="status-meta">
+              {{
+                'onboarding.status.submittedAt'
+                  | transloco: { date: formatDate(application()?.submittedAtUtc) }
+              }}
+            </p>
+          }
+        }
+        @case ('UnderReview') {
+          <h2>{{ 'onboarding.status.underReviewTitle' | transloco }}</h2>
+          <p>{{ 'onboarding.status.underReviewBody' | transloco }}</p>
+        }
+        @case ('ChangesRequested') {
+          <h2>{{ 'onboarding.status.changesRequestedTitle' | transloco }}</h2>
+          <p>{{ 'onboarding.status.changesRequestedBody' | transloco }}</p>
+          @if (application()?.ownerVisibleReason) {
+            <div class="status-reason">
+              <strong>{{ 'onboarding.status.changesRequestedReason' | transloco }}</strong>
+              <p>{{ application()?.ownerVisibleReason }}</p>
+            </div>
+          }
+          <se-button type="button" (click)="continueOnboarding()">
+            {{ 'onboarding.status.editAndResubmitCta' | transloco }}
+          </se-button>
+        }
+        @case ('Approved') {
+          <h2>{{ 'onboarding.status.approvedTitle' | transloco }}</h2>
+          <p>{{ 'onboarding.status.approvedBody' | transloco }}</p>
+          @if (application()?.approvedSchoolName) {
+            <p class="status-meta">
+              {{
+                'onboarding.status.approvedSchool'
+                  | transloco: { name: application()?.approvedSchoolName }
+              }}
+            </p>
+          }
+          <p class="status-note">{{ 'onboarding.status.approvedNotPublicNote' | transloco }}</p>
+          <a routerLink="/school" class="status-cta">{{ 'onboarding.status.goToPortalCta' | transloco }}</a>
+        }
+        @case ('Rejected') {
+          <h2>{{ 'onboarding.status.rejectedTitle' | transloco }}</h2>
+          <p>{{ 'onboarding.status.rejectedBody' | transloco }}</p>
+          @if (application()?.ownerVisibleReason) {
+            <div class="status-reason">
+              <strong>{{ 'onboarding.status.rejectionReason' | transloco }}</strong>
+              <p>{{ application()?.ownerVisibleReason }}</p>
+            </div>
+          }
+        }
+        @default {
+          <h2>{{ 'onboarding.status.title' | transloco }}</h2>
+          <p>{{ status() }}</p>
+        }
+      }
+    </section>
+  }
+</se-public-page-container>

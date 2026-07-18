@@ -1,0 +1,206 @@
+<se-portal-page-header titleKey="admin.taxonomies.title" subtitleKey="admin.taxonomies.subtitle" />
+
+<div class="admin-page">
+  <div class="admin-tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      [class.is-active]="activeTab() === 'countries'"
+      [attr.aria-selected]="activeTab() === 'countries'"
+      (click)="setTab('countries')"
+    >
+      {{ 'admin.taxonomies.tabs.countries' | transloco }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [class.is-active]="activeTab() === 'governorates'"
+      [attr.aria-selected]="activeTab() === 'governorates'"
+      (click)="setTab('governorates')"
+    >
+      {{ 'admin.taxonomies.tabs.governorates' | transloco }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [class.is-active]="activeTab() === 'cities'"
+      [attr.aria-selected]="activeTab() === 'cities'"
+      (click)="setTab('cities')"
+    >
+      {{ 'admin.taxonomies.tabs.cities' | transloco }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [class.is-active]="activeTab() === 'curricula'"
+      [attr.aria-selected]="activeTab() === 'curricula'"
+      (click)="setTab('curricula')"
+    >
+      {{ 'admin.taxonomies.tabs.curricula' | transloco }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <se-portal-loading-skeleton [rows]="6" />
+  } @else if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  } @else {
+    @if (actionMessage()) {
+      <div
+        class="admin-alert"
+        [class.admin-alert--error]="actionIsError()"
+        [class.admin-alert--success]="!actionIsError()"
+      >
+        {{ actionMessage() }}
+      </div>
+    }
+
+    <section class="admin-form-panel">
+      <h2>{{ 'admin.taxonomies.createTitle' | transloco }}</h2>
+      <form [formGroup]="createForm" (ngSubmit)="createItem()">
+        <se-bilingual-field-group
+          [formGroup]="createForm"
+          arabicControlName="nameAr"
+          englishControlName="nameEn"
+          arabicLabelKey="admin.taxonomies.nameAr"
+          englishLabelKey="admin.taxonomies.nameEn"
+        />
+        <label>
+          {{ 'admin.taxonomies.slug' | transloco }}
+          <input type="text" formControlName="slug" />
+        </label>
+        <label>
+          {{ 'admin.taxonomies.sortOrder' | transloco }}
+          <input type="number" formControlName="sortOrder" />
+        </label>
+        @if (activeTab() === 'countries') {
+          <label>
+            {{ 'admin.taxonomies.code' | transloco }}
+            <input type="text" formControlName="code" maxlength="2" />
+          </label>
+        }
+        @if (activeTab() === 'governorates') {
+          <label>
+            {{ 'admin.taxonomies.country' | transloco }}
+            <select formControlName="countryId" (change)="loadActiveTab()">
+              @for (country of countries(); track country.id) {
+                <option [value]="country.id">{{ country.name }}</option>
+              }
+            </select>
+          </label>
+        }
+        <div class="admin-actions">
+          <button type="submit" class="primary" [disabled]="saving()">
+            {{ 'admin.taxonomies.create' | transloco }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section>
+      <h2>{{ 'admin.taxonomies.listTitle' | transloco }}</h2>
+      @if (activeTab() === 'countries') {
+        @if (countries().length) {
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr>
+                <th scope="col">{{ 'admin.taxonomies.columns.name' | transloco }}</th>
+                <th scope="col">{{ 'admin.taxonomies.code' | transloco }}</th>
+                <th scope="col">{{ 'admin.taxonomies.columns.slug' | transloco }}</th>
+                <th scope="col">{{ 'admin.taxonomies.columns.sortOrder' | transloco }}</th>
+              </tr></thead>
+              <tbody>
+                @for (item of countries(); track item.id) {
+                  <tr><td>{{ item.name }}</td><td>{{ item.code }}</td><td>{{ item.slug }}</td><td>{{ item.sortOrder }}</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="admin-empty">{{ 'admin.taxonomies.empty' | transloco }}</p>
+        }
+      } @else if (activeTab() === 'governorates') {
+        @if (governorates().length) {
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr>
+                <th scope="col">{{ 'admin.taxonomies.columns.name' | transloco }}</th>
+                <th scope="col">{{ 'admin.taxonomies.columns.slug' | transloco }}</th>
+                <th scope="col">{{ 'admin.taxonomies.columns.sortOrder' | transloco }}</th>
+              </tr></thead>
+              <tbody>
+                @for (item of governorates(); track item.id) {
+                  <tr><td>{{ item.name }}</td><td>{{ item.slug }}</td><td>{{ item.sortOrder }}</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="admin-empty">{{ 'admin.taxonomies.empty' | transloco }}</p>
+        }
+      } @else if (activeTab() === 'cities') {
+        @if (cities().length) {
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'admin.taxonomies.columns.name' | transloco }}</th>
+                  <th scope="col">{{ 'admin.taxonomies.columns.slug' | transloco }}</th>
+                  <th scope="col">{{ 'admin.taxonomies.columns.sortOrder' | transloco }}</th>
+                  <th scope="col">{{ 'admin.taxonomies.columns.actions' | transloco }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of cities(); track item.id) {
+                  <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.slug }}</td>
+                    <td>{{ item.sortOrder }}</td>
+                    <td>
+                      <button type="button" class="admin-btn-danger" [disabled]="saving()" (click)="deactivateItem(item)">
+                        {{ 'admin.taxonomies.deactivate' | transloco }}
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="admin-empty">{{ 'admin.taxonomies.empty' | transloco }}</p>
+        }
+      } @else {
+        @if (curricula().length) {
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'admin.taxonomies.columns.name' | transloco }}</th>
+                  <th scope="col">{{ 'admin.taxonomies.columns.slug' | transloco }}</th>
+                  <th scope="col">{{ 'admin.taxonomies.columns.sortOrder' | transloco }}</th>
+                  <th scope="col">{{ 'admin.taxonomies.columns.actions' | transloco }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of curricula(); track item.id) {
+                  <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.slug }}</td>
+                    <td>{{ item.sortOrder }}</td>
+                    <td>
+                      <button type="button" class="admin-btn-danger" [disabled]="saving()" (click)="deactivateItem(item)">
+                        {{ 'admin.taxonomies.deactivate' | transloco }}
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="admin-empty">{{ 'admin.taxonomies.empty' | transloco }}</p>
+        }
+      }
+    </section>
+  }
+</div>

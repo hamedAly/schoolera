@@ -1,9 +1,12 @@
-using System.Text.Json;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Schoolera.Api.Middleware;
+using Schoolera.Api.Resources;
+using Schoolera.Application.Common.Models;
+using System.Text.Json;
 
 namespace Schoolera.Tests;
 
@@ -20,7 +23,7 @@ public sealed class ExceptionHandlingMiddlewareTests
             ]),
             NullLogger<ExceptionHandlingMiddleware>.Instance);
 
-        await middleware.InvokeAsync(context);
+        await middleware.InvokeAsync(context, new StubApiMessagesLocalizer());
 
         var json = await ReadJsonAsync(context);
         Assert.Equal(StatusCodes.Status400BadRequest, context.Response.StatusCode);
@@ -37,13 +40,14 @@ public sealed class ExceptionHandlingMiddlewareTests
             _ => throw new InvalidOperationException("Database unavailable."),
             NullLogger<ExceptionHandlingMiddleware>.Instance);
 
-        await middleware.InvokeAsync(context);
+        await middleware.InvokeAsync(context, new StubApiMessagesLocalizer());
 
         var json = await ReadJsonAsync(context);
         Assert.Equal(StatusCodes.Status500InternalServerError, context.Response.StatusCode);
         Assert.False(json.RootElement.GetProperty("succeeded").GetBoolean());
         Assert.Equal(JsonValueKind.Null, json.RootElement.GetProperty("data").ValueKind);
         Assert.Equal("An unexpected error occurred.", json.RootElement.GetProperty("errors")[0].GetString());
+        Assert.Equal(ErrorCodes.Unexpected, json.RootElement.GetProperty("errorCodes")[0].GetString());
     }
 
     private static DefaultHttpContext CreateHttpContext()
@@ -59,5 +63,16 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.Body.Position = 0;
 
         return await JsonDocument.ParseAsync(context.Response.Body);
+    }
+
+    private sealed class StubApiMessagesLocalizer : IStringLocalizer<ApiMessages>
+    {
+        public LocalizedString this[string name] =>
+            new(name, name == "UnexpectedError" ? "An unexpected error occurred." : name);
+
+        public LocalizedString this[string name, params object[] arguments] => this[name];
+
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) =>
+            [this["UnexpectedError"]];
     }
 }

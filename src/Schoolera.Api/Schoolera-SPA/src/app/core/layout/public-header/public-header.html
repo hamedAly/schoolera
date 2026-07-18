@@ -1,0 +1,105 @@
+<header class="public-header">
+  <div class="public-header__inner">
+    <a routerLink="/" class="brand" [attr.aria-label]="'app.brandHomeAria' | transloco">
+      <span class="brand__mark" aria-hidden="true">{{ 'app.brandMark' | transloco }}</span>
+      <span class="brand__text">
+        <strong>{{ 'app.name' | transloco }}</strong>
+        <span>{{ 'app.tagline' | transloco }}</span>
+      </span>
+    </a>
+
+    <nav class="public-header__desktop-nav" [attr.aria-label]="'nav.main' | transloco">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.exact === true }"
+        >
+          {{ item.labelKey | transloco }}
+        </a>
+      }
+    </nav>
+
+    <div class="public-header__actions">
+      <se-language-switcher />
+
+      <a routerLink="/auth/login" class="btn btn--outline public-header__login">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+          <path
+            d="M15 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>{{ 'nav.login' | transloco }}</span>
+      </a>
+
+      <a routerLink="/auth/account-type" class="btn btn--accent public-header__register">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+          <path
+            d="M15 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M8.5 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM19 8v6M22 11h-6"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>{{ 'nav.register' | transloco }}</span>
+      </a>
+
+      <button
+        #menuButton
+        type="button"
+        class="public-header__menu-toggle"
+        [attr.aria-expanded]="menuOpen()"
+        [attr.aria-controls]="menuId"
+        [attr.aria-label]="menuToggleLabelKey() | transloco"
+        (click)="toggleMenu()"
+      >
+        <span aria-hidden="true" class="public-header__menu-icon" [class.is-open]="menuOpen()"></span>
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="public-header__backdrop"
+    [class.is-open]="menuOpen()"
+    [attr.aria-hidden]="!menuOpen()"
+    (click)="closeMenu()"
+  ></div>
+
+  <nav
+    #menuPanel
+    [id]="menuId"
+    class="public-header__mobile-nav"
+    [class.is-open]="menuOpen()"
+    [attr.aria-label]="'nav.mobile' | transloco"
+    [attr.aria-hidden]="mobileNavHidden()"
+    [attr.inert]="mobileNavHidden() ? true : null"
+  >
+    <div class="public-header__mobile-nav-inner">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.exact === true }"
+          (click)="closeMenu()"
+        >
+          {{ item.labelKey | transloco }}
+        </a>
+      }
+
+      <div class="public-header__mobile-actions">
+        <se-language-switcher (languageChange)="closeMenu(false)" />
+        <a routerLink="/auth/login" class="btn btn--outline" (click)="closeMenu()">{{
+          'nav.login' | transloco
+        }}</a>
+        <a routerLink="/auth/account-type" class="btn btn--accent" (click)="closeMenu()">{{
+          'nav.register' | transloco
+        }}</a>
+      </div>
+    </div>
+  </nav>
+</header>

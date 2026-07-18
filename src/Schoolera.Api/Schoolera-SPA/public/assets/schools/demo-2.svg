@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" role="img" aria-label="School placeholder 2">
+  <rect width="400" height="300" fill="#fce8e6"/>
+  <rect x="120" y="80" width="160" height="120" rx="8" fill="#d93025"/>
+  <polygon points="120,80 200,40 280,80" fill="#a50e0e"/>
+  <rect x="155" y="140" width="40" height="60" fill="#ffffff"/>
+  <rect x="215" y="120" width="35" height="35" fill="#ffffff"/>
+  <text x="200" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#5f6368">Demo School 2</text>
+</svg>

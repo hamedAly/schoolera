@@ -17,7 +17,7 @@ public sealed class CreateSchoolCommandHandler(
     {
         logger.LogInformation("Creating school {SchoolName}.", request.Name);
 
-        var school = new School(request.Name, request.City);
+        var school = School.CreateLegacy(request.Name, request.City);
 
         await schoolRepository.AddAsync(school, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

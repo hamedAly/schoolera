@@ -1,0 +1,65 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: 'auth.login.breadcrumb' | transloco },
+    ]"
+  />
+  <se-page-hero
+    [title]="'auth.login.title' | transloco"
+    [subtitle]="'auth.login.subtitle' | transloco"
+  />
+
+  <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <se-form-error-summary [errors]="summaryErrors()" />
+
+    <se-form-field
+      controlId="email"
+      [label]="'auth.fields.email' | transloco"
+      [error]="fieldError('email')"
+    >
+      <input
+        id="email"
+        seAutofocus
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        [attr.aria-invalid]="hasFieldError('email')"
+        [attr.aria-describedby]="hasFieldError('email') ? 'email-error' : null"
+      />
+    </se-form-field>
+
+    <se-form-field
+      controlId="password"
+      [label]="'auth.fields.password' | transloco"
+      [error]="fieldError('password')"
+    >
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+        [attr.aria-invalid]="hasFieldError('password')"
+        [attr.aria-describedby]="hasFieldError('password') ? 'password-error' : null"
+      />
+    </se-form-field>
+
+    <div class="auth-form__actions">
+      <se-button type="submit" [disabled]="submitting()">
+        {{
+          submitting()
+            ? ('auth.actions.signingIn' | transloco)
+            : ('auth.actions.signIn' | transloco)
+        }}
+      </se-button>
+    </div>
+
+    <p class="auth-form__links">
+      <a routerLink="/auth/forgot-password">{{ 'auth.login.forgotPassword' | transloco }}</a>
+      <span>
+        {{ 'auth.login.noAccount' | transloco }}
+        <a routerLink="/auth/account-type">{{ 'auth.login.createAccount' | transloco }}</a>
+      </span>
+    </p>
+  </form>
+</se-public-page-container>

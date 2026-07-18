@@ -1,0 +1,29 @@
+<se-portal-page-header titleKey="portal.facilities.title" subtitleKey="portal.facilities.subtitle">
+  <se-button type="button" [disabled]="saving()" (click)="save()">{{ 'common.save' | transloco }}</se-button>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="5" />
+} @else if (errorMessage() && !facilities().length) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (!facilities().length) {
+  <se-portal-empty-state titleKey="portal.facilities.emptyTitle" messageKey="portal.facilities.emptyMessage" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  }
+  <ul class="portal-facilities__grid">
+    @for (facility of facilities(); track facility.facilityId) {
+      <li>
+        <label class="portal-facilities__item">
+          <input
+            type="checkbox"
+            [checked]="isSelected(facility.facilityId)"
+            (change)="toggle(facility.facilityId)"
+          />
+          <span>{{ facilityName(facility) }}</span>
+        </label>
+      </li>
+    }
+  </ul>
+}

@@ -1,16 +1,22 @@
 using FluentValidation;
+using Microsoft.Extensions.Localization;
+using Schoolera.Application.Resources;
+using Schoolera.Domain.Common;
 
 namespace Schoolera.Application.Schools.Commands.CreateSchool;
 
 public sealed class CreateSchoolCommandValidator : AbstractValidator<CreateSchoolCommand>
 {
-    public CreateSchoolCommandValidator()
+    public CreateSchoolCommandValidator(IStringLocalizer<ValidationMessages> localizer)
     {
         RuleFor(command => command.Name)
             .NotEmpty()
-            .MaximumLength(200);
+            .WithMessage(_ => localizer["SchoolNameRequired"].Value)
+            .MaximumLength(FieldLengthLimits.SchoolName)
+            .WithMessage(_ => localizer["SchoolNameMaxLength", FieldLengthLimits.SchoolName].Value);
 
         RuleFor(command => command.City)
-            .MaximumLength(100);
+            .MaximumLength(FieldLengthLimits.SchoolCity)
+            .WithMessage(_ => localizer["SchoolCityMaxLength", FieldLengthLimits.SchoolCity].Value);
     }
 }

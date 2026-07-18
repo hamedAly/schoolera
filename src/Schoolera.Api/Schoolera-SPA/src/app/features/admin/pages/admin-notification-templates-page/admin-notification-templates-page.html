@@ -1,0 +1,126 @@
+<se-portal-page-header
+  titleKey="admin.templates.title"
+  subtitleKey="admin.templates.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+  <div class="admin-actions">
+    <button type="button" (click)="load()">{{ 'admin.common.retry' | transloco }}</button>
+  </div>
+} @else {
+  <div class="admin-page">
+    @if (templates().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.templates.columns.event' | transloco }}</th>
+              <th scope="col">{{ 'admin.templates.columns.channel' | transloco }}</th>
+              <th scope="col">{{ 'admin.templates.columns.culture' | transloco }}</th>
+              <th scope="col">{{ 'admin.templates.columns.code' | transloco }}</th>
+              <th scope="col">{{ 'admin.templates.columns.latest' | transloco }}</th>
+              <th scope="col">{{ 'admin.templates.columns.published' | transloco }}</th>
+              <th scope="col">{{ 'admin.templates.columns.updated' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of templates(); track item.id) {
+              <tr>
+                <td>{{ eventKey(item.eventType) | transloco }}</td>
+                <td>{{ channelKey(item.channel) | transloco }}</td>
+                <td>{{ item.culture }}</td>
+                <td>{{ item.code }}</td>
+                <td>{{ item.latestVersionNumber }}</td>
+                <td>{{ item.publishedVersionNumber ?? '—' }}</td>
+                <td>{{ item.updatedAtUtc ? (item.updatedAtUtc | date: 'medium') : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.templates.empty' | transloco }}</p>
+    }
+
+    <section class="admin-form-panel" [attr.aria-labelledby]="'template-version-heading'">
+      <h2 id="template-version-heading">{{ 'admin.templates.createVersionTitle' | transloco }}</h2>
+      <form [formGroup]="form" (ngSubmit)="createVersion()">
+        <label>
+          {{ 'admin.templates.fields.eventType' | transloco }}
+          <select formControlName="eventType">
+            @for (opt of eventOptions; track opt.value) {
+              <option [ngValue]="opt.value">{{ opt.labelKey | transloco }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'admin.templates.fields.channel' | transloco }}
+          <select formControlName="channel">
+            @for (opt of channelOptions; track opt.value) {
+              <option [ngValue]="opt.value">{{ opt.labelKey | transloco }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'admin.templates.fields.culture' | transloco }}
+          <input type="text" formControlName="culture" />
+        </label>
+        <label>
+          {{ 'admin.templates.fields.code' | transloco }}
+          <input type="text" formControlName="code" />
+        </label>
+        <label>
+          {{ 'admin.templates.fields.subject' | transloco }}
+          <input type="text" formControlName="subject" />
+        </label>
+        <label>
+          {{ 'admin.templates.fields.body' | transloco }}
+          <textarea formControlName="body" rows="6"></textarea>
+        </label>
+        <label>
+          {{ 'admin.templates.fields.allowedVariables' | transloco }}
+          <input type="text" formControlName="allowedVariablesCsv" />
+        </label>
+        <label>
+          {{ 'admin.templates.fields.providerTemplateId' | transloco }}
+          <input type="text" formControlName="providerTemplateId" />
+        </label>
+        <div class="admin-actions">
+          <button type="submit" class="primary" [disabled]="saving()">
+            {{ 'admin.templates.createVersion' | transloco }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    @if (lastCreatedVersion(); as version) {
+      <div class="admin-alert" role="status">
+        <p>
+          {{
+            'admin.templates.lastVersion'
+              | transloco: { id: version.id, number: version.versionNumber }
+          }}
+        </p>
+        @if (!version.isPublished) {
+          <div class="admin-actions">
+            <button type="button" class="primary" (click)="requestPublish(version.id)">
+              {{ 'admin.templates.publish' | transloco }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="!!publishVersionId()"
+  titleKey="admin.templates.confirmPublishTitle"
+  messageKey="admin.templates.confirmPublishMessage"
+  [confirming]="confirming()"
+  (confirmed)="confirmPublish()"
+  (cancelled)="cancelPublish()"
+/>

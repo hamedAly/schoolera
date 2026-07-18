@@ -1,0 +1,23 @@
+<se-public-page-container>
+  <h1>{{ 'dev.bilingualShowcase.title' | transloco }}</h1>
+  <p>{{ 'dev.bilingualShowcase.description' | transloco }}</p>
+
+  <form [formGroup]="form" class="showcase-form">
+    <se-bilingual-field-group
+      [formGroup]="form"
+      arabicControlName="nameAr"
+      englishControlName="nameEn"
+      [arabicLabelKey]="'dev.bilingualShowcase.nameAr'"
+      [englishLabelKey]="'dev.bilingualShowcase.nameEn'"
+    />
+
+    <se-bilingual-field-group
+      [formGroup]="form"
+      arabicControlName="descriptionAr"
+      englishControlName="descriptionEn"
+      [arabicLabelKey]="'dev.bilingualShowcase.descriptionAr'"
+      [englishLabelKey]="'dev.bilingualShowcase.descriptionEn'"
+      [multiline]="true"
+    />
+  </form>
+</se-public-page-container>

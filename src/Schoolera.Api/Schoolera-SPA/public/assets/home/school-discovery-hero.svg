@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="520" viewBox="0 0 640 520" fill="none" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="seRoof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0B8177"/>
+      <stop offset="1" stop-color="#075E57"/>
+    </linearGradient>
+    <linearGradient id="seRoofSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0E9488"/>
+      <stop offset="1" stop-color="#08756B"/>
+    </linearGradient>
+    <linearGradient id="seGround" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E4F5F1"/>
+      <stop offset="1" stop-color="#F1FAF8"/>
+    </linearGradient>
+    <linearGradient id="sePin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E88908"/>
+      <stop offset="1" stop-color="#D97800"/>
+    </linearGradient>
+    <filter id="seCardShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#083B37" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- decorative rings -->
+  <circle cx="330" cy="250" r="228" fill="none" stroke="#0B8177" stroke-opacity="0.10" stroke-width="1.5"/>
+  <circle cx="330" cy="250" r="176" fill="none" stroke="#0B8177" stroke-opacity="0.08" stroke-width="1.5"/>
+
+  <!-- ground -->
+  <ellipse cx="330" cy="392" rx="252" ry="70" fill="url(#seGround)"/>
+
+  <!-- sports court -->
+  <g opacity="0.9">
+    <path d="M250 430 L360 430 L336 470 L226 470 Z" fill="#DDF3F0"/>
+    <path d="M250 430 L360 430 L336 470 L226 470 Z" fill="none" stroke="#0B8177" stroke-opacity="0.45" stroke-width="1.4"/>
+    <line x1="293" y1="430" x2="281" y2="470" stroke="#0B8177" stroke-opacity="0.45" stroke-width="1.4"/>
+    <circle cx="287" cy="450" r="10" fill="none" stroke="#0B8177" stroke-opacity="0.45" stroke-width="1.4"/>
+  </g>
+
+  <!-- LEFT building (taller, main block) -->
+  <g>
+    <rect x="196" y="196" width="150" height="176" rx="8" fill="#FFFFFF"/>
+    <rect x="196" y="196" width="150" height="176" rx="8" fill="#FBF8F2" fill-opacity="0.6"/>
+    <!-- roof -->
+    <path d="M186 200 L271 150 L356 200 Z" fill="url(#seRoof)"/>
+    <rect x="262" y="120" width="10" height="40" rx="3" fill="#075E57"/>
+    <path d="M272 122 l26 8 l-26 8 Z" fill="#E88908"/>
+    <!-- clock -->
+    <circle cx="271" cy="196" r="13" fill="#F1FAF8" stroke="#0B8177" stroke-width="2"/>
+    <line x1="271" y1="196" x2="271" y2="189" stroke="#075E57" stroke-width="2" stroke-linecap="round"/>
+    <line x1="271" y1="196" x2="276" y2="199" stroke="#075E57" stroke-width="2" stroke-linecap="round"/>
+    <!-- windows -->
+    <g fill="#DDF3F0" stroke="#0B8177" stroke-width="1.6">
+      <rect x="214" y="228" width="30" height="30" rx="4"/>
+      <rect x="256" y="228" width="30" height="30" rx="4"/>
+      <rect x="298" y="228" width="30" height="30" rx="4"/>
+      <rect x="214" y="276" width="30" height="30" rx="4"/>
+      <rect x="298" y="276" width="30" height="30" rx="4"/>
+    </g>
+    <!-- entrance -->
+    <path d="M256 372 v-40 a15 15 0 0 1 30 0 v40 Z" fill="#0B8177"/>
+    <line x1="271" y1="336" x2="271" y2="372" stroke="#F1FAF8" stroke-width="1.6"/>
+  </g>
+
+  <!-- RIGHT building (annex) -->
+  <g>
+    <rect x="346" y="250" width="116" height="122" rx="8" fill="#FFFFFF"/>
+    <rect x="346" y="250" width="116" height="122" rx="8" fill="#FBF8F2" fill-opacity="0.55"/>
+    <path d="M338 254 L404 214 L470 254 Z" fill="url(#seRoofSoft)"/>
+    <g fill="#DDF3F0" stroke="#0B8177" stroke-width="1.6">
+      <rect x="362" y="276" width="26" height="26" rx="4"/>
+      <rect x="398" y="276" width="26" height="26" rx="4"/>
+      <rect x="434" y="276" width="26" height="26" rx="4"/>
+      <rect x="362" y="318" width="26" height="26" rx="4"/>
+      <rect x="434" y="318" width="26" height="26" rx="4"/>
+    </g>
+    <rect x="398" y="336" width="26" height="36" rx="4" fill="#08756B"/>
+  </g>
+
+  <!-- trees -->
+  <g>
+    <rect x="166" y="316" width="7" height="26" rx="3" fill="#8A6A4B"/>
+    <circle cx="169" cy="308" r="22" fill="#0B8177"/>
+    <circle cx="156" cy="316" r="15" fill="#08756B"/>
+    <circle cx="184" cy="316" r="15" fill="#0E9488"/>
+  </g>
+  <g>
+    <rect x="474" y="330" width="7" height="24" rx="3" fill="#8A6A4B"/>
+    <circle cx="477" cy="322" r="19" fill="#0E9488"/>
+    <circle cx="490" cy="330" r="13" fill="#08756B"/>
+  </g>
+
+  <!-- large orange map pin -->
+  <g filter="url(#seCardShadow)">
+    <path d="M300 300 c0 34 -34 52 -34 82 a34 34 0 1 0 68 0 c0 -30 -34 -48 -34 -82 Z" transform="translate(-6 -14)" fill="url(#sePin)"/>
+    <circle cx="300" cy="356" r="15" fill="#FFF0D7"/>
+    <circle cx="300" cy="356" r="6" fill="#D97800"/>
+  </g>
+
+  <!-- floating card: rating (stars) -->
+  <g filter="url(#seCardShadow)">
+    <rect x="70" y="150" width="128" height="56" rx="14" fill="#FFFFFF"/>
+    <circle cx="96" cy="178" r="14" fill="#DDF3F0"/>
+    <path d="M96 170 l2.4 4.9 5.4 .8 -3.9 3.8 .9 5.4 -4.8 -2.5 -4.8 2.5 .9 -5.4 -3.9 -3.8 5.4 -.8 Z" fill="#E88908"/>
+    <g fill="#E88908">
+      <circle cx="120" cy="172" r="3"/><circle cx="132" cy="172" r="3"/>
+      <circle cx="144" cy="172" r="3"/><circle cx="156" cy="172" r="3"/>
+      <circle cx="168" cy="172" r="3" fill="#F2D9AE"/>
+    </g>
+    <rect x="120" y="185" width="58" height="6" rx="3" fill="#DCE8E5"/>
+  </g>
+
+  <!-- floating card: accreditation ribbon -->
+  <g filter="url(#seCardShadow)">
+    <rect x="66" y="290" width="120" height="64" rx="14" fill="#FFFFFF"/>
+    <circle cx="96" cy="318" r="16" fill="#DDF3F0"/>
+    <circle cx="96" cy="314" r="9" fill="none" stroke="#0B8177" stroke-width="2.4"/>
+    <path d="M91 322 l-4 12 8 -5 8 5 -4 -12" fill="#0B8177"/>
+    <rect x="122" y="308" width="50" height="7" rx="3.5" fill="#0B8177" fill-opacity="0.85"/>
+    <rect x="122" y="322" width="40" height="6" rx="3" fill="#DCE8E5"/>
+  </g>
+
+  <!-- floating card: donut chart -->
+  <g filter="url(#seCardShadow)">
+    <rect x="392" y="150" width="120" height="72" rx="14" fill="#FFFFFF"/>
+    <circle cx="422" cy="186" r="18" fill="none" stroke="#DDF3F0" stroke-width="7"/>
+    <path d="M422 168 a18 18 0 0 1 15.6 27" fill="none" stroke="#0B8177" stroke-width="7" stroke-linecap="round"/>
+    <path d="M422 168 a18 18 0 0 0 -15.6 9" fill="none" stroke="#E88908" stroke-width="7" stroke-linecap="round"/>
+    <rect x="452" y="174" width="48" height="7" rx="3.5" fill="#DCE8E5"/>
+    <rect x="452" y="190" width="34" height="7" rx="3.5" fill="#DCE8E5"/>
+  </g>
+
+  <!-- floating card: checklist -->
+  <g filter="url(#seCardShadow)">
+    <rect x="404" y="300" width="132" height="86" rx="14" fill="#FFFFFF"/>
+    <g>
+      <circle cx="428" cy="324" r="9" fill="#DDF3F0"/>
+      <path d="M424 324 l3 3 5 -6" fill="none" stroke="#0B8177" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="444" y="320" width="76" height="7" rx="3.5" fill="#DCE8E5"/>
+      <circle cx="428" cy="348" r="9" fill="#DDF3F0"/>
+      <path d="M424 348 l3 3 5 -6" fill="none" stroke="#0B8177" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="444" y="344" width="60" height="7" rx="3.5" fill="#DCE8E5"/>
+      <circle cx="428" cy="372" r="9" fill="#FFF0D7"/>
+      <path d="M424 372 l3 3 5 -6" fill="none" stroke="#E88908" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="444" y="368" width="68" height="7" rx="3.5" fill="#DCE8E5"/>
+    </g>
+  </g>
+
+  <!-- small dotted accent -->
+  <g fill="#0B8177" fill-opacity="0.18">
+    <circle cx="150" cy="96" r="3"/><circle cx="166" cy="96" r="3"/><circle cx="182" cy="96" r="3"/>
+    <circle cx="150" cy="112" r="3"/><circle cx="166" cy="112" r="3"/><circle cx="182" cy="112" r="3"/>
+    <circle cx="150" cy="128" r="3"/><circle cx="166" cy="128" r="3"/><circle cx="182" cy="128" r="3"/>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.unauthorized-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-4);
+}
+
+.unauthorized-actions a {
+  font-weight: 700;
+  text-decoration: none;
+}

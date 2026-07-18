@@ -1,0 +1,11 @@
+@use '../../styles/admin-shared';
+
+.admin-badge {
+  display: inline-block;
+  margin-inline-start: var(--se-space-2);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--se-radius-sm, 0.25rem);
+  font-size: 0.75rem;
+  background: var(--se-color-surface-muted, #eef1f3);
+  color: var(--se-color-ink-muted);
+}

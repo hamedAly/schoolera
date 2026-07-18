@@ -1,0 +1,45 @@
+.portal-application-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--se-space-4);
+}
+
+.portal-application-timeline__item {
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.portal-application-timeline__action {
+  font-weight: 600;
+}
+
+.portal-application-timeline__status {
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.portal-application-timeline__note {
+  margin: var(--se-space-2) 0 0;
+  font-size: 0.875rem;
+}
+
+.portal-application-timeline__note--internal {
+  color: var(--se-color-ink-muted);
+}
+
+.portal-application-timeline__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+  margin-top: var(--se-space-2);
+  font-size: 0.8125rem;
+  color: var(--se-color-ink-muted);
+}
+
+.portal-application-timeline__empty {
+  color: var(--se-color-ink-muted);
+}

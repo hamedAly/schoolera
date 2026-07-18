@@ -1,0 +1,14 @@
+@use '../../styles/admin-shared';
+
+.admin-back {
+  margin: 0 0 var(--se-space-4);
+}
+
+.admin-back a {
+  color: var(--se-color-brand-strong);
+  text-decoration: none;
+}
+
+.admin-back a:hover {
+  text-decoration: underline;
+}

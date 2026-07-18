@@ -1,0 +1,152 @@
+<se-portal-page-header
+  [titleKey]="isCreate() ? 'admin.integrations.edit.createTitle' : 'admin.integrations.edit.editTitle'"
+  subtitleKey="admin.integrations.edit.subtitle"
+/>
+
+<p>
+  <a routerLink="/admin/integrations">{{ 'admin.integrations.edit.back' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="10" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    <p class="admin-alert admin-alert--warning" role="status">
+      {{ 'admin.integrations.plaintextWarning' | transloco }}
+    </p>
+
+    <form class="admin-form-panel" [formGroup]="form" (ngSubmit)="save()">
+      <label>
+        {{ 'admin.integrations.edit.type' | transloco }}
+        <select formControlName="integrationType">
+          @for (opt of typeOptions; track opt.value) {
+            <option [ngValue]="opt.value">{{ opt.labelKey | transloco }}</option>
+          }
+        </select>
+      </label>
+
+      @if (isMeeting()) {
+        <div class="admin-alert admin-alert--warning" role="status">
+          <strong>{{ 'admin.integrations.meeting.developmentOnly' | transloco }}</strong>
+          <p>{{ 'admin.integrations.meeting.noRealProvider' | transloco }}</p>
+          @if (isCreate()) {
+            <button type="button" (click)="applySimulatedMeetingTemplate()">
+              {{ 'admin.integrations.meeting.useTemplate' | transloco }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (isCourier()) {
+        <div class="admin-alert admin-alert--warning" role="status">
+          <strong>{{ 'admin.integrations.courier.simulatedWarning' | transloco }}</strong>
+          <p>{{ 'admin.integrations.courier.noSecrets' | transloco }}</p>
+          @if (isCreate()) {
+            <button type="button" (click)="applySimulatedCourierTemplate()">
+              {{ 'admin.integrations.courier.template.use' | transloco }}
+            </button>
+          }
+        </div>
+      }
+
+      <label>
+        {{ 'admin.integrations.edit.providerCode' | transloco }}
+        <input type="text" formControlName="providerCode" autocomplete="off" />
+      </label>
+
+      <label>
+        {{ 'admin.integrations.edit.displayNameAr' | transloco }}
+        <input type="text" formControlName="displayNameAr" />
+      </label>
+
+      <label>
+        {{ 'admin.integrations.edit.displayNameEn' | transloco }}
+        <input type="text" formControlName="displayNameEn" />
+      </label>
+
+      <label>
+        {{ 'admin.integrations.edit.settingsJson' | transloco }}
+        <textarea
+          formControlName="settingsJson"
+          rows="12"
+          spellcheck="false"
+          autocomplete="off"
+          class="admin-settings-json"
+        ></textarea>
+        <span class="admin-field-hint">{{ 'admin.integrations.edit.settingsHint' | transloco }}</span>
+      </label>
+
+      <label>
+        {{ 'admin.integrations.edit.schemaVersion' | transloco }}
+        <input type="number" formControlName="settingsSchemaVersion" min="1" />
+      </label>
+
+      <label>
+        {{ 'admin.integrations.edit.sortOrder' | transloco }}
+        <input type="number" formControlName="sortOrder" />
+      </label>
+
+      @if (validationMessages().length) {
+        <ul class="admin-alert admin-alert--error" role="alert">
+          @for (msg of validationMessages(); track msg) {
+            <li>{{ msg }}</li>
+          }
+        </ul>
+      }
+
+      @if (detail()?.meetingMetadata; as metadata) {
+        <dl class="admin-integration-metadata">
+          <div><dt>{{ 'admin.integrations.meeting.environment' | transloco }}</dt><dd>{{ metadata.environment }}</dd></div>
+          <div><dt>{{ 'admin.integrations.meeting.simulated' | transloco }}</dt><dd>{{ metadata.isSimulated ? ('common.yes' | transloco) : ('common.no' | transloco) }}</dd></div>
+          <div><dt>{{ 'admin.integrations.meeting.parentAccess' | transloco }}</dt><dd>{{ metadata.supportsParentAccess ? ('common.yes' | transloco) : ('common.no' | transloco) }}</dd></div>
+          <div><dt>{{ 'admin.integrations.meeting.hostAccess' | transloco }}</dt><dd>{{ metadata.supportsHostAccess ? ('common.yes' | transloco) : ('common.no' | transloco) }}</dd></div>
+          <div><dt>{{ 'admin.integrations.meeting.cancellation' | transloco }}</dt><dd>{{ metadata.supportsCancellation ? ('common.yes' | transloco) : ('common.no' | transloco) }}</dd></div>
+        </dl>
+      }
+
+      <div class="admin-actions">
+        <button type="submit" class="primary" [disabled]="saving()">
+          {{ 'admin.integrations.edit.save' | transloco }}
+        </button>
+        <button type="button" [disabled]="acting() || saving()" (click)="validateSettings()">
+          {{ 'admin.integrations.edit.validate' | transloco }}
+        </button>
+
+        @if (!isCreate() && detail(); as d) {
+          @if (!d.isActive) {
+            <button type="button" [disabled]="acting()" (click)="activate()">
+              {{ 'admin.integrations.edit.activate' | transloco }}
+            </button>
+          } @else {
+            <button type="button" class="danger" [disabled]="acting()" (click)="requestConfirm('deactivate')">
+              {{ 'admin.integrations.edit.deactivate' | transloco }}
+            </button>
+          }
+          @if (!d.isDefault) {
+            <button type="button" [disabled]="acting()" (click)="requestConfirm('setDefault')">
+              {{ 'admin.integrations.edit.setDefault' | transloco }}
+            </button>
+          }
+          <button type="button" [disabled]="acting()" (click)="testConnection()">
+            {{ 'admin.integrations.edit.testConnection' | transloco }}
+          </button>
+        }
+      </div>
+    </form>
+
+    @if (!isCreate() && isCourier() && detail()?.id; as integrationId) {
+      <se-courier-configuration-panel [integrationId]="integrationId" />
+    }
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="!!confirmAction()"
+  [titleKey]="confirmTitleKey()"
+  [messageKey]="confirmMessageKey()"
+  [confirming]="confirming()"
+  (confirmed)="confirmPending()"
+  (cancelled)="cancelConfirm()"
+/>

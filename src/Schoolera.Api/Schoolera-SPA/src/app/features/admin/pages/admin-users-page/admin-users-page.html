@@ -1,0 +1,126 @@
+<se-portal-page-header titleKey="admin.users.title" subtitleKey="admin.users.subtitle" />
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    <form class="admin-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'admin.users.search' | transloco }}
+        <input type="search" [(ngModel)]="searchTerm" name="search" />
+      </label>
+      <label>
+        {{ 'admin.users.roleFilter' | transloco }}
+        <select [(ngModel)]="roleFilter" name="role">
+          <option value="">{{ 'admin.common.all' | transloco }}</option>
+          @for (role of roleOptions; track role) {
+            @if (role) {
+              <option [value]="role">{{ 'admin.roles.' + role | transloco }}</option>
+            }
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.users.accountStatusFilter' | transloco }}
+        <select [(ngModel)]="accountStatusFilter" name="accountStatus">
+          <option value="">{{ 'admin.common.all' | transloco }}</option>
+          @for (status of accountStatusOptions; track status) {
+            @if (status) {
+              <option [value]="status">{{ accountStatusKey(status) | transloco }}</option>
+            }
+          }
+        </select>
+      </label>
+      <button type="submit">{{ 'admin.common.apply' | transloco }}</button>
+    </form>
+
+    @if (items().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.users.columns.name' | transloco }}</th>
+              <th scope="col">{{ 'admin.users.columns.email' | transloco }}</th>
+              <th scope="col">{{ 'admin.users.columns.roles' | transloco }}</th>
+              <th scope="col">{{ 'admin.users.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'admin.users.columns.actions' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of items(); track user.id) {
+              <tr>
+                <td>{{ user.displayName }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  @for (role of user.roles ?? []; track role) {
+                    <span class="admin-badge">{{ 'admin.roles.' + role | transloco }}</span>
+                  }
+                </td>
+                <td>
+                  <span
+                    class="admin-badge"
+                    [class.admin-badge--active]="user.accountStatus === 'Active'"
+                    [class.admin-badge--suspended]="user.accountStatus === 'Suspended'"
+                  >
+                    {{ accountStatusKey(user.accountStatus) | transloco }}
+                  </span>
+                </td>
+                <td>
+                  @if (isSelf(user)) {
+                    <span class="admin-muted">{{ 'admin.users.cannotModifySelf' | transloco }}</span>
+                  } @else {
+                    <div class="admin-actions">
+                      @if (canSuspend(user)) {
+                        <button
+                          type="button"
+                          class="danger"
+                          [disabled]="actionLoading() === user.id"
+                          (click)="suspendUser(user)"
+                        >
+                          {{ 'admin.users.suspend' | transloco }}
+                        </button>
+                      }
+                      @if (canActivate(user)) {
+                        <button
+                          type="button"
+                          [disabled]="actionLoading() === user.id"
+                          (click)="activateUser(user)"
+                        >
+                          {{ 'admin.users.activate' | transloco }}
+                        </button>
+                      }
+                    </div>
+                  }
+                  @if (rowMessage()?.userId === user.id) {
+                    <div
+                      class="admin-row-message"
+                      [class.admin-row-message--error]="rowMessage()!.isError"
+                    >
+                      {{ rowMessage()!.message }}
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination">
+        <span>{{ 'admin.common.pageInfo' | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 } }}</span>
+        <div class="admin-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'admin.common.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'admin.common.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.users.empty' | transloco }}</p>
+    }
+  </div>
+}

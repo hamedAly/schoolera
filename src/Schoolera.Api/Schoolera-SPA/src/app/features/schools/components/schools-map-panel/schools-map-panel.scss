@@ -1,0 +1,113 @@
+.schools-map-panel {
+  display: grid;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.schools-map-panel__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.schools-map-panel__action {
+  border: 1px solid var(--se-border, #c9d0d8);
+  background: var(--se-surface, #fff);
+  color: inherit;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.schools-map-panel__action:focus-visible {
+  outline: 2px solid var(--se-focus, #0b6e4f);
+  outline-offset: 2px;
+}
+
+.schools-map-panel__status,
+.schools-map-panel__message,
+.schools-map-panel__truncated {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.schools-map-panel__canvas {
+  min-height: 420px;
+  height: min(62vh, 640px);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--se-border, #c9d0d8);
+}
+
+.schools-map-panel__canvas--hidden {
+  display: none;
+}
+
+.schools-map-panel__fallback {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: var(--se-surface-muted, #f4f7f6);
+}
+
+.schools-map-panel__preview {
+  position: absolute;
+  inset-inline-start: 1rem;
+  bottom: 1rem;
+  z-index: 500;
+  width: min(100% - 2rem, 22rem);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: var(--se-surface, #fff);
+  box-shadow: 0 8px 28px rgb(16 24 40 / 16%);
+}
+
+.schools-map-panel__preview h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+}
+
+.schools-map-panel__preview p {
+  margin: 0 0 0.35rem;
+}
+
+.schools-map-panel__close {
+  float: inline-end;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.schools-map-panel__link {
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.schools-map-panel__badge {
+  color: var(--se-success, #0b6e4f);
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .schools-map-panel__canvas {
+    min-height: 320px;
+    height: 55vh;
+  }
+
+  .schools-map-panel__preview {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid var(--se-border, #c9d0d8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schools-map-panel * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,62 @@
+<se-portal-page-header
+  titleKey="parent.favorites.title"
+  subtitleKey="parent.favorites.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+  <div class="parent-actions">
+    <button type="button" (click)="load()">{{ 'parent.common.retry' | transloco }}</button>
+  </div>
+} @else {
+  <div class="parent-page">
+    @if (items().length) {
+      <ul class="parent-favorites-list">
+        @for (item of items(); track item.favoriteId) {
+          <li [class.is-unavailable]="!item.isAvailable">
+            <div class="parent-favorites-list__body">
+              <strong>{{ displayName(item) }}</strong>
+              @if (!item.isAvailable) {
+                <p class="parent-muted">{{ 'parent.favorites.unavailable.message' | transloco }}</p>
+              } @else if (item.school?.city) {
+                <p class="parent-muted">{{ item.school?.city }}</p>
+              }
+            </div>
+            <div class="parent-actions">
+              @if (schoolLink(item); as link) {
+                <a [routerLink]="link">{{ 'parent.favorites.viewSchool' | transloco }}</a>
+              }
+              <button type="button" [disabled]="acting()" (click)="remove(item)">
+                {{ 'parent.favorites.remove' | transloco }}
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+
+      <div class="parent-pagination">
+        <span>
+          {{
+            'parent.favorites.pageInfo'
+              | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 }
+          }}
+        </span>
+        <div class="parent-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'parent.notifications.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'parent.notifications.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="parent-empty">{{ 'parent.favorites.empty' | transloco }}</p>
+      <div class="parent-actions">
+        <a routerLink="/schools">{{ 'parent.favorites.browseSchools' | transloco }}</a>
+      </div>
+    }
+  </div>
+}

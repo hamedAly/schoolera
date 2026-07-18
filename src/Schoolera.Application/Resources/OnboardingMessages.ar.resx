@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="NotFound" xml:space="preserve"><value>لم يتم العثور على طلب التسجيل.</value></data>
+  <data name="Forbidden" xml:space="preserve"><value>لا تملك صلاحية الوصول إلى طلب التسجيل هذا.</value></data>
+  <data name="OwnerRoleRequired" xml:space="preserve"><value>يلزم حساب مالك مدرسة لإكمال التسجيل.</value></data>
+  <data name="InvalidStatusTransition" xml:space="preserve"><value>هذا الإجراء غير مسموح به في حالة الطلب الحالية.</value></data>
+  <data name="NotEditable" xml:space="preserve"><value>لا يمكن تعديل الطلب في حالته الحالية.</value></data>
+  <data name="ConcurrentUpdate" xml:space="preserve"><value>تم تحديث الطلب من مكان آخر. أعد التحميل وحاول مجددًا.</value></data>
+  <data name="Incomplete" xml:space="preserve"><value>بعض البيانات المطلوبة ناقصة أو غير صحيحة.</value></data>
+  <data name="RequiredDocumentMissing" xml:space="preserve"><value>يوجد مستند مطلوب واحد أو أكثر مفقود.</value></data>
+  <data name="InvalidDocumentType" xml:space="preserve"><value>نوع المستند المحدد غير صالح.</value></data>
+  <data name="DocumentTooLarge" xml:space="preserve"><value>يتجاوز الملف المرفوع الحد الأقصى المسموح به للحجم.</value></data>
+  <data name="UnsupportedDocumentFormat" xml:space="preserve"><value>صيغة الملف المرفوع غير مدعومة.</value></data>
+  <data name="InvalidFileSignature" xml:space="preserve"><value>محتوى الملف المرفوع لا يطابق نوعه.</value></data>
+  <data name="EmptyDocument" xml:space="preserve"><value>الملف المرفوع فارغ.</value></data>
+  <data name="CityDistrictMismatch" xml:space="preserve"><value>الحي المحدد لا ينتمي إلى المدينة المحددة.</value></data>
+  <data name="DuplicateRegistrationNumber" xml:space="preserve"><value>رقم السجل أو الترخيص مستخدم بالفعل.</value></data>
+  <data name="AlreadyApproved" xml:space="preserve"><value>تمت الموافقة على الطلب بالفعل.</value></data>
+  <data name="ApprovalFailed" xml:space="preserve"><value>تعذّرت الموافقة على الطلب. حاول مرة أخرى.</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>يلزم إدخال سبب مرئي للمالك.</value></data>
+  <data name="ReasonTooLong" xml:space="preserve"><value>السبب طويل جدًا.</value></data>
+  <data name="InvalidUrl" xml:space="preserve"><value>أدخل رابطًا صالحًا.</value></data>
+  <data name="InvalidPhone" xml:space="preserve"><value>أدخل رقم هاتف صالحًا.</value></data>
+  <data name="FieldMaxLength" xml:space="preserve"><value>يجب ألا يتجاوز هذا الحقل {0} حرفًا.</value></data>
+  <data name="InvalidFoundedYear" xml:space="preserve"><value>أدخل سنة تأسيس صحيحة.</value></data>
+  <data name="InvalidCoordinates" xml:space="preserve"><value>أدخل قيم خط عرض وخط طول صحيحة.</value></data>
+  <data name="InvalidCountryCode" xml:space="preserve"><value>أدخل رمز دولة صحيحًا من حرفين.</value></data>
+</root>

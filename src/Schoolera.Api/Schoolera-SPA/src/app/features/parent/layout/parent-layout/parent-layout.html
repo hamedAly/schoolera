@@ -1,0 +1,61 @@
+<div class="parent-layout">
+  <header class="parent-layout__header">
+    <div class="parent-layout__header-start">
+      <button
+        type="button"
+        class="parent-layout__menu-toggle"
+        [attr.aria-expanded]="mobileNavOpen()"
+        [attr.aria-label]="(mobileNavOpen() ? 'parent.layout.closeNav' : 'parent.layout.openNav') | transloco"
+        (click)="toggleMobileNav()"
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
+
+      <a routerLink="/parent" class="parent-layout__brand">{{ 'parent.layout.brand' | transloco }}</a>
+    </div>
+
+    <div class="parent-layout__header-end">
+      <se-language-switcher />
+
+      <div class="parent-layout__user-menu">
+        <button
+          type="button"
+          class="parent-layout__user-trigger"
+          [attr.aria-expanded]="userMenuOpen()"
+          (click)="toggleUserMenu()"
+        >
+          {{ authUser()?.displayName }}
+        </button>
+        @if (userMenuOpen()) {
+          <div class="parent-layout__user-dropdown" role="menu">
+            <button type="button" role="menuitem" (click)="logout()">
+              {{ 'parent.layout.logout' | transloco }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </header>
+
+  <div class="parent-layout__body">
+    <nav
+      class="parent-layout__nav"
+      [class.parent-layout__nav--open]="mobileNavOpen()"
+      [attr.aria-label]="'parent.layout.mainNav' | transloco"
+    >
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="['/parent', item.path]"
+          routerLinkActive="is-active"
+          (click)="closeMobileNav()"
+        >
+          {{ item.labelKey | transloco }}
+        </a>
+      }
+    </nav>
+
+    <main class="parent-layout__main" id="parent-main">
+      <router-outlet />
+    </main>
+  </div>
+</div>

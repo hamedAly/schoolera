@@ -1,0 +1,142 @@
+<se-portal-page-header
+  titleKey="admin.supportTickets.list.title"
+  subtitleKey="admin.supportTickets.list.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    <form class="admin-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'admin.supportTickets.filters.search' | transloco }}
+        <input
+          type="search"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          name="search"
+        />
+      </label>
+
+      <label>
+        {{ 'admin.supportTickets.filters.status' | transloco }}
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" name="status">
+          <option value="">{{ 'admin.supportTickets.filters.allStatuses' | transloco }}</option>
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">
+              {{ ('admin.supportTickets.' + option.labelKey) | transloco }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'admin.supportTickets.filters.priority' | transloco }}
+        <select
+          [ngModel]="priorityFilter()"
+          (ngModelChange)="priorityFilter.set($event)"
+          name="priority"
+        >
+          <option value="">{{ 'admin.supportTickets.filters.allPriorities' | transloco }}</option>
+          @for (option of priorityOptions; track option.value) {
+            <option [value]="option.value">
+              {{ ('admin.supportTickets.' + option.labelKey) | transloco }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'admin.supportTickets.filters.category' | transloco }}
+        <select
+          [ngModel]="categoryFilter()"
+          (ngModelChange)="categoryFilter.set($event)"
+          name="category"
+        >
+          <option value="">{{ 'admin.supportTickets.filters.allCategories' | transloco }}</option>
+          @for (option of categoryOptions; track option.value) {
+            <option [value]="option.value">
+              {{ ('admin.supportTickets.' + option.labelKey) | transloco }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label class="admin-filters__check">
+        <input
+          type="checkbox"
+          [ngModel]="unassignedOnly()"
+          (ngModelChange)="unassignedOnly.set($event)"
+          name="unassignedOnly"
+        />
+        {{ 'admin.supportTickets.filters.unassignedOnly' | transloco }}
+      </label>
+
+      <div class="admin-actions">
+        <button type="submit">{{ 'admin.common.apply' | transloco }}</button>
+        <button type="button" (click)="clearFilters()">
+          {{ 'admin.supportTickets.filters.clear' | transloco }}
+        </button>
+        <button type="button" [disabled]="exporting()" (click)="exportCsv()">
+          {{
+            exporting()
+              ? ('admin.supportTickets.exporting' | transloco)
+              : ('admin.supportTickets.export' | transloco)
+          }}
+        </button>
+      </div>
+    </form>
+
+    @if (items().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.supportTickets.columns.reference' | transloco }}</th>
+              <th scope="col">{{ 'admin.supportTickets.columns.subject' | transloco }}</th>
+              <th scope="col">{{ 'admin.supportTickets.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'admin.supportTickets.columns.priority' | transloco }}</th>
+              <th scope="col">{{ 'admin.supportTickets.columns.category' | transloco }}</th>
+              <th scope="col">{{ 'admin.supportTickets.columns.updated' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/admin/support-tickets', item.id]">{{ item.reference }}</a>
+                </td>
+                <td>{{ item.subject }}</td>
+                <td>{{ statusKey(item.status) | transloco }}</td>
+                <td>{{ priorityKey(item.priority) | transloco }}</td>
+                <td>{{ categoryKey(item.category) | transloco }}</td>
+                <td>{{ item.updatedAtUtc | date: 'medium' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination">
+        <span>
+          {{
+            'admin.common.pageInfo'
+              | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 }
+          }}
+        </span>
+        <div class="admin-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'admin.common.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'admin.common.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.supportTickets.list.empty' | transloco }}</p>
+    }
+  </div>
+}

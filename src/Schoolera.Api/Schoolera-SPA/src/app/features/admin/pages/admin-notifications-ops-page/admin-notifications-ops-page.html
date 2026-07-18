@@ -1,0 +1,34 @@
+<se-portal-page-header
+  titleKey="admin.notificationsOps.title"
+  subtitleKey="admin.notificationsOps.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+  <div class="admin-actions">
+    <button type="button" (click)="load()">{{ 'admin.common.retry' | transloco }}</button>
+  </div>
+} @else if (summary(); as s) {
+  <div class="admin-page">
+    <dl class="admin-stats">
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.notificationsOps.pending' | transloco }}</dt>
+        <dd>{{ s.pending }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.notificationsOps.processing' | transloco }}</dt>
+        <dd>{{ s.processing }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.notificationsOps.failed' | transloco }}</dt>
+        <dd>{{ s.failed }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.notificationsOps.deadLetter' | transloco }}</dt>
+        <dd>{{ s.deadLetter }}</dd>
+      </div>
+    </dl>
+  </div>
+}

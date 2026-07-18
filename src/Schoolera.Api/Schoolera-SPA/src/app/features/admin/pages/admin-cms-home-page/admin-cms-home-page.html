@@ -1,0 +1,154 @@
+<se-portal-page-header
+  titleKey="admin.cms.home.title"
+  subtitleKey="admin.cms.home.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="12" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    @if (content(); as c) {
+      <p class="admin-meta">
+        {{ 'admin.cms.home.status' | transloco }}:
+        <strong>{{ statusKey(c.status) | transloco }}</strong>
+      </p>
+    }
+
+    <form class="admin-form" [formGroup]="form" (ngSubmit)="save()">
+      <h3>{{ 'admin.cms.home.heroSection' | transloco }}</h3>
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="heroTitleAr"
+        englishControlName="heroTitleEn"
+        arabicLabelKey="admin.cms.home.heroTitleAr"
+        englishLabelKey="admin.cms.home.heroTitleEn"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="heroSubtitleAr"
+        englishControlName="heroSubtitleEn"
+        arabicLabelKey="admin.cms.home.heroSubtitleAr"
+        englishLabelKey="admin.cms.home.heroSubtitleEn"
+        [multiline]="true"
+        [rows]="3"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="primaryCtaLabelAr"
+        englishControlName="primaryCtaLabelEn"
+        arabicLabelKey="admin.cms.home.primaryCtaLabelAr"
+        englishLabelKey="admin.cms.home.primaryCtaLabelEn"
+      />
+      <label class="admin-field">
+        {{ 'admin.cms.home.primaryCtaUrl' | transloco }}
+        <input type="text" formControlName="primaryCtaUrl" />
+        <small>{{ 'admin.cms.home.ctaUrlHint' | transloco }}</small>
+      </label>
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="secondaryCtaLabelAr"
+        englishControlName="secondaryCtaLabelEn"
+        arabicLabelKey="admin.cms.home.secondaryCtaLabelAr"
+        englishLabelKey="admin.cms.home.secondaryCtaLabelEn"
+      />
+      <label class="admin-field">
+        {{ 'admin.cms.home.secondaryCtaUrl' | transloco }}
+        <input type="text" formControlName="secondaryCtaUrl" />
+        <small>{{ 'admin.cms.home.ctaUrlHint' | transloco }}</small>
+      </label>
+
+      <h3>{{ 'admin.cms.home.sections' | transloco }}</h3>
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="schoolsSectionTitleAr"
+        englishControlName="schoolsSectionTitleEn"
+        arabicLabelKey="admin.cms.home.schoolsSectionTitleAr"
+        englishLabelKey="admin.cms.home.schoolsSectionTitleEn"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="parentJourneyTitleAr"
+        englishControlName="parentJourneyTitleEn"
+        arabicLabelKey="admin.cms.home.parentJourneyTitleAr"
+        englishLabelKey="admin.cms.home.parentJourneyTitleEn"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="parentJourneyTextAr"
+        englishControlName="parentJourneyTextEn"
+        arabicLabelKey="admin.cms.home.parentJourneyTextAr"
+        englishLabelKey="admin.cms.home.parentJourneyTextEn"
+        [multiline]="true"
+        [rows]="3"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="schoolJourneyTitleAr"
+        englishControlName="schoolJourneyTitleEn"
+        arabicLabelKey="admin.cms.home.schoolJourneyTitleAr"
+        englishLabelKey="admin.cms.home.schoolJourneyTitleEn"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="schoolJourneyTextAr"
+        englishControlName="schoolJourneyTextEn"
+        arabicLabelKey="admin.cms.home.schoolJourneyTextAr"
+        englishLabelKey="admin.cms.home.schoolJourneyTextEn"
+        [multiline]="true"
+        [rows]="3"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="faqSectionTitleAr"
+        englishControlName="faqSectionTitleEn"
+        arabicLabelKey="admin.cms.home.faqSectionTitleAr"
+        englishLabelKey="admin.cms.home.faqSectionTitleEn"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="faqSectionSubtitleAr"
+        englishControlName="faqSectionSubtitleEn"
+        arabicLabelKey="admin.cms.home.faqSectionSubtitleAr"
+        englishLabelKey="admin.cms.home.faqSectionSubtitleEn"
+        [multiline]="true"
+        [rows]="2"
+      />
+
+      <div class="admin-actions">
+        <button type="submit" class="se-btn se-btn--primary" [disabled]="saving()">
+          {{ 'admin.cms.home.save' | transloco }}
+        </button>
+        @if (content(); as c) {
+          @if (c.status !== publishedStatus) {
+            <button type="button" class="se-btn se-btn--outline" (click)="requestAction('publish')">
+              {{ 'admin.cms.home.publish' | transloco }}
+            </button>
+          } @else {
+            <button type="button" class="se-btn se-btn--outline" (click)="requestAction('unpublish')">
+              {{ 'admin.cms.home.unpublish' | transloco }}
+            </button>
+          }
+        }
+      </div>
+    </form>
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="!!confirmAction()"
+  [titleKey]="
+    confirmAction() === 'unpublish'
+      ? 'admin.cms.home.confirm.unpublishTitle'
+      : 'admin.cms.home.confirm.publishTitle'
+  "
+  [messageKey]="
+    confirmAction() === 'unpublish'
+      ? 'admin.cms.home.confirm.unpublishMessage'
+      : 'admin.cms.home.confirm.publishMessage'
+  "
+  [confirming]="confirming()"
+  (confirmed)="confirmPending()"
+  (cancelled)="cancelConfirm()"
+/>

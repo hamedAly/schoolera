@@ -1,0 +1,76 @@
+---
+description: Mandatory Schoolera architecture, NSwag, database, Angular, localization, and verification rules
+alwaysApply: true
+---
+
+# Schoolera core rules
+
+## Before coding
+
+- Read `docs/implementation-baseline.md` and `docs/localization.md` before implementing a feature.
+- Inspect existing code before changing it.
+- Complete only the requested prompt scope and stop.
+
+## Architecture
+
+- Preserve Clean Architecture projects: Api, Application, Domain, Infrastructure, Tests.
+- Keep controllers thin; use MediatR (CQRS).
+- Use explicit API DTOs; never expose EF entities from controllers.
+- Preserve the `Result<T>` (`succeeded` / `data` / `errors` / `errorCodes`) response pattern.
+- Preserve migrations and existing data; prefer additive schema changes.
+- Do not create duplicate architectures, unnecessary generic repositories, microservices, event buses, or excessive abstractions.
+
+## NSwag (official Angular API contract)
+
+- NSwag is the official Angular API-contract generator.
+- Generated file: `src/Schoolera.Api/Schoolera-SPA/src/app/core/api-client/SwaggerClient.service.ts`
+- Never manually edit the generated file.
+- Backend DTOs and OpenAPI are the source of truth.
+- When contracts change: update backend → regenerate NSwag client → fix consuming Angular code.
+- Wrap generated clients behind Angular feature services (for example `SchoolsApi`).
+- Angular components must not normally depend on generated clients directly.
+- Do not hand-write duplicates of generated API DTOs.
+- UI-only view models are allowed for display, form state, filters, and non-API flags.
+
+## Hosting and HTTP
+
+- Preserve same-origin production `/api` behavior (NSwag paths are `/api/...`; base URL is usually empty).
+- Never hardcode localhost addresses in production or generated client code.
+- Prefer Angular proxy for Development relative `/api` requests.
+- Preserve Swagger and SPA endpoint ordering: `MapControllers()` before `MapFallbackToFile("index.html")`.
+- Unmatched `/api/**`, `/swagger/**`, and `/uploads/**` must return API/file 404, not Angular `index.html`.
+- Use the global `Accept-Language` interceptor; do not set language headers in feature services.
+
+## Angular UI
+
+- Reusable shared components only when reused or part of the design system.
+- Prefer extending existing feature-service and layout patterns.
+
+## Localization (permanent — overrides older “English optional” wording)
+
+- Arabic (`ar`, locale `ar-EG`, RTL) and English (`en`, locale `en-US`, LTR) are mandatory from Phase 1.
+- Arabic is the default and fallback language.
+- Read `docs/localization.md` before frontend or API-contract work.
+- Use only the existing Transloco architecture (no ngx-translate, no Angular compile-time i18n second system).
+- Do not hardcode user-facing UI strings; use translation keys in `public/i18n`.
+- Do not duplicate page components per language.
+- Static UI uses Transloco keys; managed public content uses explicit Arabic/English database fields when required.
+- Management forms show both language fields (`se-bilingual-field-group`); public APIs may return localized display DTOs; management APIs return both language values.
+- Localization validation (`npm run i18n:check` / `i18n:validate`) must pass before a feature is complete.
+- Frontends branch on `errorCodes`, never on localized `errors` text.
+
+## Authentication (Phase 1)
+
+- ASP.NET Core Identity with HttpOnly application cookie (`ConfigureApplicationCookie`); no tokens in browser storage.
+- Public registration creates only **Parent** and **SchoolOwner** roles.
+- Centralized roles/policies in `Schoolera.Application.Auth.Constants`.
+- State-changing cookie-authenticated `/api/**` POST requests require CSRF (`XSRF-TOKEN` / `X-XSRF-TOKEN`).
+- API `401`/`403` return JSON `Result<T>` with stable `auth.*` error codes.
+- See `docs/authentication.md` before auth work.
+
+## Verification
+
+- Run relevant backend and Angular builds/tests for the change.
+- Never claim a command succeeded unless it was actually executed.
+- Report real failures (Node version, SQL, etc.) honestly.
+- Do not put machine-specific build failures into permanent rules.

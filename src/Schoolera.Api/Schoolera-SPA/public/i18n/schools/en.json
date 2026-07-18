@@ -1,0 +1,270 @@
+{
+  "list": {
+    "title": "Schools",
+    "description": "Route-owned page component backed by the schools data-access layer.",
+    "new": "New school",
+    "loadingTitle": "Loading schools",
+    "loadingMessage": "Waiting for the API response.",
+    "errorTitle": "Unable to load schools",
+    "emptyTitle": "No schools yet",
+    "emptyMessage": "Create the first school to start using this module."
+  },
+  "search": {
+    "eyebrow": "School discovery",
+    "title": "Find the right school",
+    "subtitle": "Search published schools across Egypt with filters for location, curriculum, fees, and admission status.",
+    "searchLabel": "Search schools",
+    "searchPlaceholder": "Search by school name or keyword",
+    "mobileFilters": "Filters",
+    "filtersTitle": "Filters",
+    "closeFilters": "Close filters",
+    "showResults": "Show {{count}} schools",
+    "activeFilters": "Active filters",
+    "clearAll": "Clear all",
+    "resetFilters": "Reset filters",
+    "resultsTitle": "School search results",
+    "loadingCount": "Searching schools…",
+    "resultCount": "{{count}} schools found",
+    "sortLabel": "Sort by",
+    "pagination": "Pagination",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "errorTitle": "Unable to load schools",
+    "errorMessage": "Something went wrong while loading schools. Please try again.",
+    "retry": "Try again",
+    "emptyTitle": "No schools found",
+    "emptyMessage": "We couldn't find schools matching your filters.",
+    "viewSchool": "View School",
+    "feeFrom": "Starting from",
+    "feesRequireLogin": "Fees available after login",
+    "distanceKm": "{{distance}} km away",
+    "distanceApproximate": "Approximate distance",
+    "locationFallback": "Location unavailable",
+    "admissionOpen": "Admission open",
+    "geolocation": {
+      "useCurrent": "Use my current location",
+      "clear": "Clear current location",
+      "loading": "Getting your current location…",
+      "success": "Current location applied. Results are sorted by nearest.",
+      "denied": "Location permission was denied.",
+      "unavailable": "Your current location is unavailable.",
+      "timeout": "Getting your location timed out. Please try again.",
+      "unsupported": "Location is not supported by this browser.",
+      "insecure": "Location requires a secure connection."
+    },
+    "sort": {
+      "relevance": "Relevance",
+      "name-asc": "Name (A–Z)",
+      "name-desc": "Name (Z–A)",
+      "lowest-fee": "Lowest fee",
+      "highest-fee": "Highest fee",
+      "newest": "Newest",
+      "nearest": "Nearest"
+    },
+    "filters": {
+      "any": "Any",
+      "city": "City",
+      "district": "District",
+      "stage": "Educational stage",
+      "grade": "Grade",
+      "schoolType": "School type",
+      "genderType": "Gender",
+      "curricula": "Curriculum",
+      "facilities": "Facilities",
+      "minimumTuition": "Minimum annual fee (EGP)",
+      "maximumTuition": "Maximum annual fee (EGP)",
+      "academicYear": "Academic year",
+      "admissionOpen": "Admission open only"
+    },
+    "chips": {
+      "minimumTuition": "Min fee: {{amount}}",
+      "maximumTuition": "Max fee: {{amount}}"
+    },
+    "map": {
+      "viewToggle": "Result view",
+      "listView": "List",
+      "mapView": "Map",
+      "listCountHint": "List matches: {{count}} (map shows branches with coordinates)",
+      "regionLabel": "School search map",
+      "searchThisArea": "Search this area",
+      "loading": "Loading map…",
+      "loadingPins": "Loading schools on the map…",
+      "pinsLoaded": "{{count}} locations on the map",
+      "pinsError": "Unable to load map locations. Use the List view.",
+      "unavailable": "Map is temporarily unavailable. Use the List view.",
+      "providerFailed": "The map could not be loaded. Use the List view.",
+      "useList": "School search still works in List view.",
+      "zoomIn": "Zoom in to see more schools",
+      "previewLabel": "Selected school branch",
+      "closePreview": "Close",
+      "selected": "Selected {{school}} — {{branch}}"
+    }
+  },
+  "location": {
+    "country": "Country",
+    "governorate": "Governorate",
+    "city": "City",
+    "district": "District",
+    "any": "Any",
+    "loading": "Loading locations…",
+    "empty": "No locations available.",
+    "error": "Unable to load locations.",
+    "retry": "Try again"
+  },
+  "enums": {
+    "schoolType": {
+      "private": "Private",
+      "international": "International",
+      "national": "National",
+      "language": "Language school"
+    },
+    "genderType": {
+      "boys": "Boys",
+      "girls": "Girls",
+      "mixed": "Mixed"
+    }
+  },
+  "create": {
+    "title": "Add school",
+    "description": "Create a new school through the API.",
+    "errorsLabel": "Validation errors",
+    "createFailed": "Unable to create school."
+  },
+  "details": {
+    "title": "School page",
+    "subtitle": "The value below is only the route parameter. The full school profile will be connected to the API in a later step.",
+    "backToList": "Back to school list",
+    "slugHeading": "Route identifier",
+    "slugLabel": "Current route parameter:",
+    "slugMissing": "Unavailable",
+    "noApiNote": "No nonexistent backend endpoint is called in this stage, and we will not show a fake full school record.",
+    "breadcrumb": "School details"
+  },
+  "profile": {
+    "breadcrumbFallback": "School details",
+    "loading": "Loading school profile",
+    "notFoundTitle": "School not found",
+    "notFoundMessage": "This school is unavailable or may have been removed.",
+    "errorTitle": "Unable to load school",
+    "errorMessage": "Something went wrong while loading this school profile. Please try again.",
+    "retry": "Try again",
+    "backToList": "Back to school list",
+    "contactCta": "Contact school",
+    "applyNow": "Apply Now",
+    "admissionClosed": "Admissions currently closed",
+    "notifyAdmissionsOpen": {
+      "cta": "Notify me when admissions open",
+      "success": "You will be notified in-app when admissions open.",
+      "alreadySubscribed": "You are already subscribed to admissions-open alerts for this school.",
+      "error": "Could not create the subscription. Please try again."
+    },
+    "applyRoleBlocked": "Only parent accounts can start admission applications.",
+    "favorite": "Save to favorites",
+    "mainBranch": "Main branch",
+    "capacity": "Capacity: {{count}}",
+    "coordinates": "Coordinates",
+    "meta": {
+      "title": "{{name}} | Schoolera",
+      "descriptionFallback": "Explore {{name}} on Schoolera — curriculum, fees, facilities, and contact details."
+    },
+    "sections": {
+      "overview": "Overview",
+      "keyFacts": "Key facts",
+      "branches": "Branches",
+      "stagesGrades": "Stages and grades",
+      "curricula": "Curriculum",
+      "fees": "Fees",
+      "admissionRequirements": "Admission requirements",
+      "facilities": "Facilities",
+      "additionalServices": "Additional services",
+      "gallery": "Gallery",
+      "locationContact": "Location and contact",
+      "relatedSchools": "Related schools",
+      "interviewFaqs": "Interview & assessment FAQs"
+    },
+    "facts": {
+      "foundedYear": "Founded",
+      "studentCount": "Students",
+      "schoolType": "School type",
+      "genderType": "Gender",
+      "admission": "Admission status"
+    },
+    "fees": {
+      "branch": "Branch",
+      "stage": "Stage",
+      "grade": "Grade",
+      "year": "Academic year",
+      "amount": "Annual fee",
+      "startingFrom": "Starting from",
+      "requireLogin": "Detailed fees are available after parent login.",
+      "informational": "Fees are informational.",
+      "confirmedBySchool": "Final fees are confirmed by the school.",
+      "discountsTitle": "Published discounts",
+      "notesTitle": "Financial notes",
+      "installmentSchedule": "Installment schedule",
+      "offerExpired": "Offer expired"
+    },
+    "admissionRequirements": {
+      "loading": "Loading admission requirements…",
+      "error": "Unable to load admission requirements.",
+      "required": "Required",
+      "note": "Requirements may vary by branch, stage, grade, and academic year when you apply."
+    },
+    "contactFields": {
+      "phone": "Phone",
+      "email": "Email",
+      "website": "Website",
+      "whatsApp": "WhatsApp"
+    },
+    "gallery": {
+      "openImage": "Open gallery image {{index}}",
+      "lightboxLabel": "School photo gallery",
+      "close": "Close gallery",
+      "previous": "Previous image",
+      "next": "Next image"
+    },
+    "contact": {
+      "title": "Contact the school",
+      "close": "Close contact form",
+      "cancel": "Cancel",
+      "submit": "Send message",
+      "submitting": "Sending…",
+      "success": "Your message was sent. The school may contact you soon.",
+      "consent": "I agree that the school may contact me about my inquiry.",
+      "honeypotLabel": "Website",
+      "errorsTitle": "Please fix the following",
+      "fields": {
+        "name": "Full name",
+        "phone": "Phone number",
+        "email": "Email (optional)",
+        "message": "Message (optional)"
+      },
+      "errors": {
+        "generic": "Unable to send your message. Please try again.",
+        "notFound": "This school is no longer available.",
+        "consentRequired": "You must agree before sending your message.",
+        "invalidSource": "Unable to send your message from this page.",
+        "rejected": "Unable to send your message right now. Please try again later.",
+        "validation": "Please check the form and try again."
+      }
+    },
+    "unfavorite": "Remove from favorites",
+    "favoriteAdded": "Added to favorites.",
+    "favoriteRemoved": "Removed from favorites.",
+    "interviewFaqs": {
+      "loading": "Loading interview FAQs…",
+      "error": "Unable to load interview FAQs."
+    }
+  },
+  "table": {
+    "name": "Name",
+    "city": "City",
+    "created": "Created"
+  },
+  "form": {
+    "name": "School name",
+    "city": "City",
+    "save": "Save school",
+    "saving": "Saving..."
+  }
+}

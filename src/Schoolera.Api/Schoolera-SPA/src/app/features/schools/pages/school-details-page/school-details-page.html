@@ -1,0 +1,741 @@
+<se-public-page-container>
+  <se-breadcrumbs [items]="breadcrumbs()" />
+
+  @if (pageState() === 'loading') {
+    <div class="school-profile school-profile--loading" aria-busy="true">
+      <div class="school-profile__hero-skeleton">
+        <span class="school-profile__skeleton school-profile__skeleton--cover"></span>
+        <span class="school-profile__skeleton school-profile__skeleton--title"></span>
+        <span class="school-profile__skeleton school-profile__skeleton--line"></span>
+        <span class="school-profile__skeleton school-profile__skeleton--line school-profile__skeleton--short"></span>
+      </div>
+      <div class="school-profile__sections-skeleton">
+        @for (_ of [1, 2, 3]; track $index) {
+          <span class="school-profile__skeleton school-profile__skeleton--block"></span>
+        }
+      </div>
+      <p class="visually-hidden">{{ 'schools.profile.loading' | transloco }}</p>
+    </div>
+  } @else if (pageState() === 'not-found') {
+    <section class="school-profile__status" role="alert">
+      <h1>{{ 'schools.profile.notFoundTitle' | transloco }}</h1>
+      <p>{{ 'schools.profile.notFoundMessage' | transloco }}</p>
+      <a class="se-btn se-btn--outline" routerLink="/schools">
+        {{ 'schools.profile.backToList' | transloco }}
+      </a>
+    </section>
+  } @else if (pageState() === 'error') {
+    <section class="school-profile__status" role="alert">
+      <h1>{{ 'schools.profile.errorTitle' | transloco }}</h1>
+      <p>{{ 'schools.profile.errorMessage' | transloco }}</p>
+      <button type="button" class="se-btn se-btn--outline" (click)="retryLoad()">
+        {{ 'schools.profile.retry' | transloco }}
+      </button>
+    </section>
+  } @else if (profile(); as school) {
+    <article class="school-profile">
+      <header class="school-profile__hero">
+        <div class="school-profile__hero-media">
+          <img
+            class="school-profile__cover"
+            [src]="coverUrl()"
+            width="1280"
+            height="420"
+            alt=""
+            decoding="async"
+            (error)="onImageError($event, coverFallback)"
+          />
+          <img
+            class="school-profile__logo"
+            [src]="logoUrl()"
+            width="88"
+            height="88"
+            alt=""
+            decoding="async"
+            (error)="onImageError($event, schoolCardFallback)"
+          />
+        </div>
+
+        <div class="school-profile__hero-body">
+          <div class="school-profile__hero-head">
+            <div>
+              <h1>{{ school.name }}</h1>
+              <p class="school-profile__location">
+                <se-home-icon name="pin" />
+                <span>{{ heroLocation() }}</span>
+              </p>
+            </div>
+
+            <div class="school-profile__hero-actions">
+              @if (favoritesEnabled) {
+                <button
+                  type="button"
+                  class="se-btn se-btn--outline school-profile__favorite"
+                  [disabled]="favoriteSubmitting()"
+                  [attr.aria-pressed]="isFavorite()"
+                  (click)="toggleFavorite()"
+                >
+                  {{
+                    (isFavorite() ? 'schools.profile.unfavorite' : 'schools.profile.favorite')
+                      | transloco
+                  }}
+                </button>
+              }
+              @if (canShowApplyCta()) {
+                <button type="button" class="se-btn se-btn--primary" (click)="startApplication()">
+                  {{ 'schools.profile.applyNow' | transloco }}
+                </button>
+              } @else if (showAdmissionClosedHint()) {
+                <span class="school-profile__admission-closed" role="status">
+                  {{ 'schools.profile.admissionClosed' | transloco }}
+                </span>
+              }
+              @if (canNotifyAdmissionsOpen()) {
+                <button
+                  type="button"
+                  class="se-btn se-btn--outline"
+                  [disabled]="notifySubmitting()"
+                  (click)="notifyAdmissionsOpen()"
+                >
+                  {{ 'schools.profile.notifyAdmissionsOpen.cta' | transloco }}
+                </button>
+              }
+              <button type="button" class="se-btn se-btn--outline" (click)="openContact()">
+                {{ 'schools.profile.contactCta' | transloco }}
+              </button>
+            </div>
+          </div>
+
+          <ul class="school-profile__badges">
+            @if (school.schoolType !== undefined) {
+              <li>{{ schoolTypeLabel(school.schoolType) }}</li>
+            }
+            @if (school.genderType !== undefined) {
+              <li>{{ genderTypeLabel(school.genderType) }}</li>
+            }
+            @if (school.isAdmissionOpen) {
+              <li class="is-accent">{{ 'schools.search.admissionOpen' | transloco }}</li>
+            }
+          </ul>
+        </div>
+      </header>
+
+      <div class="school-profile__content">
+        @if (hasOverview()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-overview-heading'">
+            <h2 id="school-overview-heading">{{ 'schools.profile.sections.overview' | transloco }}</h2>
+            @if (school.shortDescription) {
+              <p class="school-profile__lead">{{ school.shortDescription }}</p>
+            }
+            @if (school.fullDescription) {
+              <div class="school-profile__description">{{ school.fullDescription }}</div>
+            }
+          </section>
+        }
+
+        @if (hasKeyFacts()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-keyfacts-heading'">
+            <h2 id="school-keyfacts-heading">{{ 'schools.profile.sections.keyFacts' | transloco }}</h2>
+            <dl class="school-profile__facts">
+              @if (school.foundedYear != null) {
+                <div>
+                  <dt>{{ 'schools.profile.facts.foundedYear' | transloco }}</dt>
+                  <dd>{{ formatCount(school.foundedYear) }}</dd>
+                </div>
+              }
+              @if (school.studentCount != null) {
+                <div>
+                  <dt>{{ 'schools.profile.facts.studentCount' | transloco }}</dt>
+                  <dd>{{ formatCount(school.studentCount) }}</dd>
+                </div>
+              }
+              @if (school.schoolType !== undefined) {
+                <div>
+                  <dt>{{ 'schools.profile.facts.schoolType' | transloco }}</dt>
+                  <dd>{{ schoolTypeLabel(school.schoolType) }}</dd>
+                </div>
+              }
+              @if (school.genderType !== undefined) {
+                <div>
+                  <dt>{{ 'schools.profile.facts.genderType' | transloco }}</dt>
+                  <dd>{{ genderTypeLabel(school.genderType) }}</dd>
+                </div>
+              }
+              @if (school.isAdmissionOpen) {
+                <div>
+                  <dt>{{ 'schools.profile.facts.admission' | transloco }}</dt>
+                  <dd>{{ 'schools.search.admissionOpen' | transloco }}</dd>
+                </div>
+              }
+            </dl>
+          </section>
+        }
+
+        @if (hasBranches()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-branches-heading'">
+            <h2 id="school-branches-heading">{{ 'schools.profile.sections.branches' | transloco }}</h2>
+            <ul class="school-profile__branch-list">
+              @for (branch of school.branches; track branch.id) {
+                <li class="school-profile__branch-card">
+                  <div class="school-profile__branch-head">
+                    <h3>{{ branch.name }}</h3>
+                    @if (branch.isMainBranch) {
+                      <span class="school-profile__chip">{{ 'schools.profile.mainBranch' | transloco }}</span>
+                    }
+                  </div>
+                  <p>{{ branch.city }} · {{ branch.district }}</p>
+                  @if (branch.addressLine) {
+                    <p>{{ branch.addressLine }}</p>
+                  }
+                  @if (branch.phone) {
+                    <p><a [href]="'tel:' + branch.phone">{{ branch.phone }}</a></p>
+                  }
+                  @if (branch.email) {
+                    <p><a [href]="'mailto:' + branch.email">{{ branch.email }}</a></p>
+                  }
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (hasOfferings()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-offerings-heading'">
+            <h2 id="school-offerings-heading">{{ 'schools.profile.sections.stagesGrades' | transloco }}</h2>
+            <ul class="school-profile__offering-list">
+              @for (offering of offeringRows(); track offering.id) {
+                <li class="school-profile__offering-card">
+                  <div class="school-profile__offering-head">
+                    <h3>{{ offering.stageName }}</h3>
+                    @if (offering.isAdmissionOpen) {
+                      <span class="school-profile__chip is-accent">
+                        {{ 'schools.search.admissionOpen' | transloco }}
+                      </span>
+                    }
+                  </div>
+                  @if (offering.branchName) {
+                    <p class="school-profile__muted">{{ offering.branchName }}</p>
+                  }
+                  <p class="school-profile__muted">{{ offeringGenderLabel(offering.genderType) }}</p>
+                  @if (gradeNames(offering)) {
+                    <p>{{ gradeNames(offering) }}</p>
+                  }
+                  @if (offering.capacity != null) {
+                    <p class="school-profile__muted">
+                      {{ 'schools.profile.capacity' | transloco: { count: formatCount(offering.capacity) } }}
+                    </p>
+                  }
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (hasCurricula()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-curricula-heading'">
+            <h2 id="school-curricula-heading">{{ 'schools.profile.sections.curricula' | transloco }}</h2>
+            <ul class="school-profile__tag-list">
+              @for (item of school.curricula; track item.id) {
+                <li>{{ item.name }}</li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (showFeesLoginPrompt()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-fees-heading'">
+            <h2 id="school-fees-heading">{{ 'schools.profile.sections.fees' | transloco }}</h2>
+            <p>{{ 'schools.profile.fees.requireLogin' | transloco }}</p>
+            <p class="school-profile__fees-disclaimer">
+              {{ 'schools.profile.fees.informational' | transloco }}
+            </p>
+          </section>
+        } @else if (hasFees()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-fees-heading'">
+            <h2 id="school-fees-heading">{{ 'schools.profile.sections.fees' | transloco }}</h2>
+            <p class="school-profile__fees-disclaimer">
+              {{ 'schools.profile.fees.informational' | transloco }}
+            </p>
+            <div class="school-profile__table-wrap">
+              <table class="school-profile__table">
+                <thead>
+                  <tr>
+                    <th scope="col">{{ 'schools.profile.fees.branch' | transloco }}</th>
+                    <th scope="col">{{ 'schools.profile.fees.stage' | transloco }}</th>
+                    <th scope="col">{{ 'schools.profile.fees.grade' | transloco }}</th>
+                    <th scope="col">{{ 'schools.profile.fees.year' | transloco }}</th>
+                    <th scope="col">{{ 'schools.profile.fees.amount' | transloco }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (fee of school.fees; track $index) {
+                    <tr>
+                      <td>{{ fee.branchName }}</td>
+                      <td>{{ fee.stageName }}</td>
+                      <td>{{ fee.gradeName || '—' }}</td>
+                      <td>{{ fee.academicYearName }}</td>
+                      <td>
+                        @if (fee.amount == null) {
+                          —
+                        } @else if (fee.isStartingFrom) {
+                          {{ 'schools.profile.fees.startingFrom' | transloco }}
+                          {{ formatFeeAmount(fee.amount, fee.currencyCode) }}
+                        } @else {
+                          {{ formatFeeAmount(fee.amount, fee.currencyCode) }}
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            @if (hasPublishedDiscounts()) {
+              <h3>{{ 'schools.profile.fees.discountsTitle' | transloco }}</h3>
+              <ul>
+                @for (discount of school.publishedDiscounts; track $index) {
+                  <li>
+                    <strong>{{ discount.title }}</strong>
+                    <span> — {{ discount.lifecycleState }}</span>
+                    <p>{{ discount.eligibilityDescription }}</p>
+                  </li>
+                }
+              </ul>
+            }
+            @if (hasFinancialNotes()) {
+              <h3>{{ 'schools.profile.fees.notesTitle' | transloco }}</h3>
+              <ul>
+                @for (note of school.financialNotes; track $index) {
+                  <li>{{ note.text }}</li>
+                }
+              </ul>
+            }
+            <p class="school-profile__fees-disclaimer">
+              {{ 'schools.profile.fees.confirmedBySchool' | transloco }}
+            </p>
+          </section>
+        }
+
+        @if (admissionsEnabled && school.isAdmissionOpen) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-admission-requirements-heading'">
+            <h2 id="school-admission-requirements-heading">
+              {{ 'schools.profile.sections.admissionRequirements' | transloco }}
+            </h2>
+            @if (admissionRequirementsLoading()) {
+              <p>{{ 'schools.profile.admissionRequirements.loading' | transloco }}</p>
+            } @else if (admissionRequirementsError()) {
+              <p>{{ 'schools.profile.admissionRequirements.error' | transloco }}</p>
+              <button type="button" class="se-btn se-btn--outline" (click)="retryAdmissionRequirements()">
+                {{ 'schools.profile.retry' | transloco }}
+              </button>
+            } @else if (hasAdmissionRequirements()) {
+              <ul class="school-profile__requirements-list">
+                @for (item of admissionRequirements(); track item.requirementCode) {
+                  <li>
+                    <strong>{{ item.name }}</strong>
+                    @if (item.description) {
+                      <p>{{ item.description }}</p>
+                    }
+                    @if (item.isRequired) {
+                      <span class="school-profile__required-badge">
+                        {{ 'schools.profile.admissionRequirements.required' | transloco }}
+                      </span>
+                    }
+                  </li>
+                }
+              </ul>
+              <p class="school-profile__requirements-note">
+                {{ 'schools.profile.admissionRequirements.note' | transloco }}
+              </p>
+            }
+          </section>
+        }
+
+        @if (interviewFaqsLoading() || interviewFaqsError() || hasInterviewFaqs()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-interview-faqs-heading'">
+            <h2 id="school-interview-faqs-heading">
+              {{ 'schools.profile.sections.interviewFaqs' | transloco }}
+            </h2>
+            @if (interviewFaqsLoading()) {
+              <p>{{ 'schools.profile.interviewFaqs.loading' | transloco }}</p>
+            } @else if (interviewFaqsError()) {
+              <p>{{ 'schools.profile.interviewFaqs.error' | transloco }}</p>
+              <button type="button" class="se-btn se-btn--outline" (click)="retryInterviewFaqs()">
+                {{ 'schools.profile.retry' | transloco }}
+              </button>
+            } @else if (hasInterviewFaqs()) {
+              <div class="school-profile__interview-faqs">
+                @for (item of interviewFaqs(); track item.id) {
+                  <div class="school-profile__interview-faq">
+                    <h3>
+                      <button
+                        type="button"
+                        class="school-profile__interview-faq-trigger"
+                        [attr.aria-expanded]="isInterviewFaqOpen(item.id!)"
+                        [attr.aria-controls]="'school-interview-faq-panel-' + item.id"
+                        [attr.id]="'school-interview-faq-button-' + item.id"
+                        (click)="toggleInterviewFaq(item.id!)"
+                      >
+                        <span>{{ item.question }}</span>
+                      </button>
+                    </h3>
+                    @if (isInterviewFaqOpen(item.id!)) {
+                      <div
+                        class="cms-content school-profile__interview-faq-panel"
+                        [attr.id]="'school-interview-faq-panel-' + item.id"
+                        role="region"
+                        [attr.aria-labelledby]="'school-interview-faq-button-' + item.id"
+                        [innerHTML]="sanitizeInterviewFaqAnswer(item.answer)"
+                      ></div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </section>
+        }
+
+        @if (hasFacilities()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-facilities-heading'">
+            <h2 id="school-facilities-heading">{{ 'schools.profile.sections.facilities' | transloco }}</h2>
+            <ul class="school-profile__tag-list">
+              @for (item of school.facilities; track item.id) {
+                <li>{{ item.name }}</li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (hasAdditionalServices()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-services-heading'">
+            <h2 id="school-services-heading">{{ 'schools.profile.sections.additionalServices' | transloco }}</h2>
+            <ul class="school-profile__service-list">
+              @for (service of school.additionalServices; track service.id) {
+                <li class="school-profile__service-card">
+                  <h3>{{ service.name }}</h3>
+                  @if (service.description) {
+                    <p>{{ service.description }}</p>
+                  }
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (hasGallery()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-gallery-heading'">
+            <h2 id="school-gallery-heading">{{ 'schools.profile.sections.gallery' | transloco }}</h2>
+            <ul class="school-profile__gallery">
+              @for (image of galleryImages(); track image.id; let index = $index) {
+                <li>
+                  <button
+                    type="button"
+                    class="school-profile__gallery-button"
+                    [attr.aria-label]="
+                      'schools.profile.gallery.openImage' | transloco: { index: index + 1 }
+                    "
+                    (click)="openLightbox(index, $any($event.currentTarget))"
+                  >
+                    <img
+                      [src]="image.imageUrl"
+                      [alt]="image.altText || image.caption || ''"
+                      width="320"
+                      height="220"
+                      loading="lazy"
+                      decoding="async"
+                      (error)="onImageError($event, schoolCardFallback)"
+                    />
+                  </button>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (hasLocationContact()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-location-heading'">
+            <h2 id="school-location-heading">{{ 'schools.profile.sections.locationContact' | transloco }}</h2>
+            @if (mainBranch(); as branch) {
+              @if (branch.addressLine) {
+                <p>{{ branch.addressLine }}</p>
+              }
+              <p>{{ branch.city }} · {{ branch.district }}</p>
+              @if (branch.latitude != null && branch.longitude != null) {
+                <p class="school-profile__coords">
+                  {{ 'schools.profile.coordinates' | transloco }}:
+                  {{ branch.latitude }}, {{ branch.longitude }}
+                </p>
+              }
+            }
+
+            <ul class="school-profile__contact-list">
+              @if (school.contact?.phone) {
+                <li>
+                  <strong>{{ 'schools.profile.contactFields.phone' | transloco }}:</strong>
+                  <a [href]="'tel:' + school.contact!.phone">{{ school.contact!.phone }}</a>
+                </li>
+              }
+              @if (school.contact?.email) {
+                <li>
+                  <strong>{{ 'schools.profile.contactFields.email' | transloco }}:</strong>
+                  <a [href]="'mailto:' + school.contact!.email">{{ school.contact!.email }}</a>
+                </li>
+              }
+              @if (externalUrl(school.contact?.websiteUrl); as website) {
+                <li>
+                  <strong>{{ 'schools.profile.contactFields.website' | transloco }}:</strong>
+                  <a [href]="website" target="_blank" rel="noopener noreferrer">{{ website }}</a>
+                </li>
+              }
+              @if (school.contact?.whatsAppNumber) {
+                <li>
+                  <strong>{{ 'schools.profile.contactFields.whatsApp' | transloco }}:</strong>
+                  <a
+                    [href]="'https://wa.me/' + school.contact!.whatsAppNumber"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {{ school.contact!.whatsAppNumber }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (hasRelatedSchools()) {
+          <section class="school-profile__section" [attr.aria-labelledby]="'school-related-heading'">
+            <h2 id="school-related-heading">{{ 'schools.profile.sections.relatedSchools' | transloco }}</h2>
+            <ul class="school-profile__related-grid">
+              @for (related of relatedSchools(); track related.id) {
+                <li class="school-card">
+                  <div class="school-card__media">
+                    <img
+                      [src]="relatedCover(related)"
+                      width="480"
+                      height="220"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      (error)="onImageError($event, schoolCardFallback)"
+                    />
+                    @if (related.logoUrl) {
+                      <img
+                        class="school-card__logo"
+                        [src]="relatedLogo(related)"
+                        width="56"
+                        height="56"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        (error)="onImageError($event, schoolCardFallback)"
+                      />
+                    }
+                  </div>
+                  <div class="school-card__body">
+                    <div class="school-card__head">
+                      <h3>{{ related.name }}</h3>
+                      @if (related.isAdmissionOpen) {
+                        <span class="school-card__badge">{{ 'schools.search.admissionOpen' | transloco }}</span>
+                      }
+                    </div>
+                    <p class="school-card__location">
+                      <se-home-icon name="pin" />
+                      <span>{{ relatedLocation(related) }}</span>
+                    </p>
+                    <ul class="school-card__meta">
+                      @if (related.schoolType !== undefined) {
+                        <li>{{ schoolTypeLabel(related.schoolType) }}</li>
+                      }
+                      @if (related.genderType !== undefined) {
+                        <li>{{ genderTypeLabel(related.genderType) }}</li>
+                      }
+                    </ul>
+                    @if (summaryText(related.curriculumSummary)) {
+                      <p class="school-card__summary">{{ summaryText(related.curriculumSummary) }}</p>
+                    }
+                    <div class="school-card__footer">
+                      <div class="school-card__pricing">
+                        @if (relatedFee(related); as fee) {
+                          <p>{{ fee }}</p>
+                        }
+                      </div>
+                      <a class="se-btn se-btn--primary" [routerLink]="['/schools', related.slug]">
+                        {{ 'schools.search.viewSchool' | transloco }}
+                      </a>
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+
+      <div class="school-profile__mobile-cta">
+        @if (canShowApplyCta()) {
+          <button type="button" class="se-btn se-btn--primary se-btn--block" (click)="startApplication()">
+            {{ 'schools.profile.applyNow' | transloco }}
+          </button>
+        }
+        @if (canNotifyAdmissionsOpen()) {
+          <button
+            type="button"
+            class="se-btn se-btn--outline se-btn--block"
+            [disabled]="notifySubmitting()"
+            (click)="notifyAdmissionsOpen()"
+          >
+            {{ 'schools.profile.notifyAdmissionsOpen.cta' | transloco }}
+          </button>
+        }
+        <button type="button" class="se-btn se-btn--outline se-btn--block" (click)="openContact()">
+          {{ 'schools.profile.contactCta' | transloco }}
+        </button>
+      </div>
+    </article>
+  }
+
+  @if (contactOpen()) {
+    <div class="school-profile__modal-backdrop" (click)="closeContact()"></div>
+    <dialog
+      class="school-profile__modal"
+      open
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'school-contact-title'"
+    >
+      <header class="school-profile__modal-header">
+        <h2 id="school-contact-title">{{ 'schools.profile.contact.title' | transloco }}</h2>
+        <button
+          type="button"
+          class="school-profile__modal-close"
+          (click)="closeContact()"
+          [attr.aria-label]="'schools.profile.contact.close' | transloco"
+        >
+          ×
+        </button>
+      </header>
+
+      <form class="school-profile__contact-form" [formGroup]="contactForm" (ngSubmit)="submitContact()">
+        @if (contactSummaryErrors().length) {
+          <se-form-error-summary
+            [title]="'schools.profile.contact.errorsTitle' | transloco"
+            [errors]="contactSummaryErrors()"
+          />
+        }
+
+        <se-form-field
+          [label]="'schools.profile.contact.fields.name' | transloco"
+          [error]="contactFieldError('name')"
+          controlId="contact-name"
+        >
+          <input id="contact-name" type="text" autocomplete="name" formControlName="name" />
+        </se-form-field>
+
+        <se-form-field
+          [label]="'schools.profile.contact.fields.phone' | transloco"
+          [error]="contactFieldError('phone')"
+          controlId="contact-phone"
+        >
+          <input id="contact-phone" type="tel" autocomplete="tel" formControlName="phone" />
+        </se-form-field>
+
+        <se-form-field
+          [label]="'schools.profile.contact.fields.email' | transloco"
+          [error]="contactFieldError('email')"
+          controlId="contact-email"
+        >
+          <input id="contact-email" type="email" autocomplete="email" formControlName="email" />
+        </se-form-field>
+
+        <se-form-field
+          [label]="'schools.profile.contact.fields.message' | transloco"
+          [error]="contactFieldError('message')"
+          controlId="contact-message"
+        >
+          <textarea id="contact-message" rows="4" formControlName="message"></textarea>
+        </se-form-field>
+
+        <label class="school-profile__consent" for="contact-consent">
+          <input id="contact-consent" type="checkbox" formControlName="consentAccepted" />
+          <span>{{ 'schools.profile.contact.consent' | transloco }}</span>
+        </label>
+        @if (contactFieldError('consentAccepted')) {
+          <p class="school-profile__field-error" role="alert">{{ contactFieldError('consentAccepted') }}</p>
+        }
+
+        <div class="school-profile__honeypot" aria-hidden="true">
+          <label for="contact-website">{{ 'schools.profile.contact.honeypotLabel' | transloco }}</label>
+          <input id="contact-website" type="text" tabindex="-1" autocomplete="off" formControlName="website" />
+        </div>
+
+        <footer class="school-profile__modal-footer">
+          <button type="button" class="se-btn se-btn--outline" (click)="closeContact()" [disabled]="contactSubmitting()">
+            {{ 'schools.profile.contact.cancel' | transloco }}
+          </button>
+          <button type="submit" class="se-btn se-btn--primary" [disabled]="contactSubmitting()">
+            @if (contactSubmitting()) {
+              {{ 'schools.profile.contact.submitting' | transloco }}
+            } @else {
+              {{ 'schools.profile.contact.submit' | transloco }}
+            }
+          </button>
+        </footer>
+      </form>
+    </dialog>
+  }
+
+  @if (lightboxIndex() !== null && activeLightboxImage(); as image) {
+    <div
+      class="school-profile__lightbox-backdrop"
+      role="presentation"
+      (click)="onLightboxBackdropClick($event)"
+    >
+      <div
+        class="school-profile__lightbox"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-label]="'schools.profile.gallery.lightboxLabel' | transloco"
+      >
+        <button
+          #lightboxClose
+          type="button"
+          class="school-profile__lightbox-close"
+          (click)="closeLightbox()"
+          [attr.aria-label]="'schools.profile.gallery.close' | transloco"
+        >
+          ×
+        </button>
+
+        <button
+          type="button"
+          class="school-profile__lightbox-nav is-prev"
+          (click)="showPreviousImage()"
+          [attr.aria-label]="'schools.profile.gallery.previous' | transloco"
+        >
+          ‹
+        </button>
+
+        <figure class="school-profile__lightbox-figure">
+          <img
+            [src]="image.imageUrl"
+            [alt]="image.altText || image.caption || ''"
+            decoding="async"
+            (error)="onImageError($event, schoolCardFallback)"
+          />
+          @if (image.caption) {
+            <figcaption>{{ image.caption }}</figcaption>
+          }
+        </figure>
+
+        <button
+          type="button"
+          class="school-profile__lightbox-nav is-next"
+          (click)="showNextImage()"
+          [attr.aria-label]="'schools.profile.gallery.next' | transloco"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+  }
+</se-public-page-container>

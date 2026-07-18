@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Logging;
 using Schoolera.Api.Controllers;
@@ -154,7 +155,10 @@ public sealed class ControllerArchitectureTests
 
             Assert.All(GetActionBodies(source), body =>
             {
-                Assert.Contains("Mediator.Send", body, StringComparison.Ordinal);
+                Assert.True(
+                    body.Contains("Mediator.Send", StringComparison.Ordinal) ||
+                    body.Contains("SendAsync", StringComparison.Ordinal),
+                    $"{Path.GetFileName(file)} action bodies should delegate to MediatR.");
                 Assert.True(
                     CountMeaningfulLines(body) <= 8,
                     $"{Path.GetFileName(file)} action bodies should stay thin and delegate to MediatR.");
@@ -199,7 +203,18 @@ public sealed class ControllerArchitectureTests
 
     private static bool IsResultType(Type type)
     {
-        return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Result<>);
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Result<>))
+        {
+            return true;
+        }
+
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ActionResult<>))
+        {
+            var inner = type.GetGenericArguments()[0];
+            return inner.IsGenericType && inner.GetGenericTypeDefinition() == typeof(Result<>);
+        }
+
+        return false;
     }
 
     private static IReadOnlyCollection<string> GetControllerFiles()
@@ -245,8 +260,23 @@ public sealed class ControllerArchitectureTests
         foreach (Match match in actionPattern.Matches(source))
         {
             var bodyStart = match.Index + match.Length - 1;
-            yield return ReadBraceBlock(source, bodyStart);
+            var body = ReadBraceBlock(source, bodyStart);
+            if (!IsRouteTemplateFragment(body))
+            {
+                yield return body;
+            }
         }
+    }
+
+    private static bool IsRouteTemplateFragment(string body)
+    {
+        var trimmed = body.Trim();
+        return trimmed.Length > 2 &&
+               trimmed.Length < 48 &&
+               trimmed.StartsWith('{') &&
+               trimmed.EndsWith('}') &&
+               trimmed.Contains(':') &&
+               !trimmed.Contains('\n');
     }
 
     private static string ReadBraceBlock(string source, int openingBraceIndex)

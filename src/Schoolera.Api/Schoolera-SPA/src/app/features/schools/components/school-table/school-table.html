@@ -1,0 +1,41 @@
+<div class="table-wrap">
+
+  <table>
+
+    <thead>
+
+      <tr>
+
+        <th scope="col">{{ 'schools.table.name' | transloco }}</th>
+
+        <th scope="col">{{ 'schools.table.city' | transloco }}</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      @for (school of schools(); track school.id) {
+
+        <tr>
+
+          <td>
+
+            <a [routerLink]="['/schools', school.slug ?? school.id]">{{ school.name }}</a>
+
+          </td>
+
+          <td>{{ school.city | emptyValue }}</td>
+
+        </tr>
+
+      }
+
+    </tbody>
+
+  </table>
+
+</div>
+
+

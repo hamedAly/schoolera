@@ -1,0 +1,76 @@
+<section class="courier-availability" aria-labelledby="courier-availability-title">
+  <h2 id="courier-availability-title">{{ 'parent.applications.courier.title' | transloco }}</h2>
+  <p>{{ 'parent.applications.courier.readOnlyNotice' | transloco }}</p>
+
+  <se-location-selector
+    idPrefix="parent-courier-pickup"
+    [disabled]="loading()"
+    (selectionChange)="location.set($event)"
+  />
+  <button
+    type="button"
+    class="parent-btn primary"
+    [disabled]="loading() || !location().countryId"
+    (click)="preview()"
+  >
+    {{ (loading() ? 'parent.applications.courier.loading' : 'parent.applications.courier.preview') | transloco }}
+  </button>
+
+  @if (error()) {
+    <p class="parent-alert parent-alert--warning" role="alert">{{ error() }}</p>
+  }
+
+  @if (branch(); as destination) {
+    <div class="courier-availability__branch">
+      <h3>{{ 'parent.applications.courier.destinationBranch' | transloco }}</h3>
+      <p><strong>{{ localized(destination.nameAr, destination.nameEn) }}</strong></p>
+      <p>{{ localized(destination.addressAr, destination.addressEn) }}</p>
+      <p>{{ localized(destination.cityNameAr, destination.cityNameEn) }} · {{ localized(destination.districtNameAr, destination.districtNameEn) }}</p>
+    </div>
+  }
+
+  @if (loaded() && !options().length) {
+    <div class="parent-alert parent-alert--warning" role="status">
+      <p>{{ 'parent.applications.courier.noOptions' | transloco }}</p>
+      @for (code of reasonCodes(); track code) {
+        <p>{{ reasonKey(code) | transloco }}</p>
+      }
+    </div>
+  }
+
+  <div class="courier-availability__options">
+    @for (option of options(); track (option.providerCode ?? '') + (option.serviceCode ?? '')) {
+      <article class="courier-availability__option">
+        <header>
+          @if (option.logoReference) {
+            <img [src]="option.logoReference" [alt]="localized(option.providerNameAr, option.providerNameEn)" />
+          }
+          <div>
+            <h3>{{ localized(option.providerNameAr, option.providerNameEn) }}</h3>
+            <p>{{ localized(option.providerDescriptionAr, option.providerDescriptionEn) }}</p>
+          </div>
+        </header>
+        @if (option.isSimulatedWarning) {
+          <p class="parent-alert parent-alert--warning">{{ 'parent.applications.courier.simulatedWarning' | transloco }}</p>
+        }
+        <dl>
+          <div><dt>{{ 'parent.applications.courier.service' | transloco }}</dt><dd>{{ localized(option.serviceNameAr, option.serviceNameEn) }}</dd></div>
+          <div><dt>{{ 'parent.applications.courier.serviceDescription' | transloco }}</dt><dd>{{ localized(option.serviceDescriptionAr, option.serviceDescriptionEn) }}</dd></div>
+          <div><dt>{{ 'parent.applications.courier.earliestPickup' | transloco }}</dt><dd>{{ formatDate(option.earliestPickupAtUtc) }}</dd></div>
+          <div><dt>{{ 'parent.applications.courier.timezone' | transloco }}</dt><dd>{{ option.timeZoneId || '—' }}</dd></div>
+          <div><dt>{{ 'parent.applications.courier.coverageNotes' | transloco }}</dt><dd>{{ localized(option.coverageNotesAr, option.coverageNotesEn) }}</dd></div>
+          @if (option.sla; as sla) {
+            <div><dt>{{ 'parent.applications.courier.sla.acceptance' | transloco }}</dt><dd>{{ sla.acceptanceTargetMinutes }} {{ 'parent.applications.courier.elapsedMinutes' | transloco }}</dd></div>
+            <div><dt>{{ 'parent.applications.courier.sla.scheduling' | transloco }}</dt><dd>{{ sla.pickupSchedulingTargetMinutes }} {{ 'parent.applications.courier.elapsedMinutes' | transloco }}</dd></div>
+            <div><dt>{{ 'parent.applications.courier.sla.pickup' | transloco }}</dt><dd>{{ sla.pickupCompletionTargetMinutes }} {{ 'parent.applications.courier.elapsedMinutes' | transloco }}</dd></div>
+            <div><dt>{{ 'parent.applications.courier.sla.delivery' | transloco }}</dt><dd>{{ sla.deliveryToSchoolTargetMinutes }} {{ 'parent.applications.courier.elapsedMinutes' | transloco }}</dd></div>
+          }
+        </dl>
+        <div class="courier-availability__links">
+          @if (option.termsUrl) { <a [href]="option.termsUrl" target="_blank" rel="noopener noreferrer">{{ 'parent.applications.courier.terms' | transloco }}</a> }
+          @if (option.privacyUrl) { <a [href]="option.privacyUrl" target="_blank" rel="noopener noreferrer">{{ 'parent.applications.courier.privacy' | transloco }}</a> }
+        </div>
+      </article>
+    }
+  </div>
+</section>

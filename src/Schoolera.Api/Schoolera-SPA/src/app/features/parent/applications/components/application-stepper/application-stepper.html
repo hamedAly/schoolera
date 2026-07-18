@@ -1,0 +1,31 @@
+<nav class="application-stepper" [attr.aria-label]="'parent.applications.wizard.stepperLabel' | transloco">
+  <ol class="application-stepper__list" role="list">
+    @for (step of steps(); track step.id; let i = $index) {
+      <li
+        class="application-stepper__item"
+        [class.is-current]="i === currentStep()"
+        [class.is-complete]="i < currentStep()"
+        [class.is-reachable]="i <= maxReachableStep()"
+      >
+        <button
+          type="button"
+          class="application-stepper__button"
+          [attr.aria-current]="i === currentStep() ? 'step' : null"
+          [disabled]="i > maxReachableStep()"
+          (click)="onSelect(i)"
+          (keydown)="onKeydown($event, i)"
+        >
+          <span class="application-stepper__index" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="application-stepper__label">{{ step.labelKey | transloco }}</span>
+        </button>
+      </li>
+    }
+  </ol>
+  <p class="visually-hidden" aria-live="polite">
+    {{ 'parent.applications.wizard.currentStepAnnounce' | transloco: {
+      step: currentStep() + 1,
+      total: steps().length,
+      label: (steps()[currentStep()]?.labelKey | transloco)
+    } }}
+  </p>
+</nav>

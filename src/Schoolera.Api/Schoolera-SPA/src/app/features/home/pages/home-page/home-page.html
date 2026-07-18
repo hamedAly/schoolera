@@ -1,0 +1,415 @@
+<se-public-page-container>
+  <div class="home">
+    <!-- Hero -->
+    <section class="home-hero" aria-labelledby="home-hero-title">
+      <div class="home-hero__decor" aria-hidden="true">
+        <span class="home-hero__dots"></span>
+        <span class="home-hero__ring home-hero__ring--one"></span>
+        <span class="home-hero__ring home-hero__ring--two"></span>
+      </div>
+
+      <div class="home-hero__copy">
+        <p class="home-hero__eyebrow">{{ 'home.hero.eyebrow' | transloco }}</p>
+        <h1 id="home-hero-title">{{ heroTitle() || ('home.hero.title' | transloco) }}</h1>
+        <p class="home-hero__subtitle">
+          {{ heroSubtitle() || ('home.hero.subtitle' | transloco) }}
+        </p>
+
+        <div class="home-hero__actions">
+          @if (isExternalUrl(primaryCtaUrl())) {
+            <a [href]="primaryCtaUrl()" class="se-btn se-btn--primary se-btn--lg" rel="noopener">
+              <se-home-icon name="search" class="se-btn__icon" />
+              <span>{{ primaryCtaLabel() || ('home.hero.primaryCta' | transloco) }}</span>
+            </a>
+          } @else {
+            <a [routerLink]="primaryCtaUrl()" class="se-btn se-btn--primary se-btn--lg">
+              <se-home-icon name="search" class="se-btn__icon" />
+              <span>{{ primaryCtaLabel() || ('home.hero.primaryCta' | transloco) }}</span>
+            </a>
+          }
+          @if (isExternalUrl(secondaryCtaUrl())) {
+            <a [href]="secondaryCtaUrl()" class="se-btn se-btn--outline se-btn--lg" rel="noopener">
+              <se-home-icon name="cap" class="se-btn__icon" />
+              <span>{{ secondaryCtaLabel() || ('home.hero.secondaryCta' | transloco) }}</span>
+            </a>
+          } @else {
+            <a [routerLink]="secondaryCtaUrl()" class="se-btn se-btn--outline se-btn--lg">
+              <se-home-icon name="cap" class="se-btn__icon" />
+              <span>{{ secondaryCtaLabel() || ('home.hero.secondaryCta' | transloco) }}</span>
+            </a>
+          }
+        </div>
+
+        <ul class="home-hero__trust">
+          @for (item of heroTrust; track item.labelKey) {
+            <li>
+              <span class="home-hero__trust-icon" aria-hidden="true">
+                <se-home-icon [name]="item.icon" />
+              </span>
+              <span>{{ item.labelKey | transloco }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="home-hero__visual">
+        <img
+          src="assets/home/school-discovery-hero.svg"
+          width="640"
+          height="520"
+          [attr.alt]="'home.hero.visualAlt' | transloco"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
+    </section>
+
+    <!-- Why Schoolera -->
+    <section class="home-section" aria-labelledby="home-trust-title">
+      <header class="home-section__header home-section__header--center">
+        <p class="home-section__eyebrow" aria-hidden="true">
+          <span class="home-section__eyebrow-dash"></span>
+          {{ 'home.trust.eyebrow' | transloco }}
+          <span class="home-section__eyebrow-dash"></span>
+        </p>
+        <h2 id="home-trust-title">{{ 'home.trust.title' | transloco }}</h2>
+        <p>{{ 'home.trust.subtitle' | transloco }}</p>
+      </header>
+
+      <ul class="home-grid home-grid--4">
+        @for (card of whyCards; track card.titleKey) {
+          <li class="home-feature">
+            <span class="home-feature__icon" aria-hidden="true">
+              <se-home-icon [name]="card.icon" />
+            </span>
+            <h3>{{ card.titleKey | transloco }}</h3>
+            <p>{{ card.bodyKey | transloco }}</p>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Parent Benefits -->
+    <section class="home-parents" aria-labelledby="home-parents-title">
+      <div class="home-parents__media">
+        <div class="home-parents__shape" aria-hidden="true"></div>
+        <img
+          src="assets/home/parent-family.jpg"
+          width="1536"
+          height="1024"
+          [attr.alt]="'home.parents.imageAlt' | transloco"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
+      <div class="home-parents__body">
+        <h2 id="home-parents-title">{{ 'home.parents.title' | transloco }}</h2>
+        <p class="home-parents__intro">{{ 'home.parents.subtitle' | transloco }}</p>
+
+        <ul class="home-parents__list">
+          @for (benefit of parentBenefits; track benefit.titleKey) {
+            <li>
+              <span class="home-parents__list-icon" aria-hidden="true">
+                <se-home-icon [name]="benefit.icon" />
+              </span>
+              <div>
+                <h3>{{ benefit.titleKey | transloco }}</h3>
+                <p>{{ benefit.bodyKey | transloco }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- School Benefits -->
+    <section class="home-institutions" aria-labelledby="home-schools-title">
+      <div class="home-institutions__body">
+        <p class="home-section__eyebrow home-section__eyebrow--start" aria-hidden="true">
+          <span class="home-section__eyebrow-dash"></span>
+          {{ 'home.schools.eyebrow' | transloco }}
+        </p>
+        <h2 id="home-schools-title">{{ 'home.schools.title' | transloco }}</h2>
+        <p class="home-institutions__intro">{{ 'home.schools.subtitle' | transloco }}</p>
+
+        <ul class="home-institutions__list">
+          <li>
+            <span class="home-institutions__bullet" aria-hidden="true">
+              <se-home-icon name="search" />
+            </span>
+            <div>
+              <h3>{{ 'home.schools.card1Title' | transloco }}</h3>
+              <p>{{ 'home.schools.card1Body' | transloco }}</p>
+            </div>
+          </li>
+          <li>
+            <span class="home-institutions__bullet" aria-hidden="true">
+              <se-home-icon name="cap" />
+            </span>
+            <div>
+              <h3>{{ 'home.schools.card2Title' | transloco }}</h3>
+              <p>{{ 'home.schools.card2Body' | transloco }}</p>
+            </div>
+          </li>
+          <li>
+            <span class="home-institutions__bullet" aria-hidden="true">
+              <se-home-icon name="chat" />
+            </span>
+            <div>
+              <h3>{{ 'home.schools.card3Title' | transloco }}</h3>
+              <p>{{ 'home.schools.card3Body' | transloco }}</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="home-section__cta">
+          <a routerLink="/auth/account-type" class="se-btn se-btn--primary se-btn--lg">
+            <span>{{ 'home.schools.cta' | transloco }}</span>
+            <se-home-icon name="arrow" class="se-btn__icon se-btn__icon--trail" />
+          </a>
+        </div>
+      </div>
+
+      <div class="home-institutions__visual" aria-hidden="true">
+        <span class="home-institutions__glow"></span>
+        <se-home-icon name="cap" class="home-institutions__visual-icon" />
+      </div>
+    </section>
+
+    <!-- How Schoolera works / journey -->
+    <section class="home-section" aria-labelledby="home-journey-title">
+      <header class="home-section__header home-section__header--center">
+        <h2 id="home-journey-title">
+          {{ journeySectionTitle() || ('home.journey.title' | transloco) }}
+        </h2>
+        @if (journeySectionSubtitleHtml(); as journeyHtml) {
+          <div class="cms-content home-journey__subtitle" [innerHTML]="journeyHtml"></div>
+        } @else {
+          <p>{{ 'home.journey.subtitle' | transloco }}</p>
+        }
+      </header>
+
+      <div
+        class="home-journey__tabs"
+        role="tablist"
+        [attr.aria-label]="'home.journey.title' | transloco"
+        (keydown)="onJourneyKeydown($event)"
+      >
+        <button
+          type="button"
+          role="tab"
+          id="home-journey-tab-parent"
+          class="home-journey__tab"
+          [class.is-active]="journeyTab() === 'parent'"
+          [attr.aria-selected]="journeyTab() === 'parent'"
+          [attr.tabindex]="journeyTab() === 'parent' ? 0 : -1"
+          aria-controls="home-journey-panel"
+          (click)="selectJourney('parent')"
+        >
+          {{ 'home.journey.parentTab' | transloco }}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="home-journey-tab-school"
+          class="home-journey__tab"
+          [class.is-active]="journeyTab() === 'school'"
+          [attr.aria-selected]="journeyTab() === 'school'"
+          [attr.tabindex]="journeyTab() === 'school' ? 0 : -1"
+          aria-controls="home-journey-panel"
+          (click)="selectJourney('school')"
+        >
+          {{ 'home.journey.schoolTab' | transloco }}
+        </button>
+      </div>
+
+      <div
+        class="home-journey__panel"
+        role="tabpanel"
+        id="home-journey-panel"
+        [attr.aria-labelledby]="
+          journeyTab() === 'parent' ? 'home-journey-tab-parent' : 'home-journey-tab-school'
+        "
+      >
+        <ol class="home-journey__steps">
+          @for (step of activeSteps(); track step.titleKey; let index = $index) {
+            <li>
+              <span class="home-journey__step-index" aria-hidden="true">{{ index + 1 }}</span>
+              <div>
+                <h3>{{ step.titleKey | transloco }}</h3>
+                <p>{{ step.bodyKey | transloco }}</p>
+              </div>
+            </li>
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- Featured schools -->
+    <section class="home-section" aria-labelledby="home-featured-title">
+      <header class="home-section__header home-section__header--row">
+        <div>
+          <h2 id="home-featured-title">
+            {{ schoolsSectionTitle() || ('home.featured.title' | transloco) }}
+          </h2>
+          <p>{{ 'home.featured.subtitle' | transloco }}</p>
+        </div>
+        <a routerLink="/schools" class="home-link">
+          <span>{{ 'home.featured.viewAll' | transloco }}</span>
+          <se-home-icon name="arrow" class="home-link__icon" />
+        </a>
+      </header>
+
+      @if (featuredLoading()) {
+        <div class="home-featured__status" role="status" aria-live="polite">
+          <p class="home-featured__status-title">{{ 'home.featured.loadingTitle' | transloco }}</p>
+          <p>{{ 'home.featured.loadingMessage' | transloco }}</p>
+          <ul class="home-grid home-grid--4" aria-hidden="true">
+            @for (_ of [1, 2, 3, 4]; track $index) {
+              <li class="home-school home-school--skeleton">
+                <span class="home-skeleton home-skeleton--media"></span>
+                <span class="home-skeleton home-skeleton--title"></span>
+                <span class="home-skeleton home-skeleton--line"></span>
+              </li>
+            }
+          </ul>
+        </div>
+      } @else if (featuredError()) {
+        <div class="home-featured__status" role="alert">
+          <p class="home-featured__status-title">{{ 'home.featured.errorTitle' | transloco }}</p>
+          <p>{{ 'home.featured.errorMessage' | transloco }}</p>
+          <button type="button" class="se-btn se-btn--outline" (click)="retryFeatured()">
+            {{ 'home.featured.retry' | transloco }}
+          </button>
+        </div>
+      } @else if (featuredSchools().length === 0) {
+        <div class="home-featured__status">
+          <p class="home-featured__status-title">{{ 'home.featured.emptyTitle' | transloco }}</p>
+          <p>{{ 'home.featured.emptyMessage' | transloco }}</p>
+          <a routerLink="/schools" class="se-btn se-btn--outline">
+            {{ 'home.featured.viewAll' | transloco }}
+          </a>
+        </div>
+      } @else {
+        <ul class="home-grid home-grid--4">
+          @for (school of featuredSchools(); track school.id) {
+            <li class="home-school">
+              <div class="home-school__media">
+                <img
+                  [src]="school.logoUrl || schoolCardFallback"
+                  width="320"
+                  height="180"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  (error)="onSchoolImageError($event)"
+                />
+              </div>
+              <div class="home-school__body">
+                <h3>{{ school.name }}</h3>
+                <p class="home-school__location">
+                  <se-home-icon name="pin" class="home-school__location-icon" />
+                  <span>{{ school.city || ('home.featured.cityFallback' | transloco) }}</span>
+                </p>
+                <a
+                  class="home-school__link"
+                  [routerLink]="['/schools', school.slug]"
+                  [attr.aria-label]="schoolOpenLabel(school.name)"
+                >
+                  <span>{{ 'home.featured.openSchool' | transloco }}</span>
+                  <se-home-icon name="arrow" class="home-link__icon" />
+                </a>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Platform highlights -->
+    <section class="home-highlights" aria-labelledby="home-highlights-title">
+      <header class="home-section__header home-section__header--center">
+        <h2 id="home-highlights-title">{{ 'home.highlights.title' | transloco }}</h2>
+        <p>{{ 'home.highlights.subtitle' | transloco }}</p>
+      </header>
+      <ul class="home-grid home-grid--3">
+        <li class="home-highlight">
+          <span class="home-highlight__icon" aria-hidden="true"><se-home-icon name="search" /></span>
+          <h3>{{ 'home.highlights.item1Title' | transloco }}</h3>
+          <p>{{ 'home.highlights.item1Body' | transloco }}</p>
+        </li>
+        <li class="home-highlight">
+          <span class="home-highlight__icon" aria-hidden="true"><se-home-icon name="sparkle" /></span>
+          <h3>{{ 'home.highlights.item2Title' | transloco }}</h3>
+          <p>{{ 'home.highlights.item2Body' | transloco }}</p>
+        </li>
+        <li class="home-highlight">
+          <span class="home-highlight__icon" aria-hidden="true"><se-home-icon name="arrow" /></span>
+          <h3>{{ 'home.highlights.item3Title' | transloco }}</h3>
+          <p>{{ 'home.highlights.item3Body' | transloco }}</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- FAQ -->
+    <section class="home-faq-section" aria-labelledby="home-faq-title">
+      <div class="home-faq__intro">
+        <h2 id="home-faq-title">{{ faqSectionTitle() || ('home.faq.title' | transloco) }}</h2>
+        <p>{{ faqSectionSubtitle() || ('home.faq.subtitle' | transloco) }}</p>
+        <a routerLink="/faq" class="home-link">
+          <span>{{ 'home.faq.viewAll' | transloco }}</span>
+          <se-home-icon name="arrow" class="home-link__icon" />
+        </a>
+      </div>
+
+      <div class="home-faq">
+        @for (item of faqItems; track item.id) {
+          <div class="home-faq__item" [class.is-open]="isFaqOpen(item.id)">
+            <h3>
+              <button
+                type="button"
+                class="home-faq__trigger"
+                [attr.id]="item.id + '-button'"
+                [attr.aria-expanded]="isFaqOpen(item.id)"
+                [attr.aria-controls]="item.id + '-panel'"
+                (click)="toggleFaq(item.id)"
+              >
+                <span>{{ item.questionKey | transloco }}</span>
+                <span class="home-faq__icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div
+              class="home-faq__panel"
+              [attr.id]="item.id + '-panel'"
+              role="region"
+              [attr.aria-labelledby]="item.id + '-button'"
+              [hidden]="!isFaqOpen(item.id)"
+            >
+              <p>{{ item.answerKey | transloco }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="home-final" aria-labelledby="home-final-title">
+      <div class="home-final__glow" aria-hidden="true"></div>
+      <div class="home-final__grid" aria-hidden="true"></div>
+      <div class="home-final__content">
+        <h2 id="home-final-title">{{ 'home.finalCta.title' | transloco }}</h2>
+        <p>{{ 'home.finalCta.subtitle' | transloco }}</p>
+        <div class="home-hero__actions">
+          <a routerLink="/schools" class="se-btn se-btn--light se-btn--lg">
+            <se-home-icon name="search" class="se-btn__icon" />
+            <span>{{ 'home.finalCta.search' | transloco }}</span>
+          </a>
+          <a routerLink="/auth/account-type" class="se-btn se-btn--ghost-light se-btn--lg">
+            <span>{{ 'home.finalCta.account' | transloco }}</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</se-public-page-container>

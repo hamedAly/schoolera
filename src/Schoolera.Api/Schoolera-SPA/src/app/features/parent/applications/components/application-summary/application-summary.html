@@ -1,0 +1,44 @@
+<section class="application-summary" [attr.aria-label]="'parent.applications.summary.title' | transloco">
+  <dl class="application-summary__grid">
+    @if (applicationNumber()) {
+      <div>
+        <dt>{{ 'parent.applications.summary.applicationNumber' | transloco }}</dt>
+        <dd>{{ applicationNumber() }}</dd>
+      </div>
+    }
+    <div>
+      <dt>{{ 'parent.applications.summary.child' | transloco }}</dt>
+      <dd>{{ childName() || ('parent.applications.summary.emptyValue' | transloco) }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'parent.applications.summary.school' | transloco }}</dt>
+      <dd>{{ schoolName() || ('parent.applications.summary.emptyValue' | transloco) }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'parent.applications.summary.branch' | transloco }}</dt>
+      <dd>{{ branchName() || ('parent.applications.summary.emptyValue' | transloco) }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'parent.applications.summary.stage' | transloco }}</dt>
+      <dd>{{ stageName() || ('parent.applications.summary.emptyValue' | transloco) }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'parent.applications.summary.grade' | transloco }}</dt>
+      <dd>{{ gradeName() || ('parent.applications.summary.emptyValue' | transloco) }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'parent.applications.summary.academicYear' | transloco }}</dt>
+      <dd>{{ academicYearName() || ('parent.applications.summary.emptyValue' | transloco) }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'parent.applications.summary.attachments' | transloco }}</dt>
+      <dd>{{ attachmentCount() }}</dd>
+    </div>
+  </dl>
+  @if (parentNotes()) {
+    <div class="application-summary__notes">
+      <h3>{{ 'parent.applications.summary.notes' | transloco }}</h3>
+      <p>{{ parentNotes() }}</p>
+    </div>
+  }
+</section>

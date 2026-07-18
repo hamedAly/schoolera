@@ -1,0 +1,6 @@
+using FluentValidation;
+
+namespace Schoolera.Application.SchoolPortal.Commands.DeactivateSchoolChildAgeEligibilityRule;
+
+public sealed class DeactivateSchoolChildAgeEligibilityRuleCommandValidator
+    : AbstractValidator<DeactivateSchoolChildAgeEligibilityRuleCommand>;

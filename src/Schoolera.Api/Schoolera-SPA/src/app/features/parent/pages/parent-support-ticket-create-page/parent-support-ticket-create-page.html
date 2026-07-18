@@ -1,0 +1,73 @@
+<se-portal-page-header
+  titleKey="parent.supportTickets.create.title"
+  subtitleKey="parent.supportTickets.create.subtitle"
+/>
+
+<p>
+  <a routerLink="/parent/support-tickets">{{ 'parent.supportTickets.create.back' | transloco }}</a>
+</p>
+
+<div class="parent-page">
+  <se-form-error-summary [errors]="summaryErrors()" />
+
+  <form class="parent-ticket-form" [formGroup]="form" (ngSubmit)="submit()">
+    <se-form-field
+      [label]="'parent.supportTickets.create.fields.subject' | transloco"
+      controlId="ticket-subject"
+    >
+      <input id="ticket-subject" type="text" formControlName="subject" />
+    </se-form-field>
+
+    <se-form-field
+      [label]="'parent.supportTickets.create.fields.category' | transloco"
+      controlId="ticket-category"
+    >
+      <select id="ticket-category" formControlName="category">
+        @for (option of categoryOptions; track option.value) {
+          <option [value]="option.value">
+            {{ ('parent.supportTickets.' + option.labelKey) | transloco }}
+          </option>
+        }
+      </select>
+    </se-form-field>
+
+    <se-form-field
+      [label]="'parent.supportTickets.create.fields.priority' | transloco"
+      controlId="ticket-priority"
+    >
+      <select id="ticket-priority" formControlName="priority">
+        @for (option of priorityOptions; track option.value) {
+          <option [value]="option.value">
+            {{ ('parent.supportTickets.' + option.labelKey) | transloco }}
+          </option>
+        }
+      </select>
+    </se-form-field>
+
+    <se-form-field
+      [label]="'parent.supportTickets.create.fields.body' | transloco"
+      controlId="ticket-body"
+    >
+      <textarea id="ticket-body" rows="8" formControlName="body"></textarea>
+    </se-form-field>
+
+    <se-form-field
+      [label]="'parent.supportTickets.create.fields.admissionApplicationId' | transloco"
+      controlId="ticket-admission"
+    >
+      <input id="ticket-admission" type="text" formControlName="admissionApplicationId" />
+      <small class="parent-hint">{{ 'parent.supportTickets.create.fields.admissionHint' | transloco }}</small>
+    </se-form-field>
+
+    <div class="parent-actions">
+      <button type="submit" class="se-btn se-btn--primary" [disabled]="submitting()">
+        {{
+          submitting()
+            ? ('parent.supportTickets.create.submitting' | transloco)
+            : ('parent.supportTickets.create.submit' | transloco)
+        }}
+      </button>
+      <a routerLink="/parent/support-tickets">{{ 'parent.common.cancel' | transloco }}</a>
+    </div>
+  </form>
+</div>

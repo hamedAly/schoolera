@@ -1,0 +1,621 @@
+<se-portal-page-header
+
+  titleKey="portal.admissionRequirements.title"
+
+  subtitleKey="portal.admissionRequirements.subtitle"
+
+>
+
+  <se-button type="button" (click)="openCreate()">
+
+    {{ 'portal.admissionRequirements.add' | transloco }}
+
+  </se-button>
+
+</se-portal-page-header>
+
+
+
+<form class="portal-requirements__filters" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
+
+  <se-form-field [label]="'portal.admissionRequirements.filters.branch' | transloco">
+
+    <select formControlName="branchId">
+
+      <option value="">{{ 'portal.admissionRequirements.filters.all' | transloco }}</option>
+
+      @for (branch of branches(); track branch.id) {
+
+        <option [value]="branch.id">{{ branch.name }}</option>
+
+      }
+
+    </select>
+
+  </se-form-field>
+
+
+
+  <se-form-field [label]="'portal.admissionRequirements.filters.stage' | transloco">
+
+    <select formControlName="educationalStageId">
+
+      <option value="">{{ 'portal.admissionRequirements.filters.all' | transloco }}</option>
+
+      @for (stage of stages(); track stage.id) {
+
+        <option [value]="stage.id">{{ stage.name }}</option>
+
+      }
+
+    </select>
+
+  </se-form-field>
+
+
+
+  <se-form-field [label]="'portal.admissionRequirements.filters.grade' | transloco">
+
+    <select formControlName="gradeId">
+
+      <option value="">{{ 'portal.admissionRequirements.filters.all' | transloco }}</option>
+
+      @for (grade of grades(); track grade.id) {
+
+        <option [value]="grade.id">{{ grade.name }}</option>
+
+      }
+
+    </select>
+
+  </se-form-field>
+
+
+
+  <se-form-field [label]="'portal.admissionRequirements.filters.academicYear' | transloco">
+
+    <select formControlName="academicYearId">
+
+      <option value="">{{ 'portal.admissionRequirements.filters.all' | transloco }}</option>
+
+      @for (year of academicYears(); track year.id) {
+
+        <option [value]="year.id">{{ year.name }}</option>
+
+      }
+
+    </select>
+
+  </se-form-field>
+
+
+
+  <se-form-field [label]="'portal.admissionRequirements.filters.kind' | transloco">
+
+    <select formControlName="kind">
+
+      <option value="">{{ 'portal.admissionRequirements.filters.all' | transloco }}</option>
+
+      <option [value]="RequirementKind.InformationalText">{{ 'portal.admissionRequirements.kinds.informational' | transloco }}</option>
+
+      <option [value]="RequirementKind.ParentProfileField">{{ 'portal.admissionRequirements.kinds.parentProfile' | transloco }}</option>
+
+      <option [value]="RequirementKind.ChildProfileField">{{ 'portal.admissionRequirements.kinds.childProfile' | transloco }}</option>
+
+      <option [value]="RequirementKind.ApplicationDocument">{{ 'portal.admissionRequirements.kinds.document' | transloco }}</option>
+
+    </select>
+
+  </se-form-field>
+
+
+
+  <se-form-field [label]="'portal.admissionRequirements.filters.publication' | transloco">
+
+    <select formControlName="publicationStatus">
+
+      <option value="">{{ 'portal.admissionRequirements.filters.all' | transloco }}</option>
+
+      <option [value]="PublicationStatus.Draft">{{ 'portal.admissionRequirements.draft' | transloco }}</option>
+
+      <option [value]="PublicationStatus.Published">{{ 'portal.admissionRequirements.published' | transloco }}</option>
+
+    </select>
+
+  </se-form-field>
+
+
+
+  <se-form-field [label]="'portal.admissionRequirements.filters.active' | transloco">
+
+    <select formControlName="isActive">
+
+      <option value="">{{ 'portal.admissionRequirements.filters.all' | transloco }}</option>
+
+      <option value="true">{{ 'portal.admissionRequirements.active' | transloco }}</option>
+
+      <option value="false">{{ 'portal.admissionRequirements.inactive' | transloco }}</option>
+
+    </select>
+
+  </se-form-field>
+
+</form>
+
+
+
+@if (loading()) {
+
+  <se-portal-loading-skeleton [rows]="4" />
+
+} @else {
+
+  @if (errorMessage()) {
+
+    <se-portal-error-state [message]="errorMessage()!">
+
+      <se-button type="button" variant="secondary" (click)="retry()">
+
+        {{ 'portal.admissionRequirements.retry' | transloco }}
+
+      </se-button>
+
+    </se-portal-error-state>
+
+  }
+
+
+
+  @if (showForm()) {
+
+    <form class="portal-requirements__form" [formGroup]="form" (ngSubmit)="save()">
+
+      <h2>
+
+        {{ (isEditMode() ? 'portal.admissionRequirements.edit' : 'portal.admissionRequirements.add') | transloco }}
+
+      </h2>
+
+
+
+      <se-form-field [label]="'portal.admissionRequirements.fields.code' | transloco">
+
+        <input formControlName="requirementCode" />
+
+      </se-form-field>
+
+
+
+      <se-bilingual-field-group
+
+        [formGroup]="form"
+
+        arabicControlName="nameAr"
+
+        englishControlName="nameEn"
+
+        [arabicLabelKey]="'portal.admissionRequirements.fields.nameAr'"
+
+        [englishLabelKey]="'portal.admissionRequirements.fields.nameEn'"
+
+      />
+
+
+
+      <se-bilingual-field-group
+
+        [formGroup]="form"
+
+        arabicControlName="descriptionAr"
+
+        englishControlName="descriptionEn"
+
+        [arabicLabelKey]="'portal.admissionRequirements.fields.descriptionAr'"
+
+        [englishLabelKey]="'portal.admissionRequirements.fields.descriptionEn'"
+
+        [multiline]="true"
+
+      />
+
+
+
+      <se-form-field [label]="'portal.admissionRequirements.fields.kind' | transloco">
+
+        <select formControlName="kind">
+
+          <option [value]="RequirementKind.InformationalText">{{ 'portal.admissionRequirements.kinds.informational' | transloco }}</option>
+
+          <option [value]="RequirementKind.ParentProfileField">{{ 'portal.admissionRequirements.kinds.parentProfile' | transloco }}</option>
+
+          <option [value]="RequirementKind.ChildProfileField">{{ 'portal.admissionRequirements.kinds.childProfile' | transloco }}</option>
+
+          <option [value]="RequirementKind.ApplicationDocument">{{ 'portal.admissionRequirements.kinds.document' | transloco }}</option>
+
+        </select>
+
+      </se-form-field>
+
+
+
+      <se-form-field [label]="'portal.admissionRequirements.fields.scopeBranch' | transloco">
+
+        <select formControlName="schoolBranchId">
+
+          <option value="">{{ 'portal.admissionRequirements.scopeDefault' | transloco }}</option>
+
+          @for (branch of branches(); track branch.id) {
+
+            <option [value]="branch.id">{{ branch.name }}</option>
+
+          }
+
+        </select>
+
+      </se-form-field>
+
+
+
+      <se-form-field [label]="'portal.admissionRequirements.fields.scopeStage' | transloco">
+
+        <select formControlName="educationalStageId">
+
+          <option value="">{{ 'portal.admissionRequirements.scopeDefault' | transloco }}</option>
+
+          @for (stage of stages(); track stage.id) {
+
+            <option [value]="stage.id">{{ stage.name }}</option>
+
+          }
+
+        </select>
+
+      </se-form-field>
+
+
+
+      <se-form-field [label]="'portal.admissionRequirements.fields.scopeGrade' | transloco">
+
+        <select formControlName="gradeId">
+
+          <option value="">{{ 'portal.admissionRequirements.scopeDefault' | transloco }}</option>
+
+          @for (grade of grades(); track grade.id) {
+
+            <option [value]="grade.id">{{ grade.name }}</option>
+
+          }
+
+        </select>
+
+      </se-form-field>
+
+
+
+      <se-form-field [label]="'portal.admissionRequirements.fields.scopeYear' | transloco">
+
+        <select formControlName="academicYearId">
+
+          <option value="">{{ 'portal.admissionRequirements.scopeDefault' | transloco }}</option>
+
+          @for (year of academicYears(); track year.id) {
+
+            <option [value]="year.id">{{ year.name }}</option>
+
+          }
+
+        </select>
+
+      </se-form-field>
+
+
+
+      @if (showProfileField()) {
+
+        <se-form-field [label]="'portal.admissionRequirements.fields.profileField' | transloco">
+
+          <select formControlName="profileFieldCode">
+
+            <option value="">{{ 'portal.admissionRequirements.fields.selectProfileField' | transloco }}</option>
+
+            @if (form.controls.kind.value === RequirementKind.ParentProfileField) {
+
+              <option value="1">{{ 'portal.admissionRequirements.profileFields.parentOccupation' | transloco }}</option>
+
+              <option value="2">{{ 'portal.admissionRequirements.profileFields.parentQualification' | transloco }}</option>
+
+              <option value="10">{{ 'portal.admissionRequirements.profileFields.fatherFullName' | transloco }}</option>
+
+              <option value="11">{{ 'portal.admissionRequirements.profileFields.fatherPhone' | transloco }}</option>
+
+              <option value="12">{{ 'portal.admissionRequirements.profileFields.fatherOccupation' | transloco }}</option>
+
+              <option value="13">{{ 'portal.admissionRequirements.profileFields.fatherQualification' | transloco }}</option>
+
+              <option value="20">{{ 'portal.admissionRequirements.profileFields.motherFullName' | transloco }}</option>
+
+              <option value="21">{{ 'portal.admissionRequirements.profileFields.motherPhone' | transloco }}</option>
+
+              <option value="22">{{ 'portal.admissionRequirements.profileFields.motherOccupation' | transloco }}</option>
+
+              <option value="23">{{ 'portal.admissionRequirements.profileFields.motherQualification' | transloco }}</option>
+
+            } @else {
+
+              <option value="30">{{ 'portal.admissionRequirements.profileFields.childCurrentSchool' | transloco }}</option>
+
+              <option value="31">{{ 'portal.admissionRequirements.profileFields.childStudyLanguage' | transloco }}</option>
+
+              <option value="32">{{ 'portal.admissionRequirements.profileFields.childHasSpecialNeeds' | transloco }}</option>
+
+              <option value="33">{{ 'portal.admissionRequirements.profileFields.childSpecialNeedsNotes' | transloco }}</option>
+
+              <option value="34">{{ 'portal.admissionRequirements.profileFields.childSkills' | transloco }}</option>
+
+              <option value="35">{{ 'portal.admissionRequirements.profileFields.childHobbies' | transloco }}</option>
+
+              <option value="36">{{ 'portal.admissionRequirements.profileFields.childStrengths' | transloco }}</option>
+
+              <option value="37">{{ 'portal.admissionRequirements.profileFields.childImprovementAreas' | transloco }}</option>
+
+            }
+
+          </select>
+
+        </se-form-field>
+
+      }
+
+
+
+      @if (showDocumentFields()) {
+
+        <se-form-field [label]="'portal.admissionRequirements.fields.documentCode' | transloco">
+
+          <select formControlName="documentCode">
+
+            <option [value]="1">{{ 'portal.admissionRequirements.documentCodes.birthCertificate' | transloco }}</option>
+
+            <option [value]="2">{{ 'portal.admissionRequirements.documentCodes.childPhoto' | transloco }}</option>
+
+            <option [value]="3">{{ 'portal.admissionRequirements.documentCodes.previousSchoolCertificate' | transloco }}</option>
+
+            <option [value]="4">{{ 'portal.admissionRequirements.documentCodes.medicalReport' | transloco }}</option>
+
+            <option [value]="5">{{ 'portal.admissionRequirements.documentCodes.supportingDocument' | transloco }}</option>
+
+            <option [value]="99">{{ 'portal.admissionRequirements.documentCodes.otherApproved' | transloco }}</option>
+
+          </select>
+
+        </se-form-field>
+
+
+
+        <se-form-field [label]="'portal.admissionRequirements.fields.allowedExtensions' | transloco">
+
+          <input formControlName="allowedFileExtensions" />
+
+        </se-form-field>
+
+
+
+        <se-form-field [label]="'portal.admissionRequirements.fields.maxFileSize' | transloco">
+
+          <input type="number" formControlName="maxFileSizeBytes" min="1" />
+
+        </se-form-field>
+
+
+
+        <label class="portal-requirements__checkbox">
+
+          <input type="checkbox" formControlName="allowChildVaultCopy" />
+
+          <span>{{ 'portal.admissionRequirements.fields.allowVaultCopy' | transloco }}</span>
+
+        </label>
+
+      }
+
+
+
+      <se-form-field [label]="'portal.admissionRequirements.fields.sortOrder' | transloco">
+
+        <input type="number" formControlName="sortOrder" min="0" />
+
+      </se-form-field>
+
+
+
+      <label class="portal-requirements__checkbox">
+
+        <input type="checkbox" formControlName="isRequired" />
+
+        <span>{{ 'portal.admissionRequirements.fields.isRequired' | transloco }}</span>
+
+      </label>
+
+
+
+      <div class="portal-requirements__form-actions">
+
+        <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+
+        <se-button type="button" variant="secondary" (click)="cancelForm()">
+
+          {{ 'portal.confirm.cancel' | transloco }}
+
+        </se-button>
+
+      </div>
+
+    </form>
+
+  }
+
+
+
+  @if (!items().length && !errorMessage()) {
+
+    <se-portal-empty-state
+
+      titleKey="portal.admissionRequirements.emptyTitle"
+
+      messageKey="portal.admissionRequirements.emptyMessage"
+
+    />
+
+  } @else if (items().length) {
+
+    <ul class="portal-requirements__list">
+
+      @for (item of sortedItems(); track item.id; let index = $index) {
+
+        <li [class.is-inactive]="item.isActive === false">
+
+          <div>
+
+            <strong>{{ label(item) }}</strong>
+
+            <p>
+
+              {{ item.requirementCode }} · {{ kindLabel(item.kind) }} · {{ statusKey(item) | transloco }}
+
+            </p>
+
+          </div>
+
+          <div class="portal-requirements__actions">
+
+            <se-button type="button" variant="secondary" [disabled]="index === 0" (click)="moveItem(item, -1)">
+
+              {{ 'portal.admissionRequirements.moveUp' | transloco }}
+
+            </se-button>
+
+            <se-button
+
+              type="button"
+
+              variant="secondary"
+
+              [disabled]="index === sortedItems().length - 1"
+
+              (click)="moveItem(item, 1)"
+
+            >
+
+              {{ 'portal.admissionRequirements.moveDown' | transloco }}
+
+            </se-button>
+
+            @if (item.publicationStatus !== PublicationStatus.Published) {
+
+              <se-button type="button" variant="secondary" (click)="openEdit(item)">
+
+                {{ 'portal.admissionRequirements.edit' | transloco }}
+
+              </se-button>
+
+            }
+
+            @if (item.publicationStatus === PublicationStatus.Published) {
+
+              <se-button type="button" variant="secondary" (click)="unpublish(item)">
+
+                {{ 'portal.admissionRequirements.unpublish' | transloco }}
+
+              </se-button>
+
+            } @else if (item.isActive !== false) {
+
+              <se-button type="button" variant="secondary" (click)="publish(item)">
+
+                {{ 'portal.admissionRequirements.publish' | transloco }}
+
+              </se-button>
+
+            }
+
+            @if (item.isActive !== false && item.publicationStatus !== PublicationStatus.Published) {
+
+              <se-button type="button" variant="secondary" (click)="deactivate(item)">
+
+                {{ 'portal.admissionRequirements.deactivate' | transloco }}
+
+              </se-button>
+
+            }
+
+          </div>
+
+        </li>
+
+      }
+
+    </ul>
+
+  }
+
+
+
+  <section class="portal-requirements__preview" aria-labelledby="portal-requirements-preview-heading">
+
+    <div class="portal-requirements__preview-head">
+
+      <h2 id="portal-requirements-preview-heading">
+
+        {{ 'portal.admissionRequirements.previewTitle' | transloco }}
+
+      </h2>
+
+      <se-button type="button" variant="secondary" [disabled]="previewLoading() || !schoolSlug()" (click)="loadPreview()">
+
+        {{ 'portal.admissionRequirements.previewLoad' | transloco }}
+
+      </se-button>
+
+    </div>
+
+    <p>{{ 'portal.admissionRequirements.previewHint' | transloco }}</p>
+
+    @if (previewLoading()) {
+
+      <se-portal-loading-skeleton [rows]="2" />
+
+    } @else if (previewItems().length) {
+
+      <ul class="portal-requirements__preview-list">
+
+        @for (item of previewItems(); track item.requirementCode) {
+
+          <li>
+
+            <strong>{{ item.name }}</strong>
+
+            @if (item.description) {
+
+              <p>{{ item.description }}</p>
+
+            }
+
+            <span>{{ kindLabel(item.kind) }}</span>
+
+          </li>
+
+        }
+
+      </ul>
+
+    } @else {
+
+      <p>{{ 'portal.admissionRequirements.previewEmpty' | transloco }}</p>
+
+    }
+
+  </section>
+
+}
+
+

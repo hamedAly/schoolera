@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="UnexpectedError" xml:space="preserve"><value>حدث خطأ غير متوقع.</value></data>
+  <data name="NotFound" xml:space="preserve"><value>المورد المطلوب غير موجود.</value></data>
+  <data name="Unauthorized" xml:space="preserve"><value>يلزم تسجيل الدخول للمتابعة.</value></data>
+  <data name="Forbidden" xml:space="preserve"><value>ليست لديك صلاحية لتنفيذ هذا الإجراء.</value></data>
+  <data name="ValidationFailed" xml:space="preserve"><value>حدثت أخطاء في التحقق من البيانات.</value></data>
+  <data name="ConcurrentUpdate" xml:space="preserve"><value>تم تعديل السجل بواسطة عملية أخرى. أعد التحميل وحاول مجددًا.</value></data>
+  <data name="SchoolPortalSchoolNotFound" xml:space="preserve"><value>لم يتم العثور على المدرسة.</value></data>
+  <data name="SchoolPortalNotEditable" xml:space="preserve"><value>لا يمكن تعديل هذه المدرسة في حالتها الحالية.</value></data>
+  <data name="SchoolPortalOwnerRequired" xml:space="preserve"><value>يمكن لمالك المدرسة فقط تنفيذ هذا الإجراء.</value></data>
+  <data name="SchoolPortalInvalidMedia" xml:space="preserve"><value>ملف الوسائط المرفوع غير صالح أو غير مدعوم.</value></data>
+  <data name="SchoolPortalMediaLimitExceeded" xml:space="preserve"><value>تم الوصول إلى الحد الأقصى لعدد صور المعرض.</value></data>
+</root>

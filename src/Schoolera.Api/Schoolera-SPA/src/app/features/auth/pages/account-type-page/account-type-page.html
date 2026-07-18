@@ -1,0 +1,31 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: 'auth.accountType.breadcrumb' | transloco },
+    ]"
+  />
+  <se-page-hero
+    [title]="'auth.accountType.title' | transloco"
+    [subtitle]="'auth.accountType.subtitle' | transloco"
+  />
+
+  <div class="account-type-grid">
+    <a routerLink="/auth/register/parent" class="account-type-card">
+      <h2>{{ 'auth.accountType.parentTitle' | transloco }}</h2>
+      <p>{{ 'auth.accountType.parentBody' | transloco }}</p>
+      <span>{{ 'auth.accountType.continue' | transloco }}</span>
+    </a>
+
+    <a routerLink="/auth/register/school-owner" class="account-type-card">
+      <h2>{{ 'auth.accountType.schoolTitle' | transloco }}</h2>
+      <p>{{ 'auth.accountType.schoolBody' | transloco }}</p>
+      <span>{{ 'auth.accountType.continue' | transloco }}</span>
+    </a>
+  </div>
+
+  <p class="account-type-login">
+    {{ 'auth.accountType.haveAccount' | transloco }}
+    <a routerLink="/auth/login">{{ 'auth.accountType.login' | transloco }}</a>
+  </p>
+</se-public-page-container>

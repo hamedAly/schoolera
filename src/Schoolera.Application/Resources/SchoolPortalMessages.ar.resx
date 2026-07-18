@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="SchoolNotFound" xml:space="preserve"><value>لم يتم العثور على المدرسة.</value></data>
+  <data name="AccessDenied" xml:space="preserve"><value>ليس لديك صلاحية الوصول إلى هذه المدرسة.</value></data>
+  <data name="OwnerRequired" xml:space="preserve"><value>يمكن لمالك المدرسة فقط تنفيذ هذا الإجراء.</value></data>
+  <data name="NotEditable" xml:space="preserve"><value>لا يمكن تعديل هذه المدرسة في حالتها الحالية.</value></data>
+  <data name="InvalidSchoolStatus" xml:space="preserve"><value>حالة المدرسة لا تسمح بهذا الإجراء.</value></data>
+  <data name="ConcurrentUpdate" xml:space="preserve"><value>تم تحديث المدرسة من مكان آخر. أعد التحميل وحاول مرة أخرى.</value></data>
+  <data name="TeamMemberNotFound" xml:space="preserve"><value>لم يتم العثور على عضو الفريق.</value></data>
+  <data name="TeamMemberAlreadyExists" xml:space="preserve"><value>هذا المستخدم مسؤول مدرسة نشط بالفعل.</value></data>
+  <data name="TeamUserNotEligible" xml:space="preserve"><value>لا يمكن إضافة هذا المستخدم كمسؤول مدرسة.</value></data>
+  <data name="CannotModifyOwner" xml:space="preserve"><value>لا يمكن تعديل مالك المدرسة من خلال إدارة الفريق.</value></data>
+  <data name="LastOwnerProtected" xml:space="preserve"><value>يجب أن تبقى المدرسة بمالك. لا يمكن أن ينقل الملكية ويترك المدرسة بلا مالك.</value></data>
+  <data name="InvalidTeamRole" xml:space="preserve"><value>دور الفريق المحدد غير صالح.</value></data>
+  <data name="InvalidBranchScope" xml:space="preserve"><value>نطاق الفروع المحدد غير صالح لهذا الدور.</value></data>
+  <data name="BranchScopeDenied" xml:space="preserve"><value>ليس لديك صلاحية الوصول إلى هذا الفرع.</value></data>
+  <data name="OwnershipTransferInvalid" xml:space="preserve"><value>يمكن نقل الملكية فقط إلى حساب مالك مدرسة مؤهل.</value></data>
+  <data name="CannotChangeStatus" xml:space="preserve"><value>لا يمكن تغيير حالة المدرسة من البوابة.</value></data>
+  <data name="BranchNotFound" xml:space="preserve"><value>لم يتم العثور على الفرع.</value></data>
+  <data name="OfferingNotFound" xml:space="preserve"><value>لم يتم العثور على عرض المرحلة.</value></data>
+  <data name="FeeNotFound" xml:space="preserve"><value>لم يتم العثور على رسوم الدراسة.</value></data>
+  <data name="InvalidFee" xml:space="preserve"><value>تفاصيل الرسوم غير صالحة.</value></data>
+  <data name="InvalidFeeDateRange" xml:space="preserve"><value>نطاق تاريخ سريان الرسوم غير صالح.</value></data>
+  <data name="InstallmentNotFound" xml:space="preserve"><value>لم يتم العثور على صف عرض القسط.</value></data>
+  <data name="InvalidInstallment" xml:space="preserve"><value>تفاصيل عرض القسط غير صالحة.</value></data>
+  <data name="DiscountNotFound" xml:space="preserve"><value>لم يتم العثور على الخصم المنشور.</value></data>
+  <data name="InvalidDiscount" xml:space="preserve"><value>تفاصيل الخصم المنشور غير صالحة.</value></data>
+  <data name="FinancialNoteNotFound" xml:space="preserve"><value>لم يتم العثور على الملاحظة المالية.</value></data>
+  <data name="InvalidFeeVisibility" xml:space="preserve"><value>سياسة عرض الرسوم غير صالحة.</value></data>
+  <data name="ServiceNotFound" xml:space="preserve"><value>لم يتم العثور على الخدمة الإضافية.</value></data>
+  <data name="ImageNotFound" xml:space="preserve"><value>لم يتم العثور على الصورة.</value></data>
+  <data name="DuplicateOffering" xml:space="preserve"><value>يوجد عرض لهذه المرحلة والنوع على الفرع بالفعل.</value></data>
+  <data name="DuplicateFee" xml:space="preserve"><value>توجد رسوم دراسة بنفس المرحلة والصف والعام الدراسي بالفعل.</value></data>
+  <data name="CityDistrictMismatch" xml:space="preserve"><value>الحي المحدد لا ينتمي إلى المدينة المحددة.</value></data>
+  <data name="MainBranchRequired" xml:space="preserve"><value>يجب وجود فرع رئيسي نشط واحد على الأقل.</value></data>
+  <data name="InvalidMedia" xml:space="preserve"><value>ملف الوسائط المرفوع غير صالح أو غير مدعوم.</value></data>
+  <data name="MediaLimitExceeded" xml:space="preserve"><value>تم الوصول إلى الحد الأقصى لعدد صور المعرض.</value></data>
+  <data name="FacilityNotFound" xml:space="preserve"><value>لم يتم العثور على واحدة أو أكثر من المرافق المحددة.</value></data>
+  <data name="InvalidStage" xml:space="preserve"><value>المرحلة التعليمية المحددة غير صالحة.</value></data>
+  <data name="InvalidGrade" xml:space="preserve"><value>واحد أو أكثر من الصفوف المحددة غير صالح للمرحلة.</value></data>
+  <data name="InvalidAcademicYear" xml:space="preserve"><value>العام الدراسي المحدد غير صالح.</value></data>
+  <data name="DuplicateBranchSlug" xml:space="preserve"><value>يوجد فرع بهذا المعرف بالفعل.</value></data>
+  <data name="UserNotFound" xml:space="preserve"><value>لا يوجد حساب مستخدم لهذا البريد الإلكتروني.</value></data>
+  <data name="InvalidReorder" xml:space="preserve"><value>طلب إعادة الترتيب غير صالح.</value></data>
+  <data name="AdmissionRequirementNotFound" xml:space="preserve"><value>لم يتم العثور على متطلب القبول.</value></data>
+  <data name="AdmissionRequirementConflict" xml:space="preserve"><value>يوجد متطلب منشور بنفس الرمز والنطاق.</value></data>
+  <data name="AdmissionRequirementInvalidScope" xml:space="preserve"><value>نطاق المتطلب غير صالح.</value></data>
+  <data name="AdmissionRequirementInvalidKind" xml:space="preserve"><value>إعداد نوع المتطلب غير صالح.</value></data>
+  <data name="AdmissionRequirementInvalidField" xml:space="preserve"><value>حقل الملف الشخصي المحدد غير صالح لهذا النوع.</value></data>
+  <data name="AdmissionRequirementInvalidDocument" xml:space="preserve"><value>رمز المستند المحدد غير صالح.</value></data>
+  <data name="AdmissionRequirementInvalidFileTypes" xml:space="preserve"><value>يجب تحديد نوع ملف واحد على الأقل لمتطلبات المستندات.</value></data>
+  <data name="AdmissionRequirementInvalidMaxSize" xml:space="preserve"><value>الحد الأقصى لحجم الملف يتجاوز حد المنصة.</value></data>
+  <data name="AdmissionRequirementPublishInvalid" xml:space="preserve"><value>لا يمكن نشر المتطلب حتى تكون جميع الحقول صالحة.</value></data>
+  <data name="AdmissionRequirementMustUnpublish" xml:space="preserve"><value>ألغِ نشر المتطلب قبل إجراء تعديلات هيكلية.</value></data>
+  <data name="AdmissionQuestionNotFound" xml:space="preserve"><value>لم يتم العثور على سؤال القبول.</value></data>
+  <data name="AdmissionQuestionConflict" xml:space="preserve"><value>يوجد سؤال منشور بنفس الرمز والنطاق.</value></data>
+  <data name="AdmissionQuestionInvalidScope" xml:space="preserve"><value>نطاق السؤال غير صالح.</value></data>
+  <data name="AdmissionQuestionInvalidType" xml:space="preserve"><value>إعداد نوع السؤال غير صالح.</value></data>
+  <data name="AdmissionQuestionInvalidOptions" xml:space="preserve"><value>خيارات السؤال أو إعدادات الملف غير صالحة.</value></data>
+  <data name="AdmissionQuestionPublishInvalid" xml:space="preserve"><value>لا يمكن نشر السؤال حتى تكون جميع الحقول صالحة.</value></data>
+  <data name="AdmissionQuestionMustUnpublish" xml:space="preserve"><value>ألغِ نشر السؤال قبل إجراء تعديلات هيكلية.</value></data>
+  <data name="InterviewAssessmentPolicyNotFound" xml:space="preserve"><value>لم يتم العثور على سياسة المقابلة والتقييم.</value></data>
+  <data name="InterviewAssessmentPolicyConflict" xml:space="preserve"><value>توجد سياسة منشورة بنفس النطاق.</value></data>
+  <data name="InterviewAssessmentPolicyInvalidScope" xml:space="preserve"><value>نطاق السياسة غير صالح.</value></data>
+  <data name="InterviewAssessmentPolicyPublishInvalid" xml:space="preserve"><value>لا يمكن نشر السياسة حتى تكون جميع الحقول صالحة.</value></data>
+  <data name="InterviewAssessmentPolicyMustUnpublish" xml:space="preserve"><value>ألغِ نشر السياسة قبل إجراء تعديلات هيكلية.</value></data>
+  <data name="InterviewAssessmentPolicyInvalidMode" xml:space="preserve"><value>وضع متطلبات المقابلة/التقييم غير صالح.</value></data>
+  <data name="InterviewAssessmentPolicyMeetingUnavailable" xml:space="preserve"><value>مزود الاجتماع المحدد غير متاح أو غير مفعّل.</value></data>
+  <data name="InterviewAssessmentPolicyOnSiteBranchInvalid" xml:space="preserve"><value>الفرع المحدد غير صالح للحضور في الموقع أو يفتقد العنوان.</value></data>
+  <data name="InterviewAssessmentPolicyReferenced" xml:space="preserve"><value>لا يمكن حذف السياسة لأنها مستخدمة في طلبات قبول.</value></data>
+  <data name="InterviewFaqNotFound" xml:space="preserve"><value>لم يتم العثور على سؤال المقابلة الشائع.</value></data>
+  <data name="InterviewFaqInvalid" xml:space="preserve"><value>طلب سؤال المقابلة الشائع غير صالح.</value></data>
+  <data name="InterviewFaqPublishInvalid" xml:space="preserve"><value>لا يمكن نشر سؤال المقابلة الشائع حتى يكتمل المحتوى بالعربية والإنجليزية.</value></data>
+  <data name="AgeEligibilityRuleNotFound" xml:space="preserve"><value>لم يتم العثور على قاعدة أهلية العمر.</value></data>
+  <data name="AgeEligibilityRuleConflict" xml:space="preserve"><value>توجد قاعدة أهلية عمر منشورة بنفس النطاق.</value></data>
+  <data name="AgeEligibilityRuleInvalidScope" xml:space="preserve"><value>نطاق قاعدة أهلية العمر غير صالح. المرحلة والسنة الدراسية مطلوبتان.</value></data>
+  <data name="AgeEligibilityRulePublishInvalid" xml:space="preserve"><value>لا يمكن نشر قاعدة أهلية العمر حتى تكون جميع الحقول صالحة.</value></data>
+  <data name="AgeEligibilityRuleMustUnpublish" xml:space="preserve"><value>ألغِ نشر قاعدة أهلية العمر قبل إجراء تعديلات هيكلية.</value></data>
+  <data name="AgeEligibilityRuleReferenced" xml:space="preserve"><value>لا يمكن حذف القاعدة لأنها مستخدمة في طلبات قبول.</value></data>
+  <data name="FieldMaxLength" xml:space="preserve"><value>يجب ألا يتجاوز هذا الحقل {0} حرفاً.</value></data>
+  <data name="InvalidUrl" xml:space="preserve"><value>أدخل رابطاً صالحاً.</value></data>
+  <data name="InvalidPhone" xml:space="preserve"><value>أدخل رقم هاتف صالحاً.</value></data>
+  <data name="InvalidFoundedYear" xml:space="preserve"><value>أدخل سنة تأسيس صالحة.</value></data>
+  <data name="InvalidCoordinates" xml:space="preserve"><value>أدخل قيم خط عرض وطول صالحة.</value></data>
+  <data name="RequiredField" xml:space="preserve"><value>هذا الحقل مطلوب.</value></data>
+  <data name="SlotNotFound" xml:space="preserve"><value>لم يتم العثور على موعد المقابلة أو التقييم.</value></data>
+  <data name="SlotInvalidTransition" xml:space="preserve"><value>لا يسمح بحالة الانتقال المطلوبة للموعد.</value></data>
+  <data name="SlotInvalidTime" xml:space="preserve"><value>وقت الموعد غير صالح.</value></data>
+  <data name="SlotInvalidScope" xml:space="preserve"><value>نطاق المدرسة للموعد غير صالح.</value></data>
+  <data name="SlotPolicyMismatch" xml:space="preserve"><value>الموعد لا يطابق السياسة المنشورة.</value></data>
+  <data name="SlotHasReservations" xml:space="preserve"><value>للموعد حجوزات نشطة.</value></data>
+  <data name="SlotRecurrenceLimit" xml:space="preserve"><value>طلب التكرار غير صالح أو يتجاوز الحدود.</value></data>
+  <data name="SlotRecurrenceConflict" xml:space="preserve"><value>يتعارض موعد مولد واحد أو أكثر مع المواعيد الحالية.</value></data>
+  <data name="SlotIdempotencyConflict" xml:space="preserve"><value>تم استخدام مفتاح الطلب سابقاً لبيانات تكرار مختلفة.</value></data>
+</root>

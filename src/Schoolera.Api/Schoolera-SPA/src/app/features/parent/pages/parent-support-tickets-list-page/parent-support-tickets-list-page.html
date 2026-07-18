@@ -1,0 +1,105 @@
+<se-portal-page-header
+  titleKey="parent.supportTickets.list.title"
+  subtitleKey="parent.supportTickets.list.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="parent-page">
+    <div class="parent-actions parent-actions--spread">
+      <a routerLink="/parent/support-tickets/new" class="se-btn se-btn--primary">
+        {{ 'parent.supportTickets.list.create' | transloco }}
+      </a>
+    </div>
+
+    <form class="parent-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'parent.supportTickets.filters.status' | transloco }}
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" name="status">
+          <option value="">{{ 'parent.supportTickets.filters.allStatuses' | transloco }}</option>
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">
+              {{ ('parent.supportTickets.' + option.labelKey) | transloco }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'parent.supportTickets.filters.priority' | transloco }}
+        <select
+          [ngModel]="priorityFilter()"
+          (ngModelChange)="priorityFilter.set($event)"
+          name="priority"
+        >
+          <option value="">{{ 'parent.supportTickets.filters.allPriorities' | transloco }}</option>
+          @for (option of priorityOptions; track option.value) {
+            <option [value]="option.value">
+              {{ ('parent.supportTickets.' + option.labelKey) | transloco }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <div class="parent-actions">
+        <button type="submit">{{ 'parent.supportTickets.filters.apply' | transloco }}</button>
+        <button type="button" (click)="clearFilters()">
+          {{ 'parent.supportTickets.filters.clear' | transloco }}
+        </button>
+      </div>
+    </form>
+
+    @if (items().length) {
+      <div class="parent-table-wrap">
+        <table class="parent-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'parent.supportTickets.columns.reference' | transloco }}</th>
+              <th scope="col">{{ 'parent.supportTickets.columns.subject' | transloco }}</th>
+              <th scope="col">{{ 'parent.supportTickets.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'parent.supportTickets.columns.priority' | transloco }}</th>
+              <th scope="col">{{ 'parent.supportTickets.columns.category' | transloco }}</th>
+              <th scope="col">{{ 'parent.supportTickets.columns.updated' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/parent/support-tickets', item.id]">{{ item.reference }}</a>
+                </td>
+                <td>{{ item.subject }}</td>
+                <td>{{ statusKey(item.status) | transloco }}</td>
+                <td>{{ priorityKey(item.priority) | transloco }}</td>
+                <td>{{ categoryKey(item.category) | transloco }}</td>
+                <td>{{ item.updatedAtUtc | date: 'medium' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="parent-pagination">
+        <span>
+          {{
+            'parent.supportTickets.pageInfo'
+              | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 }
+          }}
+        </span>
+        <div class="parent-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'parent.notifications.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'parent.notifications.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="parent-empty">{{ 'parent.supportTickets.list.empty' | transloco }}</p>
+    }
+  </div>
+}

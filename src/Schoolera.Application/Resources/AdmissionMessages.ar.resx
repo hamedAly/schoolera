@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AppointmentNotFound" xml:space="preserve"><value>تعذر العثور على الموعد.</value></data>
+  <data name="AppointmentInvalidTransition" xml:space="preserve"><value>لا يمكن تنفيذ هذا الإجراء في حالة الموعد الحالية.</value></data>
+  <data name="AppointmentPolicyMismatch" xml:space="preserve"><value>الموعد غير متوافق مع سياسة طلب التقديم.</value></data>
+  <data name="AppointmentRescheduleNotAllowed" xml:space="preserve"><value>إعادة الجدولة غير مسموحة.</value></data>
+  <data name="AppointmentRescheduleLimitReached" xml:space="preserve"><value>تم بلوغ الحد الأقصى لمحاولات إعادة الجدولة.</value></data>
+  <data name="AppointmentDeadlinePassed" xml:space="preserve"><value>انتهت مهلة تنفيذ الإجراء على الموعد.</value></data>
+  <data name="AppointmentCancellationNotAllowed" xml:space="preserve"><value>إلغاء الموعد غير مسموح.</value></data>
+  <data name="AppointmentSlotUnavailable" xml:space="preserve"><value>الفترة المختارة غير متاحة.</value></data>
+  <data name="AppointmentSlotFull" xml:space="preserve"><value>الفترة المختارة مكتملة السعة.</value></data>
+  <data name="AppointmentConcurrencyConflict" xml:space="preserve"><value>تم تعديل الموعد بواسطة عملية أخرى.</value></data>
+  <data name="AppointmentIdempotencyConflict" xml:space="preserve"><value>تم استخدام مفتاح تكرار الطلب لإجراء آخر.</value></data>
+  <data name="AppointmentJoinTooEarly" xml:space="preserve"><value>لم تبدأ نافذة الانضمام إلى الموعد بعد.</value></data>
+  <data name="AppointmentJoinExpired" xml:space="preserve"><value>انتهت نافذة الانضمام إلى الموعد.</value></data>
+  <data name="AppointmentJoinProviderUnavailable" xml:space="preserve"><value>مزود الموعد الإلكتروني غير متاح حالياً.</value></data>
+  <data name="MeetingNotFound" xml:space="preserve"><value>لم يتم العثور على جلسة الاجتماع.</value></data>
+  <data name="MeetingAccessUnavailable" xml:space="preserve"><value>الوصول الآمن للاجتماع غير متاح حالياً.</value></data>
+  <data name="MeetingRetryRejected" xml:space="preserve"><value>تم رفض إعادة محاولة جلسة الاجتماع لأن حالتها تغيرت أو لأن الطلب غير صالح.</value></data>
+  <data name="EvaluationNotFound" xml:space="preserve"><value>التقييم غير موجود.</value></data>
+  <data name="EvaluationInvalidTransition" xml:space="preserve"><value>إجراء التقييم غير مسموح في حالته الحالية.</value></data>
+  <data name="EvaluationMissingTemplate" xml:space="preserve"><value>لا يوجد نموذج تقييم منشور ونشط ينطبق على الطلب.</value></data>
+  <data name="EvaluationInvalidAttendance" xml:space="preserve"><value>بيانات الحضور المطلوبة غير صحيحة أو غير مكتملة.</value></data>
+  <data name="EvaluationInvalidAnswers" xml:space="preserve"><value>إجابة واحدة أو أكثر غير صحيحة أو غير مكتملة.</value></data>
+  <data name="EvaluationInvalidRecommendation" xml:space="preserve"><value>توصية التقييم أو التعليمات المطلوبة معها غير صحيحة.</value></data>
+  <data name="EvaluationTooEarly" xml:space="preserve"><value>هذا الإجراء غير متاح في وقت الموعد الحالي.</value></data>
+  <data name="EvaluationConcurrencyConflict" xml:space="preserve"><value>تم تعديل التقييم بواسطة عملية أخرى.</value></data>
+  <data name="EvaluationIdempotencyConflict" xml:space="preserve"><value>تم استخدام مفتاح تكرار الطلب لإجراء تقييم آخر.</value></data>
+  <data name="EvaluationCorrectionBlocked" xml:space="preserve"><value>لا يمكن تصحيح النتيجة النهائية في حالة طلب القبول الحالية.</value></data>
+  <data name="EvaluationTemplateConflict" xml:space="preserve"><value>يوجد نموذج تقييم منشور آخر بنفس النطاق.</value></data>
+  <data name="EvaluationTemplateInvalidScope" xml:space="preserve"><value>نطاق نموذج التقييم غير صحيح.</value></data>
+</root>

@@ -1,0 +1,22 @@
+<se-page-header
+  [title]="'ops.dashboardTitle' | transloco"
+  [description]="'ops.dashboardDescription' | transloco"
+/>
+
+<section class="summary-grid" [attr.aria-label]="'ops.modulesLabel' | transloco">
+  @for (module of modules; track module.route) {
+    <a class="summary-card" [routerLink]="module.route">
+      <span>{{ module.labelKey | transloco }}</span>
+      <strong>{{ module.valueKey | transloco }}</strong>
+      <small>{{ module.stateKey | transloco }}</small>
+    </a>
+  }
+</section>
+
+<section class="panel">
+  <div>
+    <h2>{{ 'ops.backendContract' | transloco }}</h2>
+    <p>{{ 'ops.backendContractBody' | transloco }}</p>
+  </div>
+  <code>GET /api/schools</code>
+</section>

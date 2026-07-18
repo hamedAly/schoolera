@@ -1,0 +1,102 @@
+<section class="attachment-list" [attr.aria-label]="'parent.applications.wizard.attachmentsTitle' | transloco">
+  @if (canUpload()) {
+    <div class="attachment-list__upload">
+      <label class="attachment-list__type" for="admission-attachment-type">
+        {{ 'parent.applications.wizard.attachmentType' | transloco }}
+      </label>
+      <select
+        id="admission-attachment-type"
+        [ngModel]="selectedType()"
+        (ngModelChange)="selectedType.set($event)"
+        [disabled]="uploading()"
+      >
+        @for (type of attachmentTypes; track type.value) {
+          <option [ngValue]="type.value">{{ type.labelKey | transloco }}</option>
+        }
+      </select>
+
+      <label class="parent-btn secondary attachment-list__file-label" for="admission-attachment-file">
+        {{ uploading() ? ('parent.applications.wizard.uploading' | transloco) : ('parent.applications.wizard.upload' | transloco) }}
+      </label>
+      <input
+        id="admission-attachment-file"
+        class="visually-hidden"
+        type="file"
+        accept=".pdf,image/jpeg,image/png,image/webp"
+        [disabled]="uploading()"
+        (change)="onFileSelected($event)"
+      />
+
+      @if (uploading()) {
+        <p class="attachment-list__progress" role="status" aria-live="polite">
+          {{ 'parent.applications.wizard.uploadProgress' | transloco: { percent: uploadPercent() } }}
+        </p>
+      }
+      @if (clientError(); as err) {
+        <p class="attachment-list__error" role="alert">{{ err | transloco }}</p>
+      }
+    </div>
+  }
+
+  @if (canCopyFromVault()) {
+    <div class="attachment-list__vault">
+      <h3>{{ 'parent.applications.wizard.copyFromVaultTitle' | transloco }}</h3>
+      @if (vaultDocuments().length) {
+        <label for="admission-vault-document">
+          {{ 'parent.applications.wizard.vaultDocument' | transloco }}
+        </label>
+        <select
+          id="admission-vault-document"
+          [ngModel]="selectedVaultDocumentId()"
+          (ngModelChange)="selectedVaultDocumentId.set($event)"
+          [disabled]="copyingFromVault()"
+        >
+          <option value="">{{ 'parent.common.select' | transloco }}</option>
+          @for (document of vaultDocuments(); track document.id) {
+            <option [value]="document.id">
+              {{ document.originalFileName }} — {{ vaultTypeLabelKey(document.documentType) | transloco }}
+            </option>
+          }
+        </select>
+        <button
+          type="button"
+          class="parent-btn secondary"
+          [disabled]="!selectedVaultDocumentId() || copyingFromVault()"
+          (click)="copyFromVault()"
+        >
+          {{ (copyingFromVault()
+            ? 'parent.applications.wizard.copyingFromVault'
+            : 'parent.applications.wizard.copyFromVault') | transloco }}
+        </button>
+      } @else {
+        <p class="attachment-list__empty">{{ 'parent.applications.wizard.vaultEmpty' | transloco }}</p>
+      }
+    </div>
+  }
+
+  <ul class="attachment-list__items">
+    @for (attachment of attachments(); track attachment.id) {
+      <li class="attachment-list__item">
+        <div>
+          <div class="attachment-list__name">{{ attachment.originalFileName }}</div>
+          <div class="attachment-list__meta">
+            {{ typeLabelKey(attachment.attachmentType) | transloco }}
+            · {{ attachment.fileSizeBytes ?? 0 }} B
+          </div>
+        </div>
+        <div class="attachment-list__actions">
+          <button type="button" class="parent-btn secondary" (click)="download(attachment)">
+            {{ 'parent.applications.wizard.download' | transloco }}
+          </button>
+          @if (canRemove()) {
+            <button type="button" class="parent-btn danger" (click)="remove(attachment.id)">
+              {{ 'parent.applications.wizard.removeAttachment' | transloco }}
+            </button>
+          }
+        </div>
+      </li>
+    } @empty {
+      <li class="attachment-list__empty">{{ 'parent.applications.wizard.attachmentsEmpty' | transloco }}</li>
+    }
+  </ul>
+</section>

@@ -1,0 +1,102 @@
+<se-portal-page-header
+  titleKey="parent.dashboard.title"
+  subtitleKey="parent.dashboard.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="6" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!">
+    <button type="button" class="parent-btn primary" (click)="retry()">{{ 'parent.common.retry' | transloco }}</button>
+  </se-portal-error-state>
+} @else if (dashboard(); as dash) {
+  <div class="parent-page">
+    @if (displayName()) {
+      <p class="parent-welcome">{{ 'parent.dashboard.welcome' | transloco: { name: displayName() } }}</p>
+    }
+
+    @if (dash.profileIncomplete) {
+      <div class="parent-alert parent-alert--warning" role="status">
+        <p>{{ 'parent.dashboard.profileIncomplete' | transloco }}</p>
+        <a routerLink="/parent/profile" class="parent-btn primary">{{ 'parent.dashboard.completeProfile' | transloco }}</a>
+      </div>
+    }
+
+    <section class="parent-stats" aria-labelledby="parent-children-stats">
+      <h2 id="parent-children-stats" class="visually-hidden">{{ 'parent.dashboard.childrenSection' | transloco }}</h2>
+      <div class="parent-stat-card">
+        <dt>{{ 'parent.dashboard.totalChildren' | transloco }}</dt>
+        <dd>{{ dash.childCount }}</dd>
+        <a routerLink="/parent/children">{{ 'parent.dashboard.viewChildren' | transloco }}</a>
+      </div>
+      <div class="parent-stat-card">
+        <dt>{{ 'parent.dashboard.activeChildren' | transloco }}</dt>
+        <dd>{{ dash.activeChildCount }}</dd>
+      </div>
+    </section>
+
+    <section class="parent-actions" aria-labelledby="parent-quick-actions">
+      <h2 id="parent-quick-actions" class="visually-hidden">{{ 'parent.dashboard.quickActions' | transloco }}</h2>
+      <a routerLink="/parent/children/new" class="parent-btn primary">{{ 'parent.dashboard.addChild' | transloco }}</a>
+      @if (dash.applicationsAvailable) {
+        <a routerLink="/schools" class="parent-btn secondary">{{ 'parent.dashboard.startApplication' | transloco }}</a>
+        <a routerLink="/parent/applications" class="parent-btn secondary">{{ 'parent.dashboard.viewApplications' | transloco }}</a>
+      }
+    </section>
+
+    <section aria-labelledby="parent-applications-title">
+      <h2 id="parent-applications-title">{{ 'parent.dashboard.applicationsTitle' | transloco }}</h2>
+      @if (dash.applicationsAvailable) {
+        <div class="parent-stats">
+          <div class="parent-stat-card">
+            <dt>{{ 'parent.dashboard.applicationsTotal' | transloco }}</dt>
+            <dd>{{ dash.totalApplications ?? 0 }}</dd>
+            <a routerLink="/parent/applications">{{ 'parent.dashboard.viewApplications' | transloco }}</a>
+          </div>
+          <div class="parent-stat-card">
+            <dt>{{ 'parent.dashboard.applicationsDraft' | transloco }}</dt>
+            <dd>{{ dash.draftApplications ?? 0 }}</dd>
+          </div>
+          <div class="parent-stat-card">
+            <dt>{{ 'parent.dashboard.applicationsSubmitted' | transloco }}</dt>
+            <dd>{{ dash.submittedApplications ?? 0 }}</dd>
+          </div>
+          <div class="parent-stat-card">
+            <dt>{{ 'parent.dashboard.applicationsUnderReview' | transloco }}</dt>
+            <dd>{{ dash.underReviewApplications ?? 0 }}</dd>
+          </div>
+          <div class="parent-stat-card">
+            <dt>{{ 'parent.dashboard.applicationsAccepted' | transloco }}</dt>
+            <dd>{{ dash.acceptedApplications ?? 0 }}</dd>
+          </div>
+          <div class="parent-stat-card">
+            <dt>{{ 'parent.dashboard.applicationsRejected' | transloco }}</dt>
+            <dd>{{ dash.rejectedApplications ?? 0 }}</dd>
+          </div>
+          <div class="parent-stat-card">
+            <dt>{{ 'parent.dashboard.applicationsCancelled' | transloco }}</dt>
+            <dd>{{ dash.cancelledApplications ?? 0 }}</dd>
+          </div>
+        </div>
+      } @else {
+        <p class="parent-empty">{{ 'parent.dashboard.applicationsUnavailable' | transloco }}</p>
+      }
+    </section>
+
+    <section aria-labelledby="parent-recent-activity-title">
+      <h2 id="parent-recent-activity-title">{{ 'parent.dashboard.recentActivityTitle' | transloco }}</h2>
+      @if (dash.recentActivityAvailable && recentActivities().length) {
+        <ul class="parent-activity-list">
+          @for (activity of recentActivities(); track (activity.occurredAtUtc ?? '') + (activity.activityType ?? '') + (activity.summary ?? '')) {
+            <li>
+              <span class="parent-activity-list__summary">{{ activity.summary }}</span>
+              <time [attr.datetime]="activity.occurredAtUtc">{{ formatActivityDate(activity.occurredAtUtc) }}</time>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="parent-empty">{{ 'parent.dashboard.recentActivityUnavailable' | transloco }}</p>
+      }
+    </section>
+  </div>
+}

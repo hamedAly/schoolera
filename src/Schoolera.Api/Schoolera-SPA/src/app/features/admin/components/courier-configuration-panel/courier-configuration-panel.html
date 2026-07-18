@@ -1,0 +1,160 @@
+<section class="courier-panel" aria-labelledby="courier-configuration-title">
+  <h2 id="courier-configuration-title">{{ 'admin.integrations.courier.title' | transloco }}</h2>
+  <p>{{ 'admin.integrations.courier.subtitle' | transloco }}</p>
+
+  @if (loading()) {
+    <p role="status">{{ 'admin.integrations.courier.loading' | transloco }}</p>
+  } @else if (error()) {
+    <div class="admin-alert admin-alert--error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" (click)="load()">{{ 'admin.common.retry' | transloco }}</button>
+    </div>
+  } @else if (detail(); as courier) {
+    <p class="admin-alert admin-alert--warning">{{ 'admin.integrations.courier.simulatedWarning' | transloco }}</p>
+    <p class="courier-version">
+      {{ 'admin.integrations.courier.configurationVersion' | transloco }}: {{ courier.configurationVersion }}
+    </p>
+
+    <details open>
+      <summary>{{ 'admin.integrations.courier.profile.title' | transloco }}</summary>
+      <div class="courier-form">
+        <label>{{ 'admin.integrations.courier.profile.descriptionAr' | transloco }}<textarea rows="3" [(ngModel)]="profile.descriptionAr"></textarea></label>
+        <label>{{ 'admin.integrations.courier.profile.descriptionEn' | transloco }}<textarea rows="3" [(ngModel)]="profile.descriptionEn"></textarea></label>
+        <label>{{ 'admin.integrations.courier.profile.logo' | transloco }}<input type="text" [(ngModel)]="profile.logoReference" /></label>
+        <label>{{ 'admin.integrations.courier.profile.terms' | transloco }}<input type="url" [(ngModel)]="profile.termsUrl" /></label>
+        <label>{{ 'admin.integrations.courier.profile.privacy' | transloco }}<input type="url" [(ngModel)]="profile.privacyUrl" /></label>
+        <button type="button" class="primary" [disabled]="busy()" (click)="saveProfile()">{{ 'admin.integrations.courier.save' | transloco }}</button>
+      </div>
+    </details>
+
+    <details open>
+      <summary>{{ 'admin.integrations.courier.services.title' | transloco }}</summary>
+      <div class="courier-items">
+        @for (item of courier.services ?? []; track item.id) {
+          <article>
+            <strong>{{ localized(item.nameAr, item.nameEn) }}</strong>
+            <span>{{ item.code }}</span>
+            <span>{{ item.isActive ? ('admin.integrations.courier.active' | transloco) : ('admin.integrations.courier.inactive' | transloco) }}</span>
+            <button type="button" (click)="editService(item)">{{ 'admin.integrations.courier.edit' | transloco }}</button>
+            <button type="button" [disabled]="busy()" (click)="toggleService(item)">
+              {{ (item.isActive ? 'admin.integrations.courier.deactivate' : 'admin.integrations.courier.activate') | transloco }}
+            </button>
+          </article>
+        }
+      </div>
+      <div class="courier-form">
+        <h3>{{ (service.id ? 'admin.integrations.courier.services.edit' : 'admin.integrations.courier.services.add') | transloco }}</h3>
+        <p class="admin-alert admin-alert--warning">{{ 'admin.integrations.courier.services.homePickupOnly' | transloco }}</p>
+        <label>{{ 'admin.integrations.courier.services.code' | transloco }}<input type="text" [(ngModel)]="service.code" readonly /></label>
+        <label>{{ 'admin.integrations.courier.services.nameAr' | transloco }}<input type="text" [(ngModel)]="service.nameAr" /></label>
+        <label>{{ 'admin.integrations.courier.services.nameEn' | transloco }}<input type="text" [(ngModel)]="service.nameEn" /></label>
+        <label>{{ 'admin.integrations.courier.services.descriptionAr' | transloco }}<textarea [(ngModel)]="service.descriptionAr"></textarea></label>
+        <label>{{ 'admin.integrations.courier.services.descriptionEn' | transloco }}<textarea [(ngModel)]="service.descriptionEn"></textarea></label>
+        <label>{{ 'admin.integrations.courier.services.sortOrder' | transloco }}<input type="number" [(ngModel)]="service.sortOrder" /></label>
+        <label>{{ 'admin.integrations.courier.services.leadMinutes' | transloco }}<input type="number" min="0" [(ngModel)]="service.minimumPickupLeadTimeMinutes" /></label>
+        <label>{{ 'admin.integrations.courier.services.cutoff' | transloco }}<input type="time" [(ngModel)]="service.dailyCutoffLocalTime" /></label>
+        <label>{{ 'admin.integrations.courier.services.futureDays' | transloco }}<input type="number" min="0" [(ngModel)]="service.maximumFuturePickupDays" /></label>
+        <label>{{ 'admin.integrations.courier.services.acceptanceMinutes' | transloco }}<input type="number" min="0" [(ngModel)]="service.acceptanceWindowMinutes" /></label>
+        <label>{{ 'admin.integrations.courier.services.maxWeight' | transloco }}<input type="number" min="0" [(ngModel)]="service.maximumEnvelopeWeightGrams" /></label>
+        <label>{{ 'admin.integrations.courier.services.maxLength' | transloco }}<input type="number" min="0" [(ngModel)]="service.maximumEnvelopeLengthCm" /></label>
+        <label>{{ 'admin.integrations.courier.services.maxWidth' | transloco }}<input type="number" min="0" [(ngModel)]="service.maximumEnvelopeWidthCm" /></label>
+        <label>{{ 'admin.integrations.courier.services.maxHeight' | transloco }}<input type="number" min="0" [(ngModel)]="service.maximumEnvelopeHeightCm" /></label>
+        <fieldset>
+          <legend>{{ 'admin.integrations.courier.services.capabilities' | transloco }}</legend>
+          <label><input type="checkbox" [(ngModel)]="service.supportsScheduledPickup" />{{ 'admin.integrations.courier.capabilities.scheduled' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsSameDayPickup" />{{ 'admin.integrations.courier.capabilities.sameDay' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.canCreatePickup" />{{ 'admin.integrations.courier.capabilities.createPickup' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.canQueryStatus" />{{ 'admin.integrations.courier.capabilities.queryStatus' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsWebhook" />{{ 'admin.integrations.courier.capabilities.webhook' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsPolling" />{{ 'admin.integrations.courier.capabilities.polling' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsManualUpdates" />{{ 'admin.integrations.courier.capabilities.manualUpdates' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsCancellationBeforePickup" />{{ 'admin.integrations.courier.capabilities.cancellation' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsCourierAssignment" />{{ 'admin.integrations.courier.capabilities.assignment' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsProofOfPickup" />{{ 'admin.integrations.courier.capabilities.proofPickup' | transloco }}</label>
+          <label><input type="checkbox" [(ngModel)]="service.supportsProofOfDelivery" />{{ 'admin.integrations.courier.capabilities.proofDelivery' | transloco }}</label>
+          <label><input type="checkbox" disabled />{{ 'admin.integrations.courier.capabilities.dropOffUnavailable' | transloco }}</label>
+        </fieldset>
+        <button type="button" class="primary" [disabled]="busy()" (click)="saveService()">{{ 'admin.integrations.courier.save' | transloco }}</button>
+      </div>
+    </details>
+
+    <details>
+      <summary>{{ 'admin.integrations.courier.coverage.title' | transloco }}</summary>
+      <div class="courier-items">
+        @for (item of courier.coverage ?? []; track item.id) {
+          <article>
+            <strong>{{ serviceName(item.serviceId) }}</strong>
+            <span>{{ (item.result === 1 ? 'admin.integrations.courier.coverage.covered' : 'admin.integrations.courier.coverage.notCovered') | transloco }}</span>
+            <button type="button" (click)="editCoverage(item)">{{ 'admin.integrations.courier.edit' | transloco }}</button>
+            <button type="button" [disabled]="busy()" (click)="toggleCoverage(item)">{{ (item.isActive ? 'admin.integrations.courier.deactivate' : 'admin.integrations.courier.activate') | transloco }}</button>
+          </article>
+        }
+      </div>
+      <div class="courier-form">
+        <label>{{ 'admin.integrations.courier.service' | transloco }}
+          <select [(ngModel)]="coverage.serviceId"><option [ngValue]="undefined">{{ 'admin.integrations.courier.allServices' | transloco }}</option>@for (item of courier.services ?? []; track item.id) { <option [value]="item.id">{{ localized(item.nameAr, item.nameEn) }}</option> }</select>
+        </label>
+        <se-location-selector idPrefix="courier-coverage" [countryId]="coverageLocation().countryId" [governorateId]="coverageLocation().governorateId" [cityId]="coverageLocation().cityId" [districtId]="coverageLocation().districtId" (selectionChange)="coverageLocation.set($event)" />
+        <label>{{ 'admin.integrations.courier.coverage.result' | transloco }}<select [(ngModel)]="coverage.result">@for (item of coverageResults; track item.value) { <option [ngValue]="item.value">{{ item.key | transloco }}</option> }</select></label>
+        <label>{{ 'admin.integrations.courier.coverage.notesAr' | transloco }}<textarea [(ngModel)]="coverage.notesAr"></textarea></label>
+        <label>{{ 'admin.integrations.courier.coverage.notesEn' | transloco }}<textarea [(ngModel)]="coverage.notesEn"></textarea></label>
+        <button type="button" class="primary" [disabled]="busy() || !coverageLocation().countryId" (click)="saveCoverage()">{{ 'admin.integrations.courier.save' | transloco }}</button>
+      </div>
+    </details>
+
+    <details>
+      <summary>{{ 'admin.integrations.courier.windows.title' | transloco }}</summary>
+      <p>{{ 'admin.integrations.courier.windows.noCrossMidnight' | transloco }}</p>
+      <div class="courier-items">
+        @for (item of courier.windows ?? []; track item.id) {
+          <article><strong>{{ item.timeZoneId }}</strong><span>{{ item.localStartTime }}–{{ item.localEndTime }}</span><button type="button" (click)="editWindow(item)">{{ 'admin.integrations.courier.edit' | transloco }}</button><button type="button" [disabled]="busy()" (click)="toggleWindow(item)">{{ (item.isActive ? 'admin.integrations.courier.deactivate' : 'admin.integrations.courier.activate') | transloco }}</button></article>
+        }
+      </div>
+      <div class="courier-form">
+        <label>{{ 'admin.integrations.courier.service' | transloco }}<select [(ngModel)]="window.serviceId"><option [ngValue]="undefined">{{ 'admin.integrations.courier.allServices' | transloco }}</option>@for (item of courier.services ?? []; track item.id) { <option [value]="item.id">{{ localized(item.nameAr, item.nameEn) }}</option> }</select></label>
+        <label>{{ 'admin.integrations.courier.windows.coverage' | transloco }}<select [(ngModel)]="window.coverageRuleId"><option [ngValue]="undefined">{{ 'admin.integrations.courier.allCoverage' | transloco }}</option>@for (item of courier.coverage ?? []; track item.id) { <option [value]="item.id">{{ item.id }}</option> }</select></label>
+        <label>{{ 'admin.integrations.courier.windows.scope' | transloco }}<input type="text" [(ngModel)]="window.scopeKey" /></label>
+        <label>{{ 'admin.integrations.courier.windows.timezone' | transloco }}<input type="text" [(ngModel)]="window.timeZoneId" /></label>
+        <label>{{ 'admin.integrations.courier.windows.day' | transloco }}<select [(ngModel)]="window.dayOfWeek">@for (item of days; track item.value) { <option [ngValue]="item.value">{{ item.key | transloco }}</option> }</select></label>
+        <label>{{ 'admin.integrations.courier.windows.start' | transloco }}<input type="time" [(ngModel)]="window.localStartTime" /></label>
+        <label>{{ 'admin.integrations.courier.windows.end' | transloco }}<input type="time" [(ngModel)]="window.localEndTime" /></label>
+        <button type="button" class="primary" [disabled]="busy()" (click)="saveWindow()">{{ 'admin.integrations.courier.save' | transloco }}</button>
+      </div>
+    </details>
+
+    <details>
+      <summary>{{ 'admin.integrations.courier.sla.title' | transloco }}</summary>
+      <p>{{ 'admin.integrations.courier.sla.elapsedHint' | transloco }}</p>
+      <div class="courier-items">
+        @for (item of courier.slas ?? []; track item.id) {
+          <article><strong>{{ serviceName(item.serviceId) }}</strong><span>{{ item.deliveryToSchoolTargetMinutes }} {{ 'admin.integrations.courier.sla.elapsedMinutes' | transloco }}</span><button type="button" (click)="editSla(item)">{{ 'admin.integrations.courier.edit' | transloco }}</button><button type="button" [disabled]="busy()" (click)="toggleSla(item)">{{ (item.isActive ? 'admin.integrations.courier.deactivate' : 'admin.integrations.courier.activate') | transloco }}</button></article>
+        }
+      </div>
+      <div class="courier-form">
+        <label>{{ 'admin.integrations.courier.service' | transloco }}<select [(ngModel)]="sla.serviceId"><option [ngValue]="undefined">{{ 'admin.integrations.courier.allServices' | transloco }}</option>@for (item of courier.services ?? []; track item.id) { <option [value]="item.id">{{ localized(item.nameAr, item.nameEn) }}</option> }</select></label>
+        <label>{{ 'admin.integrations.courier.sla.coverage' | transloco }}<select [(ngModel)]="sla.coverageRuleId"><option [ngValue]="undefined">{{ 'admin.integrations.courier.allCoverage' | transloco }}</option>@for (item of courier.coverage ?? []; track item.id) { <option [value]="item.id">{{ item.id }}</option> }</select></label>
+        <label>{{ 'admin.integrations.courier.sla.scope' | transloco }}<input type="text" [(ngModel)]="sla.scopeKey" /></label>
+        <label>{{ 'admin.integrations.courier.sla.acceptance' | transloco }}<input type="number" min="0" [(ngModel)]="sla.acceptanceTargetMinutes" /></label>
+        <label>{{ 'admin.integrations.courier.sla.scheduling' | transloco }}<input type="number" min="0" [(ngModel)]="sla.pickupSchedulingTargetMinutes" /></label>
+        <label>{{ 'admin.integrations.courier.sla.pickup' | transloco }}<input type="number" min="0" [(ngModel)]="sla.pickupCompletionTargetMinutes" /></label>
+        <label>{{ 'admin.integrations.courier.sla.delivery' | transloco }}<input type="number" min="0" [(ngModel)]="sla.deliveryToSchoolTargetMinutes" /></label>
+        <label>{{ 'admin.integrations.courier.sla.receipt' | transloco }}<input type="number" min="0" [(ngModel)]="sla.receiptConfirmationTargetMinutes" /></label>
+        <button type="button" class="primary" [disabled]="busy()" (click)="saveSla()">{{ 'admin.integrations.courier.save' | transloco }}</button>
+      </div>
+    </details>
+
+    <details>
+      <summary>{{ 'admin.integrations.courier.health.title' | transloco }}</summary>
+      @if (!(courier.healthHistory ?? []).length) { <p>{{ 'admin.integrations.courier.health.empty' | transloco }}</p> }
+      <div class="courier-items">@for (item of courier.healthHistory ?? []; track item.checkedAtUtc) { <article><strong>{{ item.safeCode || ('admin.common.unknown' | transloco) }}</strong><span>{{ formatDate(item.checkedAtUtc) }}</span><span>{{ item.isOperational ? ('admin.integrations.courier.health.operational' | transloco) : ('admin.integrations.courier.health.unavailable' | transloco) }}</span></article> }</div>
+    </details>
+
+    <details open>
+      <summary>{{ 'admin.integrations.courier.preview.title' | transloco }}</summary>
+      <se-location-selector idPrefix="courier-preview" (selectionChange)="previewLocation.set($event)" />
+      <button type="button" class="primary" [disabled]="busy() || !previewLocation().countryId" (click)="previewAvailability()">{{ 'admin.integrations.courier.preview.action' | transloco }}</button>
+      @if (previewLoaded() && !preview().length) { <p>{{ 'admin.integrations.courier.preview.empty' | transloco }}</p> }
+      <div class="courier-items">@for (item of preview(); track (item.providerCode ?? '') + (item.serviceCode ?? '')) { <article><strong>{{ localized(item.providerNameAr, item.providerNameEn) }}</strong><span>{{ localized(item.serviceNameAr, item.serviceNameEn) }}</span><span>{{ formatDate(item.earliestPickupAtUtc) }}</span></article> }</div>
+    </details>
+  }
+</section>

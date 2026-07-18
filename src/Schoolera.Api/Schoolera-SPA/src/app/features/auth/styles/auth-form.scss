@@ -1,0 +1,60 @@
+.auth-form {
+  display: grid;
+  gap: var(--se-space-4);
+  max-width: 28rem;
+}
+
+.auth-form__alert {
+  margin: 0;
+  padding: var(--se-space-3) var(--se-space-4);
+  border-radius: var(--se-radius-md);
+  background: color-mix(in srgb, var(--se-color-danger) 12%, transparent);
+  color: var(--se-color-danger);
+}
+
+.auth-form__success {
+  margin: 0;
+  padding: var(--se-space-3) var(--se-space-4);
+  border-radius: var(--se-radius-md);
+  background: color-mix(in srgb, var(--se-color-brand) 12%, transparent);
+  color: var(--se-color-brand-strong);
+}
+
+.auth-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-3);
+  align-items: center;
+}
+
+.auth-form__links {
+  display: grid;
+  gap: var(--se-space-2);
+  margin: 0;
+  color: var(--se-color-ink-muted);
+}
+
+.auth-form__links a {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-form__checkbox {
+  display: flex;
+  gap: var(--se-space-2);
+  align-items: flex-start;
+}
+
+.auth-form__checkbox input {
+  margin-block-start: 0.2rem;
+}
+
+.auth-form__field-error {
+  color: var(--se-color-danger);
+}
+
+.auth-form__hint {
+  margin: 0;
+  color: var(--se-color-ink-muted);
+  font-size: 0.9rem;
+}

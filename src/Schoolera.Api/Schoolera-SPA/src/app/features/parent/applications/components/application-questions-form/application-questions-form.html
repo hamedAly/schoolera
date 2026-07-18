@@ -1,0 +1,161 @@
+@if (sortedQuestions().length) {
+  <ul class="app-questions-form" role="list">
+    @for (question of sortedQuestions(); track question.snapshotId) {
+      <li
+        class="app-questions-form__item"
+        [class.is-complete]="question.isComplete"
+        [class.is-incomplete]="question.isRequired && !question.isComplete"
+      >
+        <div class="app-questions-form__head">
+          <span class="app-questions-form__status" aria-hidden="true">
+            @if (question.isComplete) {
+              ✓
+            } @else if (question.isRequired) {
+              •
+            }
+          </span>
+          <div>
+            <strong>{{ question.label }}</strong>
+            @if (readOnly()) {
+              <span class="app-questions-form__type">{{ typeKey(question.questionType) | transloco }}</span>
+            }
+            @if (question.help) {
+              <p class="app-questions-form__help">{{ question.help }}</p>
+            }
+            @if (question.isRequired && !question.isComplete && reasonKey(question.reasonCode); as reason) {
+              <p class="app-questions-form__reason">{{ reason | transloco }}</p>
+            }
+          </div>
+        </div>
+
+        @if (readOnly()) {
+          <p class="app-questions-form__answer">{{ displayAnswer(question) }}</p>
+        } @else {
+          @switch (question.questionType) {
+            @case (QuestionType.ShortText) {
+              <se-form-field [label]="'parent.applications.wizard.questions.answer' | transloco">
+                <input
+                  type="text"
+                  [value]="question.textValue ?? ''"
+                  (input)="onTextInput(question, $any($event.target).value)"
+                  [disabled]="!canEdit()"
+                />
+              </se-form-field>
+            }
+            @case (QuestionType.LongText) {
+              <se-form-field [label]="'parent.applications.wizard.questions.answer' | transloco">
+                <textarea
+                  rows="4"
+                  [value]="question.textValue ?? ''"
+                  (input)="onTextInput(question, $any($event.target).value)"
+                  [disabled]="!canEdit()"
+                ></textarea>
+              </se-form-field>
+            }
+            @case (QuestionType.SingleChoice) {
+              <fieldset class="app-questions-form__choices">
+                <legend class="visually-hidden">{{ question.label }}</legend>
+                @for (option of question.options ?? []; track option.optionCode) {
+                  <label>
+                    <input
+                      type="radio"
+                      [name]="question.snapshotId"
+                      [value]="option.optionCode"
+                      [checked]="isOptionSelected(question, option.optionCode ?? '')"
+                      (change)="onSingleChoice(question, option.optionCode ?? '')"
+                      [disabled]="!canEdit()"
+                    />
+                    <span>{{ option.label }}</span>
+                  </label>
+                }
+              </fieldset>
+            }
+            @case (QuestionType.MultipleChoice) {
+              <fieldset class="app-questions-form__choices">
+                <legend class="visually-hidden">{{ question.label }}</legend>
+                @for (option of question.options ?? []; track option.optionCode) {
+                  <label>
+                    <input
+                      type="checkbox"
+                      [checked]="isOptionSelected(question, option.optionCode ?? '')"
+                      (change)="onMultipleChoice(question, option.optionCode ?? '', $any($event.target).checked)"
+                      [disabled]="!canEdit()"
+                    />
+                    <span>{{ option.label }}</span>
+                  </label>
+                }
+              </fieldset>
+            }
+            @case (QuestionType.Date) {
+              <se-form-field [label]="'parent.applications.wizard.questions.answer' | transloco">
+                <input
+                  type="date"
+                  [value]="question.dateValue ?? ''"
+                  (change)="onDateChange(question, $any($event.target).value)"
+                  [disabled]="!canEdit()"
+                />
+              </se-form-field>
+            }
+            @case (QuestionType.YesNo) {
+              <fieldset class="app-questions-form__choices">
+                <legend class="visually-hidden">{{ question.label }}</legend>
+                <label>
+                  <input
+                    type="radio"
+                    [name]="question.snapshotId"
+                    [checked]="question.booleanValue === true"
+                    (change)="onYesNo(question, true)"
+                    [disabled]="!canEdit()"
+                  />
+                  <span>{{ 'parent.applications.wizard.questions.yes' | transloco }}</span>
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    [name]="question.snapshotId"
+                    [checked]="question.booleanValue === false"
+                    (change)="onYesNo(question, false)"
+                    [disabled]="!canEdit()"
+                  />
+                  <span>{{ 'parent.applications.wizard.questions.no' | transloco }}</span>
+                </label>
+              </fieldset>
+            }
+            @case (QuestionType.File) {
+              <div class="app-questions-form__file">
+                <p class="app-questions-form__meta">
+                  {{ 'parent.applications.wizard.questions.allowedExtensions' | transloco }}:
+                  {{ extensionsLabel(question) }}
+                </p>
+                @if (question.linkedAttachmentId) {
+                  <span class="app-questions-form__attached">
+                    {{ 'parent.applications.wizard.questions.fileAttached' | transloco }}
+                  </span>
+                }
+                @if (canUpload() && canEdit()) {
+                  <label class="parent-btn secondary">
+                    {{ 'parent.applications.wizard.questions.upload' | transloco }}
+                    <input type="file" hidden (change)="onFileSelected($event, question)" />
+                  </label>
+                }
+                @if (uploadingSnapshotId() === question.snapshotId) {
+                  <p role="status">
+                    {{ 'parent.applications.wizard.uploadProgress' | transloco: { percent: uploadPercent() } }}
+                  </p>
+                }
+              </div>
+            }
+          }
+
+          @if (savingSnapshotId() === question.snapshotId) {
+            <p class="app-questions-form__saving" role="status">
+              {{ 'parent.applications.wizard.saving' | transloco }}
+            </p>
+          }
+        }
+      </li>
+    }
+  </ul>
+} @else if (!readOnly()) {
+  <p>{{ 'parent.applications.wizard.questions.empty' | transloco }}</p>
+}

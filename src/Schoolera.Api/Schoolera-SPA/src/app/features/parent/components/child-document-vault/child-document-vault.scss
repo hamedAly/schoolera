@@ -1,0 +1,81 @@
+.vault {
+  margin-block-start: var(--se-space-6);
+  padding: var(--se-space-5);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-lg);
+  background: var(--se-color-surface-raised);
+}
+
+.vault__heading p,
+.vault__empty,
+.vault__item span,
+.vault__progress {
+  color: var(--se-color-ink-muted);
+}
+
+.vault__heading h2,
+.vault__heading p,
+.vault__group h3 {
+  margin-block: 0;
+}
+
+.vault__groups {
+  display: grid;
+  gap: var(--se-space-4);
+  margin-block-start: var(--se-space-4);
+}
+
+.vault__group {
+  padding-block-start: var(--se-space-3);
+  border-block-start: 1px solid var(--se-color-border);
+}
+
+.vault__group-heading,
+.vault__item,
+.vault__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--se-space-2);
+}
+
+.vault__group-heading {
+  justify-content: space-between;
+}
+
+.vault__list {
+  display: grid;
+  gap: var(--se-space-2);
+  margin: var(--se-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vault__item {
+  justify-content: space-between;
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+}
+
+.vault__item > div:first-child {
+  display: grid;
+  gap: var(--se-space-1);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.vault__error {
+  color: #b42318;
+}
+
+@media (max-width: 640px) {
+  .vault {
+    padding: var(--se-space-3);
+  }
+
+  .vault__item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

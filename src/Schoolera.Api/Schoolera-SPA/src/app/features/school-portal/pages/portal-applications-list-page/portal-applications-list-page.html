@@ -1,0 +1,126 @@
+<se-portal-page-header
+  titleKey="portal.applications.list.title"
+  subtitleKey="portal.applications.list.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="portal-applications-page">
+    <form class="portal-applications-page__filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'portal.applications.list.filters.status' | transloco }}
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" name="status">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.labelKey | transloco }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'portal.applications.list.filters.branch' | transloco }}
+        <select [ngModel]="branchFilter()" (ngModelChange)="branchFilter.set($event)" name="branchId">
+          <option value="">{{ 'portal.applications.list.filters.allBranches' | transloco }}</option>
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branchLabel(branch) }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'portal.applications.list.filters.grade' | transloco }}
+        <select [ngModel]="gradeFilter()" (ngModelChange)="gradeFilter.set($event)" name="gradeId">
+          <option value="">{{ 'portal.applications.list.filters.allGrades' | transloco }}</option>
+          @for (grade of grades(); track grade.id) {
+            <option [value]="grade.id">{{ gradeLabel(grade) }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'portal.applications.list.filters.search' | transloco }}
+        <input
+          type="search"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          name="search"
+          [placeholder]="'portal.applications.list.filters.searchPlaceholder' | transloco"
+        />
+      </label>
+
+      <label>
+        {{ 'portal.applications.list.filters.dateFrom' | transloco }}
+        <input type="date" [ngModel]="dateFrom()" (ngModelChange)="dateFrom.set($event)" name="dateFrom" />
+      </label>
+
+      <label>
+        {{ 'portal.applications.list.filters.dateTo' | transloco }}
+        <input type="date" [ngModel]="dateTo()" (ngModelChange)="dateTo.set($event)" name="dateTo" />
+      </label>
+
+      <div class="portal-applications-page__filter-actions">
+        <button type="submit">{{ 'portal.applications.list.filters.apply' | transloco }}</button>
+        <button type="button" class="secondary" (click)="clearFilters()">
+          {{ 'portal.applications.list.filters.clear' | transloco }}
+        </button>
+      </div>
+    </form>
+
+    @if (items().length) {
+      <div class="portal-applications-page__table-wrap">
+        <table class="portal-applications-page__table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'portal.applications.list.columns.number' | transloco }}</th>
+              <th scope="col">{{ 'portal.applications.list.columns.student' | transloco }}</th>
+              <th scope="col">{{ 'portal.applications.list.columns.parent' | transloco }}</th>
+              <th scope="col">{{ 'portal.applications.list.columns.branch' | transloco }}</th>
+              <th scope="col">{{ 'portal.applications.list.columns.grade' | transloco }}</th>
+              <th scope="col">{{ 'portal.applications.list.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'portal.applications.list.columns.submitted' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="detailLink(item)">{{ item.applicationNumber }}</a>
+                </td>
+                <td>{{ item.studentName }}</td>
+                <td>{{ item.parentName }}</td>
+                <td>{{ item.branchName }}</td>
+                <td>{{ item.gradeName }}</td>
+                <td><se-portal-admission-status-badge [status]="item.status" /></td>
+                <td>{{ formatDate(item.submittedAtUtc) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="portal-applications-page__pagination">
+        <span>
+          {{
+            'portal.applications.list.pageInfo'
+              | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 }
+          }}
+        </span>
+        <div>
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'portal.applications.list.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'portal.applications.list.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <se-portal-empty-state
+        titleKey="portal.applications.list.emptyTitle"
+        messageKey="portal.applications.list.emptyMessage"
+      />
+    }
+  </div>
+}

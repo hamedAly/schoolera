@@ -1,0 +1,14 @@
+@use '../../styles/parent-shared';
+
+.parent-ticket-form {
+  display: grid;
+  gap: var(--se-space-4);
+  max-width: 40rem;
+}
+
+.parent-hint {
+  display: block;
+  margin-top: var(--se-space-1);
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}

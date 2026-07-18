@@ -1,0 +1,14 @@
+<label [attr.for]="controlId() || null">
+  <span>{{ label() }}</span>
+  <ng-content />
+</label>
+
+@if (error()) {
+  <small
+    class="se-field-error"
+    [id]="controlId() ? controlId() + '-error' : null"
+    role="alert"
+  >
+    {{ error() }}
+  </small>
+}

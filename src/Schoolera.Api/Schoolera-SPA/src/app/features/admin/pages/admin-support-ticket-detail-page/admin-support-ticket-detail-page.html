@@ -1,0 +1,98 @@
+<se-portal-page-header
+  titleKey="admin.supportTickets.detail.title"
+  subtitleKey="admin.supportTickets.detail.subtitle"
+/>
+
+<p>
+  <a routerLink="/admin/support-tickets">{{ 'admin.supportTickets.detail.back' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="10" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as d) {
+  <div class="admin-page admin-ticket-detail">
+    <dl class="admin-dl">
+      <div>
+        <dt>{{ 'admin.supportTickets.columns.reference' | transloco }}</dt>
+        <dd>{{ d.reference }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.supportTickets.columns.subject' | transloco }}</dt>
+        <dd>{{ d.subject }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.supportTickets.detail.parent' | transloco }}</dt>
+        <dd>{{ d.parentDisplayName || d.parentEmail || d.parentUserId }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.supportTickets.columns.status' | transloco }}</dt>
+        <dd>{{ statusKey(d.status) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.supportTickets.columns.priority' | transloco }}</dt>
+        <dd>{{ priorityKey(d.priority) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.supportTickets.columns.category' | transloco }}</dt>
+        <dd>{{ categoryKey(d.category) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.supportTickets.detail.assigned' | transloco }}</dt>
+        <dd>{{ d.assignedSupportAgentUserId || ('admin.supportTickets.detail.unassigned' | transloco) }}</dd>
+      </div>
+      @if (d.sourceContactRequestId) {
+        <div>
+          <dt>{{ 'admin.supportTickets.detail.sourceContact' | transloco }}</dt>
+          <dd>
+            <a [routerLink]="['/admin/contact-requests', d.sourceContactRequestId]">
+              {{ d.sourceContactRequestId }}
+            </a>
+          </dd>
+        </div>
+      }
+    </dl>
+
+    <section class="admin-ticket-assign">
+      <h2>{{ 'admin.supportTickets.detail.assignTitle' | transloco }}</h2>
+      <label>
+        {{ 'admin.supportTickets.detail.agentUserId' | transloco }}
+        <input type="text" [(ngModel)]="assignAgentId" name="assignAgentId" />
+      </label>
+      <div class="admin-actions">
+        <button type="button" class="se-btn se-btn--primary" [disabled]="acting()" (click)="assign()">
+          {{ 'admin.supportTickets.detail.assign' | transloco }}
+        </button>
+        <a [routerLink]="['/support/tickets', d.id]">
+          {{ 'admin.supportTickets.detail.openInSupport' | transloco }}
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2>{{ 'admin.supportTickets.detail.messages' | transloco }}</h2>
+      @if (d.messages?.length) {
+        <ul class="admin-ticket-messages">
+          @for (msg of d.messages; track msg.id) {
+            <li [class.is-internal]="isInternal(msg.visibility)">
+              <div class="admin-ticket-messages__meta">
+                <strong>
+                  {{
+                    isInternal(msg.visibility)
+                      ? ('admin.supportTickets.detail.internalNote' | transloco)
+                      : ('admin.supportTickets.detail.customerVisible' | transloco)
+                  }}
+                </strong>
+                <time>{{ msg.createdAtUtc | date: 'medium' }}</time>
+              </div>
+              <p>{{ msg.body }}</p>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="admin-empty">{{ 'admin.supportTickets.detail.noMessages' | transloco }}</p>
+      }
+    </section>
+  </div>
+}

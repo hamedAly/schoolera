@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Schoolera.Application.Common.Interfaces;
 using Schoolera.Domain.Entities;
-using Schoolera.Infrastructure.Persistence;
 
 namespace Schoolera.Infrastructure.Persistence.Repositories;
 
@@ -16,7 +15,7 @@ public sealed class SchoolRepository(SchooleraDbContext dbContext) : ISchoolRepo
     {
         return await dbContext.Schools
             .AsNoTracking()
-            .OrderBy(school => school.Name)
+            .OrderBy(school => school.NameAr)
             .ToArrayAsync(cancellationToken);
     }
 }

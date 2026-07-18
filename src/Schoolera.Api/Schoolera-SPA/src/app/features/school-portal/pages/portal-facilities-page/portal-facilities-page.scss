@@ -1,0 +1,25 @@
+.portal-facilities__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--se-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-facilities__item {
+  display: flex;
+  align-items: center;
+  gap: var(--se-space-2);
+  min-block-size: 2.75rem;
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+  cursor: pointer;
+}
+
+.portal-facilities__item input {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+}

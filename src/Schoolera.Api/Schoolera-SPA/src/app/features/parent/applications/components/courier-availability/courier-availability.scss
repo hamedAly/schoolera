@@ -1,0 +1,79 @@
+.courier-availability {
+  display: grid;
+  gap: var(--se-space-3);
+  padding: var(--se-space-4);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.courier-availability > h2,
+.courier-availability > p {
+  margin: 0;
+}
+
+.courier-availability > button {
+  justify-self: start;
+}
+
+.courier-availability__branch,
+.courier-availability__option {
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface);
+}
+
+.courier-availability__branch p,
+.courier-availability__option p,
+.courier-availability__option h3 {
+  margin: 0;
+}
+
+.courier-availability__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--se-space-3);
+}
+
+.courier-availability__option {
+  display: grid;
+  gap: var(--se-space-3);
+}
+
+.courier-availability__option header {
+  display: flex;
+  gap: var(--se-space-3);
+}
+
+.courier-availability__option img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+}
+
+.courier-availability__option dl {
+  display: grid;
+  gap: var(--se-space-2);
+  margin: 0;
+}
+
+.courier-availability__option dl div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) 2fr;
+  gap: var(--se-space-2);
+}
+
+.courier-availability__option dt {
+  color: var(--se-color-ink-muted);
+}
+
+.courier-availability__option dd {
+  margin: 0;
+}
+
+.courier-availability__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-3);
+}

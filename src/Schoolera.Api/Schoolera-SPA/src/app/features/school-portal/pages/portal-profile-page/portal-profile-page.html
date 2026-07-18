@@ -1,0 +1,142 @@
+<se-portal-page-header titleKey="portal.profile.title" subtitleKey="portal.profile.subtitle">
+  <se-button type="button" [disabled]="saving() || form.invalid" (click)="save()">
+    {{ (saving() ? 'common.saving' : 'common.save') | transloco }}
+  </se-button>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage() && !form.dirty) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  @if (successMessage()) {
+    <p class="portal-profile__success" role="status">{{ successMessage() }}</p>
+  }
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  }
+
+  <section class="portal-profile__media" aria-labelledby="portal-profile-media-title">
+    <h2 id="portal-profile-media-title">{{ 'portal.profile.mediaSection' | transloco }}</h2>
+    <div class="portal-profile__media-grid">
+      <div>
+        @if (logoUrl()) {
+          <img [src]="logoUrl()!" alt="" class="portal-profile__preview" width="96" height="96" />
+        }
+        <label class="portal-profile__upload">
+          {{ 'portal.profile.uploadLogo' | transloco }}
+          <input type="file" accept="image/*" (change)="onMediaSelected('logo', $event)" />
+        </label>
+        @if (logoUrl()) {
+          <button type="button" class="portal-profile__link" (click)="deleteMedia('logo')">
+            {{ 'portal.profile.deleteLogo' | transloco }}
+          </button>
+        }
+      </div>
+      <div>
+        @if (coverUrl()) {
+          <img [src]="coverUrl()!" alt="" class="portal-profile__preview portal-profile__preview--cover" />
+        }
+        <label class="portal-profile__upload">
+          {{ 'portal.profile.uploadCover' | transloco }}
+          <input type="file" accept="image/*" (change)="onMediaSelected('cover', $event)" />
+        </label>
+        @if (coverUrl()) {
+          <button type="button" class="portal-profile__link" (click)="deleteMedia('cover')">
+            {{ 'portal.profile.deleteCover' | transloco }}
+          </button>
+        }
+      </div>
+    </div>
+    @if (uploadingMedia()) {
+      <p role="status">{{ 'portal.profile.uploading' | transloco: { percent: uploadPercent() } }}</p>
+    }
+  </section>
+
+  <form class="portal-profile" [formGroup]="form" (ngSubmit)="save()">
+    <se-bilingual-field-group
+      [formGroup]="form"
+      arabicControlName="nameAr"
+      englishControlName="nameEn"
+      [arabicLabelKey]="'portal.profile.fields.nameAr'"
+      [englishLabelKey]="'portal.profile.fields.nameEn'"
+    />
+
+    <se-bilingual-field-group
+      [formGroup]="form"
+      arabicControlName="shortDescriptionAr"
+      englishControlName="shortDescriptionEn"
+      [arabicLabelKey]="'portal.profile.fields.shortDescriptionAr'"
+      [englishLabelKey]="'portal.profile.fields.shortDescriptionEn'"
+      [multiline]="true"
+    />
+
+    <se-bilingual-field-group
+      [formGroup]="form"
+      arabicControlName="fullDescriptionAr"
+      englishControlName="fullDescriptionEn"
+      [arabicLabelKey]="'portal.profile.fields.fullDescriptionAr'"
+      [englishLabelKey]="'portal.profile.fields.fullDescriptionEn'"
+      [multiline]="true"
+      [rows]="6"
+    />
+
+    <div class="portal-profile__grid">
+      <se-form-field [label]="'portal.profile.fields.schoolType' | transloco">
+        <select formControlName="schoolType">
+          @for (type of schoolTypes; track type.value) {
+            <option [value]="type.value">{{ type.labelKey | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.profile.fields.genderType' | transloco">
+        <select formControlName="genderType">
+          @for (type of genderTypes; track type.value) {
+            <option [value]="type.value">{{ type.labelKey | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.profile.fields.foundedYear' | transloco">
+        <input type="number" formControlName="foundedYear" min="1800" max="2100" />
+      </se-form-field>
+
+      <se-form-field [label]="'portal.profile.fields.studentCount' | transloco">
+        <input type="number" formControlName="studentCount" min="0" />
+      </se-form-field>
+    </div>
+
+    <div class="portal-profile__grid">
+      <se-form-field [label]="'portal.profile.fields.publicPhone' | transloco">
+        <input type="tel" formControlName="publicPhone" />
+      </se-form-field>
+      <se-form-field [label]="'portal.profile.fields.publicEmail' | transloco">
+        <input type="email" formControlName="publicEmail" />
+      </se-form-field>
+      <se-form-field [label]="'portal.profile.fields.websiteUrl' | transloco">
+        <input type="url" formControlName="websiteUrl" />
+      </se-form-field>
+      <se-form-field [label]="'portal.profile.fields.whatsAppNumber' | transloco">
+        <input type="tel" formControlName="whatsAppNumber" />
+      </se-form-field>
+    </div>
+
+    <h2>{{ 'portal.profile.seoSection' | transloco }}</h2>
+    <se-bilingual-field-group
+      [formGroup]="form"
+      arabicControlName="seoTitleAr"
+      englishControlName="seoTitleEn"
+      [arabicLabelKey]="'portal.profile.fields.seoTitleAr'"
+      [englishLabelKey]="'portal.profile.fields.seoTitleEn'"
+    />
+    <se-bilingual-field-group
+      [formGroup]="form"
+      arabicControlName="seoDescriptionAr"
+      englishControlName="seoDescriptionEn"
+      [arabicLabelKey]="'portal.profile.fields.seoDescriptionAr'"
+      [englishLabelKey]="'portal.profile.fields.seoDescriptionEn'"
+      [multiline]="true"
+    />
+  </form>
+}

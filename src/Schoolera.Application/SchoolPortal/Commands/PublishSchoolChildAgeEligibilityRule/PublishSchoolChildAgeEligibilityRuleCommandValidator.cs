@@ -1,0 +1,6 @@
+using FluentValidation;
+
+namespace Schoolera.Application.SchoolPortal.Commands.PublishSchoolChildAgeEligibilityRule;
+
+public sealed class PublishSchoolChildAgeEligibilityRuleCommandValidator
+    : AbstractValidator<PublishSchoolChildAgeEligibilityRuleCommand>;

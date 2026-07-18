@@ -1,0 +1,29 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.75rem;
+  padding: 0 var(--se-space-3);
+  border-radius: var(--se-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.status-badge--draft {
+  background: var(--se-color-brand-soft);
+  color: var(--se-color-brand-strong);
+}
+
+.status-badge--published {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.status-badge--unpublished {
+  background: var(--se-color-accent-soft);
+  color: var(--se-color-accent-strong);
+}
+
+.status-badge--suspended {
+  background: rgb(180 35 24 / 0.12);
+  color: var(--se-color-danger);
+}

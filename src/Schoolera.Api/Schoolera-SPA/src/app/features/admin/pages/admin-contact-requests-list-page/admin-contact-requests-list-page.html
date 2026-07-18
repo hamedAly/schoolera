@@ -1,0 +1,106 @@
+<se-portal-page-header
+  titleKey="admin.contactRequests.list.title"
+  subtitleKey="admin.contactRequests.list.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    <form class="admin-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'admin.contactRequests.list.search' | transloco }}
+        <input type="search" [(ngModel)]="searchTerm" name="search" />
+      </label>
+      <label>
+        {{ 'admin.contactRequests.list.statusFilter' | transloco }}
+        <select [(ngModel)]="statusFilter" name="status">
+          <option value="">{{ 'admin.common.all' | transloco }}</option>
+          @for (status of statusOptions; track status) {
+            @if (status) {
+              <option [value]="status">
+                {{
+                  ('admin.contactRequests.status.' +
+                    (status === 'InReview' ? 'inReview' : status.toLowerCase())) | transloco
+                }}
+              </option>
+            }
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.contactRequests.list.categoryFilter' | transloco }}
+        <select [(ngModel)]="categoryFilter" name="category">
+          @for (cat of categories; track cat) {
+            @if (!cat) {
+              <option value="">{{ 'admin.common.all' | transloco }}</option>
+            } @else {
+              <option [value]="cat">{{ ('admin.contactRequests.categories.' + cat) | transloco }}</option>
+            }
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.contactRequests.list.dateFrom' | transloco }}
+        <input type="date" [(ngModel)]="dateFrom" name="dateFrom" />
+      </label>
+      <label>
+        {{ 'admin.contactRequests.list.dateTo' | transloco }}
+        <input type="date" [(ngModel)]="dateTo" name="dateTo" />
+      </label>
+      <button type="submit">{{ 'admin.common.apply' | transloco }}</button>
+    </form>
+
+    @if (items().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.contactRequests.list.columns.reference' | transloco }}</th>
+              <th scope="col">{{ 'admin.contactRequests.list.columns.name' | transloco }}</th>
+              <th scope="col">{{ 'admin.contactRequests.list.columns.category' | transloco }}</th>
+              <th scope="col">{{ 'admin.contactRequests.list.columns.subject' | transloco }}</th>
+              <th scope="col">{{ 'admin.contactRequests.list.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'admin.contactRequests.list.columns.created' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/admin/contact-requests', item.id]">{{ item.reference }}</a>
+                </td>
+                <td>{{ item.name }}</td>
+                <td>{{ categoryKey(item.category) | transloco }}</td>
+                <td>{{ item.subject }}</td>
+                <td>{{ statusKey(item.status) | transloco }}</td>
+                <td>{{ item.createdAtUtc ? (item.createdAtUtc | date: 'medium') : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination">
+        <span>
+          {{
+            'admin.common.pageInfo'
+              | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 }
+          }}
+        </span>
+        <div class="admin-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'admin.common.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'admin.common.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.contactRequests.list.empty' | transloco }}</p>
+    }
+  </div>
+}

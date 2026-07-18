@@ -1,0 +1,659 @@
+<se-portal-page-header
+  titleKey="portal.applications.detail.title"
+  subtitleKey="portal.applications.detail.subtitle"
+>
+  <a [routerLink]="['/school', schoolId(), 'applications']" class="portal-link-button">
+    {{ 'portal.applications.detail.backToList' | transloco }}
+  </a>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="10" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as app) {
+  <div class="portal-application-detail">
+    <div class="portal-application-detail__head">
+      <se-portal-admission-status-badge [status]="app.status" />
+      <div class="portal-application-detail__actions">
+        @if (capabilities()?.canStartReview) {
+          <button type="button" (click)="openStartReview()">
+            {{ 'portal.applications.detail.startReview' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canRequestMissingItems) {
+          <button type="button" (click)="openDialog('requestMissing')">
+            {{ 'portal.applications.detail.requestMissingItems' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canScheduleInterview) {
+          <button type="button" (click)="openDialog('scheduleInterview')">
+            {{ 'portal.applications.detail.scheduleInterview' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canScheduleAssessment) {
+          <button type="button" (click)="openDialog('scheduleAssessment')">
+            {{ 'portal.applications.detail.scheduleAssessment' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canRescheduleInterview) {
+          <button type="button" (click)="openDialog('rescheduleInterview')">
+            {{ 'portal.applications.detail.rescheduleInterview' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canCompleteInterview) {
+          <button type="button" (click)="openDialog('completeInterview')">
+            {{ 'portal.applications.detail.completeInterview' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canCancelInterviewAppointment) {
+          <button type="button" class="danger" (click)="openDialog('cancelInterview')">
+            {{ 'portal.applications.detail.cancelInterview' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canRescheduleAssessment) {
+          <button type="button" (click)="openDialog('rescheduleAssessment')">
+            {{ 'portal.applications.detail.rescheduleAssessment' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canCompleteAssessment) {
+          <button type="button" (click)="openDialog('completeAssessment')">
+            {{ 'portal.applications.detail.completeAssessment' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canCancelAssessmentAppointment) {
+          <button type="button" class="danger" (click)="openDialog('cancelAssessment')">
+            {{ 'portal.applications.detail.cancelAssessment' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canMoveToWaitingList) {
+          <button type="button" (click)="openDialog('moveToWaitingList')">
+            {{ 'portal.applications.detail.moveToWaitingList' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canReturnToUnderReview && app.waitingList) {
+          <button type="button" (click)="openDialog('returnToUnderReview')">
+            {{ 'portal.applications.detail.returnToUnderReview' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canAccept) {
+          <button type="button" class="success" (click)="openAccept()">
+            {{ 'portal.applications.detail.accept' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canReject) {
+          <button type="button" class="danger" (click)="openReject()">
+            {{ 'portal.applications.detail.reject' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canMarkRegistered) {
+          <button type="button" class="success" (click)="openDialog('markRegistered')">
+            {{ 'portal.applications.detail.markRegistered' | transloco }}
+          </button>
+        }
+        @if (capabilities()?.canGrantAgeException) {
+          <button type="button" (click)="openAgeException()">
+            {{ 'portal.applications.detail.ageEligibility.grant' | transloco }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <section aria-labelledby="portal-application-summary">
+      <h2 id="portal-application-summary">{{ 'portal.applications.detail.summaryTitle' | transloco }}</h2>
+      <dl class="portal-application-detail__summary">
+        <div><dt>{{ 'portal.applications.detail.applicationNumber' | transloco }}</dt><dd>{{ app.applicationNumber }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.student' | transloco }}</dt><dd>{{ app.studentName }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.parent' | transloco }}</dt><dd>{{ app.parentName }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.branch' | transloco }}</dt><dd>{{ app.branchName }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.stage' | transloco }}</dt><dd>{{ app.stageName }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.grade' | transloco }}</dt><dd>{{ app.gradeName }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.academicYear' | transloco }}</dt><dd>{{ app.academicYearName }}</dd></div>
+        @if (app.studentCurrentSchoolName) {
+          <div><dt>{{ 'portal.applications.detail.studentCurrentSchool' | transloco }}</dt><dd>{{ app.studentCurrentSchoolName }}</dd></div>
+        }
+        @if (app.studentPreferredStudyLanguage) {
+          <div><dt>{{ 'portal.applications.detail.studentStudyLanguage' | transloco }}</dt><dd>{{ studyLanguageKey(app.studentPreferredStudyLanguage) | transloco }}</dd></div>
+        }
+        @if (app.studentSkills) {
+          <div><dt>{{ 'portal.applications.detail.studentSkills' | transloco }}</dt><dd>{{ app.studentSkills }}</dd></div>
+        }
+        @if (app.studentHobbies) {
+          <div><dt>{{ 'portal.applications.detail.studentHobbies' | transloco }}</dt><dd>{{ app.studentHobbies }}</dd></div>
+        }
+        @if (app.studentStrengths) {
+          <div><dt>{{ 'portal.applications.detail.studentStrengths' | transloco }}</dt><dd>{{ app.studentStrengths }}</dd></div>
+        }
+        @if (app.studentImprovementAreas) {
+          <div><dt>{{ 'portal.applications.detail.studentImprovementAreas' | transloco }}</dt><dd>{{ app.studentImprovementAreas }}</dd></div>
+        }
+        @if (app.studentSpecialNeedsNotes) {
+          <div><dt>{{ 'portal.applications.detail.studentSpecialNeedsNotes' | transloco }}</dt><dd>{{ app.studentSpecialNeedsNotes }}</dd></div>
+        }
+        @if (app.parentEmail) {
+          <div><dt>{{ 'portal.applications.detail.parentEmail' | transloco }}</dt><dd>{{ app.parentEmail }}</dd></div>
+        }
+        @if (app.parentPhone) {
+          <div><dt>{{ 'portal.applications.detail.parentPhone' | transloco }}</dt><dd>{{ app.parentPhone }}</dd></div>
+        }
+        @if (app.parentNotes) {
+          <div><dt>{{ 'portal.applications.detail.parentNotes' | transloco }}</dt><dd>{{ app.parentNotes }}</dd></div>
+        }
+        @if (app.schoolNotes) {
+          <div><dt>{{ 'portal.applications.detail.schoolNotes' | transloco }}</dt><dd>{{ app.schoolNotes }}</dd></div>
+        }
+        @if (app.rejectionReason) {
+          <div><dt>{{ 'portal.applications.detail.rejectionReason' | transloco }}</dt><dd>{{ app.rejectionReason }}</dd></div>
+        }
+        @if (app.registeredAtUtc) {
+          <div><dt>{{ 'portal.applications.detail.registeredAt' | transloco }}</dt><dd>{{ formatDate(app.registeredAtUtc) }}</dd></div>
+        }
+      </dl>
+    </section>
+
+    @if (app.ageEligibility; as eligibility) {
+      <section aria-labelledby="portal-age-eligibility">
+        <h2 id="portal-age-eligibility">{{ 'portal.applications.detail.ageEligibility.title' | transloco }}</h2>
+        <p>{{ ageEligibilityKey(eligibility.resultCode) | transloco }}</p>
+        @if (eligibility.explanation) { <p>{{ eligibility.explanation }}</p> }
+      </section>
+    }
+
+    @if (missingRequest(); as request) {
+      <section aria-labelledby="portal-application-missing">
+        <h2 id="portal-application-missing">{{ 'portal.applications.detail.lifecycle.missingItemsTitle' | transloco }}</h2>
+        <dl class="portal-application-detail__summary">
+          <div><dt>{{ 'portal.applications.detail.lifecycle.reason' | transloco }}</dt><dd>{{ request.parentVisibleReason || '—' }}</dd></div>
+          @if (request.instructions) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.instructions' | transloco }}</dt><dd>{{ request.instructions }}</dd></div>
+          }
+          <div><dt>{{ 'portal.applications.detail.lifecycle.deadline' | transloco }}</dt><dd>{{ formatDate(request.responseDeadlineUtc) }}</dd></div>
+          <div><dt>{{ 'portal.applications.detail.lifecycle.requestedAt' | transloco }}</dt><dd>{{ formatDate(request.requestedAtUtc) }}</dd></div>
+        </dl>
+        <h3>{{ 'portal.applications.detail.lifecycle.itemsTitle' | transloco }}</h3>
+        <ul class="portal-application-detail__items">
+          @for (item of request.items ?? []; track item.id) {
+            <li>
+              <span>{{ item.label }}</span>
+              <span class="portal-tag">{{ (item.isMandatory ? 'portal.applications.detail.lifecycle.mandatory' : 'portal.applications.detail.lifecycle.optional') | transloco }}</span>
+              <span class="portal-tag">{{ (item.isCompleted ? 'portal.applications.detail.lifecycle.completed' : 'portal.applications.detail.lifecycle.pending') | transloco }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    @if (app.activeInterview; as interview) {
+      <section aria-labelledby="portal-application-interview">
+        <h2 id="portal-application-interview">{{ 'portal.applications.detail.lifecycle.interviewTitle' | transloco }}</h2>
+        <dl class="portal-application-detail__summary">
+          <div><dt>{{ 'portal.applications.detail.lifecycle.scheduledAt' | transloco }}</dt><dd>{{ formatDate(interview.scheduledAtUtc) }}</dd></div>
+          <div><dt>{{ 'portal.applications.detail.lifecycle.mode' | transloco }}</dt><dd>{{ appointmentModeKey(interview.mode) | transloco }}</dd></div>
+          @if (interview.location) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.location' | transloco }}</dt><dd>{{ interview.location }}</dd></div>
+          }
+          @if (interview.onlineInstructions) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.onlineInstructions' | transloco }}</dt><dd>{{ interview.onlineInstructions }}</dd></div>
+          }
+          @if (interview.parentVisibleNotes) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.notes' | transloco }}</dt><dd>{{ interview.parentVisibleNotes }}</dd></div>
+          }
+          @if (interview.preparationInstructions) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.preparation' | transloco }}</dt><dd>{{ interview.preparationInstructions }}</dd></div>
+          }
+          <div><dt>{{ 'portal.applications.detail.lifecycle.appointmentStatus' | transloco }}</dt><dd>{{ appointmentStatusKey(interview.lifecycle) | transloco }}</dd></div>
+          @if (interview.outcomeNotes) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.outcomeNotes' | transloco }}</dt><dd>{{ interview.outcomeNotes }}</dd></div>
+          }
+          @if (interview.onSiteAttendance; as onsite) {
+            <div><dt>{{ 'portal.applications.meeting.branch' | transloco }}</dt><dd>{{ onsite.branchNameAr }}</dd></div>
+            <div><dt>{{ 'portal.applications.meeting.address' | transloco }}</dt><dd>{{ onsite.publicAddressAr || '—' }}</dd></div>
+            @if (!onsite.branchIsActive) { <div><dt>{{ 'portal.applications.meeting.correctiveAction' | transloco }}</dt><dd>{{ 'portal.applications.meeting.branchInactive' | transloco }}</dd></div> }
+          }
+          @if (meetingFor(SlotKind._1)?.summary; as meeting) {
+            <div><dt>{{ 'portal.applications.meeting.state' | transloco }}</dt><dd>{{ meetingStatusKey(meeting.status) | transloco }}</dd></div>
+            @if (meeting.isSimulated) { <div><dt>{{ 'portal.applications.meeting.notice' | transloco }}</dt><dd>{{ 'portal.applications.meeting.simulatedWarning' | transloco }}</dd></div> }
+            @if (meeting.safeFailureCode) { <div><dt>{{ 'portal.applications.meeting.failureCode' | transloco }}</dt><dd>{{ meeting.safeFailureCode }}</dd></div> }
+          }
+        </dl>
+        @if (meetingFor(SlotKind._1)?.summary?.canSchoolHost) {
+          <button type="button" class="se-btn se-btn--primary" [disabled]="actionLoading()" (click)="hostMeeting(SlotKind._1)">{{ 'portal.applications.meeting.host' | transloco }}</button>
+        }
+      </section>
+    }
+
+    @if (app.activeAssessment; as assessment) {
+      <section aria-labelledby="portal-application-assessment">
+        <h2 id="portal-application-assessment">{{ 'portal.applications.detail.lifecycle.assessmentTitle' | transloco }}</h2>
+        <dl class="portal-application-detail__summary">
+          <div><dt>{{ 'portal.applications.detail.lifecycle.scheduledAt' | transloco }}</dt><dd>{{ formatDate(assessment.scheduledAtUtc) }}</dd></div>
+          <div><dt>{{ 'portal.applications.detail.lifecycle.mode' | transloco }}</dt><dd>{{ appointmentModeKey(assessment.mode) | transloco }}</dd></div>
+          @if (assessment.location) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.location' | transloco }}</dt><dd>{{ assessment.location }}</dd></div>
+          }
+          @if (assessment.onlineInstructions) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.onlineInstructions' | transloco }}</dt><dd>{{ assessment.onlineInstructions }}</dd></div>
+          }
+          @if (assessment.parentVisibleNotes) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.notes' | transloco }}</dt><dd>{{ assessment.parentVisibleNotes }}</dd></div>
+          }
+          @if (assessment.preparationInstructions) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.preparation' | transloco }}</dt><dd>{{ assessment.preparationInstructions }}</dd></div>
+          }
+          @if (assessment.onSiteAttendance; as onsite) {
+            <div><dt>{{ 'portal.applications.meeting.branch' | transloco }}</dt><dd>{{ onsite.branchNameAr }}</dd></div>
+            <div><dt>{{ 'portal.applications.meeting.address' | transloco }}</dt><dd>{{ onsite.publicAddressAr || '—' }}</dd></div>
+          }
+          @if (meetingFor(SlotKind._2)?.summary; as meeting) {
+            <div><dt>{{ 'portal.applications.meeting.state' | transloco }}</dt><dd>{{ meetingStatusKey(meeting.status) | transloco }}</dd></div>
+            @if (meeting.isSimulated) { <div><dt>{{ 'portal.applications.meeting.notice' | transloco }}</dt><dd>{{ 'portal.applications.meeting.simulatedWarning' | transloco }}</dd></div> }
+            @if (meeting.safeFailureCode) { <div><dt>{{ 'portal.applications.meeting.failureCode' | transloco }}</dt><dd>{{ meeting.safeFailureCode }}</dd></div> }
+          }
+          <div><dt>{{ 'portal.applications.detail.lifecycle.appointmentStatus' | transloco }}</dt><dd>{{ appointmentStatusKey(assessment.lifecycle) | transloco }}</dd></div>
+          @if (assessment.outcomeNotes) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.outcomeNotes' | transloco }}</dt><dd>{{ assessment.outcomeNotes }}</dd></div>
+          }
+        </dl>
+        @if (meetingFor(SlotKind._2)?.summary?.canSchoolHost) {
+          <button type="button" class="se-btn se-btn--primary" [disabled]="actionLoading()" (click)="hostMeeting(SlotKind._2)">{{ 'portal.applications.meeting.host' | transloco }}</button>
+        }
+      </section>
+    }
+
+    @if (app.waitingList; as waiting) {
+      <section aria-labelledby="portal-application-waiting">
+        <h2 id="portal-application-waiting">{{ 'portal.applications.detail.lifecycle.waitingListTitle' | transloco }}</h2>
+        <dl class="portal-application-detail__summary">
+          @if (waiting.position != null) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.waitingListPosition' | transloco }}</dt><dd>{{ waiting.position }}</dd></div>
+          }
+          @if (waiting.reviewDate) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.waitingListReviewDate' | transloco }}</dt><dd>{{ formatDate(waiting.reviewDate) }}</dd></div>
+          }
+          @if (waiting.reason) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.waitingListReason' | transloco }}</dt><dd>{{ waiting.reason }}</dd></div>
+          }
+          @if (waiting.enteredAtUtc) {
+            <div><dt>{{ 'portal.applications.detail.lifecycle.waitingListEnteredAt' | transloco }}</dt><dd>{{ formatDate(waiting.enteredAtUtc) }}</dd></div>
+          }
+        </dl>
+      </section>
+    }
+
+    <section aria-labelledby="portal-application-dates">
+      <h2 id="portal-application-dates">{{ 'portal.applications.detail.datesTitle' | transloco }}</h2>
+      <dl class="portal-application-detail__summary">
+        <div><dt>{{ 'portal.applications.detail.createdAt' | transloco }}</dt><dd>{{ formatDate(app.createdAtUtc) }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.submittedAt' | transloco }}</dt><dd>{{ formatDate(app.submittedAtUtc) }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.reviewStartedAt' | transloco }}</dt><dd>{{ formatDate(app.reviewStartedAtUtc) }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.acceptedAt' | transloco }}</dt><dd>{{ formatDate(app.acceptedAtUtc) }}</dd></div>
+        <div><dt>{{ 'portal.applications.detail.rejectedAt' | transloco }}</dt><dd>{{ formatDate(app.rejectedAtUtc) }}</dd></div>
+      </dl>
+    </section>
+
+    @if (app.requirements?.length) {
+      <section aria-labelledby="portal-application-requirements">
+        <h2 id="portal-application-requirements">
+          {{ 'portal.applications.detail.requirementsTitle' | transloco }}
+        </h2>
+        <se-application-requirements-checklist
+          [requirements]="app.requirements ?? []"
+          [readOnly]="true"
+        />
+      </section>
+    }
+
+    @if (app.questions?.length) {
+      <section aria-labelledby="portal-application-questions">
+        <h2 id="portal-application-questions">
+          {{ 'portal.applications.detail.questionsTitle' | transloco }}
+        </h2>
+        <se-application-questions-form
+          [applicationId]="app.id!"
+          [questions]="app.questions ?? []"
+          [readOnly]="true"
+        />
+      </section>
+    }
+
+    <section aria-labelledby="portal-application-attachments">
+      <h2 id="portal-application-attachments">{{ 'portal.applications.detail.attachmentsTitle' | transloco }}</h2>
+      <se-attachment-list
+        [attachments]="app.attachments ?? []"
+        [canUpload]="false"
+        [canRemove]="false"
+        (downloadRequested)="onDownload($event)"
+      />
+    </section>
+
+    <section aria-labelledby="portal-application-timeline">
+      <h2 id="portal-application-timeline">{{ 'portal.applications.timeline.title' | transloco }}</h2>
+      <se-portal-application-timeline [items]="app.timeline ?? []" />
+    </section>
+  </div>
+
+  <se-confirmation-dialog
+    [open]="showConfirmDialog()"
+    [titleKey]="confirmTitleKey()"
+    [messageKey]="confirmMessageKey()"
+    [confirmKey]="confirmButtonKey()"
+    cancelKey="portal.confirm.cancel"
+    [confirming]="actionLoading()"
+    (confirmed)="confirmAction()"
+    (cancelled)="showConfirmDialog.set(false)"
+  />
+
+  @if (showConfirmDialog()) {
+    <div class="portal-application-detail__note-field">
+      <label for="review-internal-note">{{ 'portal.applications.detail.internalReviewNote' | transloco }}</label>
+      <textarea id="review-internal-note" rows="3" [(ngModel)]="internalReviewNote"></textarea>
+    </div>
+  }
+
+  @if (showRejectDialog()) {
+    <div class="portal-application-detail__reject-dialog" role="dialog" aria-modal="true">
+      <div class="portal-application-detail__reject-panel">
+        <h2>{{ 'portal.applications.detail.rejectConfirmTitle' | transloco }}</h2>
+        <p>{{ 'portal.applications.detail.rejectConfirmMessage' | transloco }}</p>
+        <label for="reject-parent-reason">
+          {{ 'portal.applications.detail.parentVisibleRejectionReason' | transloco }}
+          <textarea id="reject-parent-reason" rows="3" required [(ngModel)]="parentVisibleRejectionReason"></textarea>
+        </label>
+        <label for="reject-internal-note">
+          {{ 'portal.applications.detail.internalReviewNote' | transloco }}
+          <textarea id="reject-internal-note" rows="3" [(ngModel)]="internalReviewNote"></textarea>
+        </label>
+        <div class="portal-application-detail__reject-actions">
+          <button type="button" class="secondary" [disabled]="actionLoading()" (click)="showRejectDialog.set(false)">
+            {{ 'portal.confirm.cancel' | transloco }}
+          </button>
+          <button type="button" class="danger" [disabled]="actionLoading() || !parentVisibleRejectionReason.trim()" (click)="confirmReject()">
+            {{ 'portal.applications.detail.reject' | transloco }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showAgeExceptionDialog()) {
+    <div class="portal-application-detail__reject-dialog" role="dialog" aria-modal="true">
+      <div class="portal-application-detail__reject-panel">
+        <h2>{{ 'portal.applications.detail.ageEligibility.grantTitle' | transloco }}</h2>
+        <label>{{ 'portal.applications.detail.ageEligibility.reason' | transloco }}
+          <select [(ngModel)]="ageExceptionReason">
+            <option [ngValue]="AgeExceptionReason._1">{{ 'portal.applications.detail.ageEligibility.reasons.schoolReviewApproved' | transloco }}</option>
+            <option [ngValue]="AgeExceptionReason._2">{{ 'portal.applications.detail.ageEligibility.reasons.documentationReviewed' | transloco }}</option>
+            <option [ngValue]="AgeExceptionReason._99">{{ 'portal.applications.detail.ageEligibility.reasons.other' | transloco }}</option>
+          </select>
+        </label>
+        <label>{{ 'portal.applications.detail.ageEligibility.note' | transloco }}
+          <textarea rows="3" [(ngModel)]="ageExceptionNote"></textarea>
+        </label>
+        <div class="portal-application-detail__reject-actions">
+          <button type="button" class="secondary" (click)="showAgeExceptionDialog.set(false)">{{ 'portal.confirm.cancel' | transloco }}</button>
+          <button type="button" [disabled]="actionLoading()" (click)="grantAgeException()">{{ 'portal.applications.detail.ageEligibility.grant' | transloco }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Request missing items dialog -->
+  @if (activeDialog() === 'requestMissing') {
+    <div class="portal-application-detail__reject-dialog" role="dialog" aria-modal="true">
+      <div class="portal-application-detail__reject-panel">
+        <h2>{{ 'portal.applications.detail.dialogs.requestMissingTitle' | transloco }}</h2>
+        <label>
+          {{ 'portal.applications.detail.dialogs.requestMissingReason' | transloco }}
+          <textarea rows="2" required [(ngModel)]="missingReason"></textarea>
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.requestMissingInstructions' | transloco }}
+          <textarea rows="2" [(ngModel)]="missingInstructions"></textarea>
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.requestMissingDeadline' | transloco }}
+          <input type="date" [(ngModel)]="missingDeadline" />
+        </label>
+        <p>{{ 'portal.applications.detail.dialogs.requestMissingItemsHint' | transloco }}</p>
+        @if (selectableItems().length === 0) {
+          <p class="portal-muted">{{ 'portal.applications.detail.dialogs.requestMissingNoItems' | transloco }}</p>
+        } @else {
+          <ul class="portal-application-detail__items">
+            @for (item of selectableItems(); track item.snapshotId) {
+              <li>
+                <label class="portal-inline-check">
+                  <input type="checkbox" [checked]="item.selected" (change)="toggleItemSelected(item)" />
+                  {{ item.label }}
+                </label>
+                @if (item.selected) {
+                  <label class="portal-inline-check">
+                    <input type="checkbox" [checked]="item.mandatory" (change)="toggleItemMandatory(item)" />
+                    {{ 'portal.applications.detail.dialogs.requestMissingMandatory' | transloco }}
+                  </label>
+                }
+              </li>
+            }
+          </ul>
+        }
+        <label>
+          {{ 'portal.applications.detail.dialogs.internalReviewNote' | transloco }}
+          <textarea rows="2" [(ngModel)]="internalReviewNote"></textarea>
+        </label>
+        <div class="portal-application-detail__reject-actions">
+          <button type="button" class="secondary" [disabled]="actionLoading()" (click)="closeDialog()">
+            {{ 'portal.confirm.cancel' | transloco }}
+          </button>
+          <button
+            type="button"
+            [disabled]="actionLoading() || !missingReason.trim() || selectableItems().length === 0"
+            (click)="submitRequestMissing()"
+          >
+            {{ 'portal.applications.detail.dialogs.requestMissingSubmit' | transloco }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Schedule / reschedule appointment dialog -->
+  @if (
+    activeDialog() === 'scheduleInterview' ||
+    activeDialog() === 'rescheduleInterview' ||
+    activeDialog() === 'scheduleAssessment' ||
+    activeDialog() === 'rescheduleAssessment'
+  ) {
+    <div class="portal-application-detail__reject-dialog" role="dialog" aria-modal="true">
+      <div class="portal-application-detail__reject-panel">
+        <h2>{{ 'portal.applications.detail.dialogs.scheduleTitle' | transloco }}</h2>
+        <a [routerLink]="['/school', schoolId(), 'interview-assessment-slots']">{{ 'portal.applications.detail.dialogs.manageSlots' | transloco }}</a>
+        @if (scheduleSlotsLoading()) {
+          <p role="status">{{ 'portal.applications.detail.dialogs.slotsLoading' | transloco }}</p>
+        } @else if (scheduleSlotsError()) {
+          <div role="alert"><p>{{ scheduleSlotsError() }}</p><button type="button" (click)="retryScheduleSlots()">{{ 'portal.applications.detail.dialogs.slotsRetry' | transloco }}</button></div>
+        } @else if (!scheduleSlots().length) {
+          <p>{{ 'portal.applications.detail.dialogs.slotsEmpty' | transloco }}</p>
+        } @else {
+          <fieldset class="portal-application-detail__slot-list">
+            <legend>{{ 'portal.applications.detail.dialogs.selectSlot' | transloco }}</legend>
+            @for (slot of scheduleSlots(); track slot.id) {
+              <label>
+                <input type="radio" name="schedule-slot" [value]="slot.id" [checked]="selectedScheduleSlotId() === slot.id" (change)="selectedScheduleSlotId.set(slot.id!)" />
+                <span>{{ formatDate(slot.startAtUtc) }} · {{ slot.timeZoneId }} · {{ appointmentModeKey(slot.deliveryMode) | transloco }}</span>
+                <small>{{ 'portal.applications.detail.dialogs.remainingCapacity' | transloco }}: {{ remainingCapacity(slot) }}</small>
+                @if (scheduleSlotInstruction(slot)) { <small>{{ scheduleSlotInstruction(slot) }}</small> }
+              </label>
+            }
+          </fieldset>
+        }
+        <details>
+          <summary>{{ 'portal.applications.detail.dialogs.manualFallback' | transloco }}</summary>
+          <label class="portal-inline-check"><input type="checkbox" [(ngModel)]="useManualScheduleFallback" />{{ 'portal.applications.detail.dialogs.enableManualFallback' | transloco }}</label>
+          @if (useManualScheduleFallback) {
+            <label>{{ 'portal.applications.detail.dialogs.scheduleDateTime' | transloco }}<input type="datetime-local" required [(ngModel)]="scheduleDateTime" /></label>
+            <label>{{ 'portal.applications.detail.dialogs.scheduleTimeZone' | transloco }}<input type="text" [(ngModel)]="scheduleTimeZone" /></label>
+            <label>{{ 'portal.applications.detail.dialogs.scheduleMode' | transloco }}
+              <select [(ngModel)]="scheduleMode"><option [ngValue]="AppointmentMode.InPerson">{{ 'portal.applications.detail.lifecycle.inPerson' | transloco }}</option><option [ngValue]="AppointmentMode.Online">{{ 'portal.applications.detail.lifecycle.online' | transloco }}</option></select>
+            </label>
+            @if (scheduleMode === AppointmentMode.InPerson) { <label>{{ 'portal.applications.detail.dialogs.scheduleLocation' | transloco }}<input type="text" [(ngModel)]="scheduleLocation" /></label> }
+            @else { <label>{{ 'portal.applications.detail.dialogs.scheduleOnlineInstructions' | transloco }}<textarea rows="2" [(ngModel)]="scheduleOnlineInstructions"></textarea></label> }
+          }
+        </details>
+        <label>
+          {{ 'portal.applications.detail.dialogs.scheduleParentNotes' | transloco }}
+          <textarea rows="2" [(ngModel)]="scheduleParentNotes"></textarea>
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.schedulePreparation' | transloco }}
+          <textarea rows="2" [(ngModel)]="schedulePreparation"></textarea>
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.internalReviewNote' | transloco }}
+          <textarea rows="2" [(ngModel)]="internalReviewNote"></textarea>
+        </label>
+        <div class="portal-application-detail__reject-actions">
+          <button type="button" class="secondary" [disabled]="actionLoading()" (click)="closeDialog()">
+            {{ 'portal.confirm.cancel' | transloco }}
+          </button>
+          <button type="button" [disabled]="actionLoading() || (!selectedScheduleSlotId() && (!useManualScheduleFallback || !scheduleDateTime))" (click)="submitSchedule()">
+            {{ 'portal.applications.detail.dialogs.scheduleSubmit' | transloco }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Complete appointment dialog -->
+  @if (activeDialog() === 'completeInterview' || activeDialog() === 'completeAssessment') {
+    <div class="portal-application-detail__reject-dialog" role="dialog" aria-modal="true">
+      <div class="portal-application-detail__reject-panel">
+        <h2>{{ 'portal.applications.detail.dialogs.completeTitle' | transloco }}</h2>
+        <label>
+          {{ 'portal.applications.detail.dialogs.completeNextStatus' | transloco }}
+          <select [(ngModel)]="completeNextStatus">
+            @for (option of nextStatusOptions; track option.value) {
+              <option [ngValue]="option.value">{{ option.labelKey | transloco }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.completeOutcomeNotes' | transloco }}
+          <textarea rows="2" [(ngModel)]="completeOutcomeNotes"></textarea>
+        </label>
+        @if (completeNextStatus === 10) {
+          <label>
+            {{ 'portal.applications.detail.dialogs.completeWaitingListReason' | transloco }}
+            <input type="text" [(ngModel)]="completeWaitingListReason" />
+          </label>
+          <label>
+            {{ 'portal.applications.detail.dialogs.completeWaitingListPosition' | transloco }}
+            <input type="number" min="1" [(ngModel)]="completeWaitingListPosition" />
+          </label>
+          <label>
+            {{ 'portal.applications.detail.dialogs.completeWaitingListReviewDate' | transloco }}
+            <input type="date" [(ngModel)]="completeWaitingListReviewDate" />
+          </label>
+        }
+        @if (completeNextStatus === 5) {
+          <label>
+            {{ 'portal.applications.detail.dialogs.completeRejectionReason' | transloco }}
+            <textarea rows="2" required [(ngModel)]="completeRejectionReason"></textarea>
+          </label>
+        }
+        <label>
+          {{ 'portal.applications.detail.dialogs.internalReviewNote' | transloco }}
+          <textarea rows="2" [(ngModel)]="internalReviewNote"></textarea>
+        </label>
+        <div class="portal-application-detail__reject-actions">
+          <button type="button" class="secondary" [disabled]="actionLoading()" (click)="closeDialog()">
+            {{ 'portal.confirm.cancel' | transloco }}
+          </button>
+          <button
+            type="button"
+            [disabled]="actionLoading() || (completeNextStatus === 5 && !completeRejectionReason.trim())"
+            (click)="submitComplete()"
+          >
+            {{ 'portal.applications.detail.dialogs.completeSubmit' | transloco }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Move to waiting list dialog -->
+  @if (activeDialog() === 'moveToWaitingList') {
+    <div class="portal-application-detail__reject-dialog" role="dialog" aria-modal="true">
+      <div class="portal-application-detail__reject-panel">
+        <h2>{{ 'portal.applications.detail.dialogs.moveToWaitingListTitle' | transloco }}</h2>
+        <label>
+          {{ 'portal.applications.detail.dialogs.moveToWaitingListReason' | transloco }}
+          <input type="text" [(ngModel)]="waitingReason" />
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.moveToWaitingListPosition' | transloco }}
+          <input type="number" min="1" [(ngModel)]="waitingPosition" />
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.moveToWaitingListReviewDate' | transloco }}
+          <input type="date" [(ngModel)]="waitingReviewDate" />
+        </label>
+        <label>
+          {{ 'portal.applications.detail.dialogs.internalReviewNote' | transloco }}
+          <textarea rows="2" [(ngModel)]="internalReviewNote"></textarea>
+        </label>
+        <div class="portal-application-detail__reject-actions">
+          <button type="button" class="secondary" [disabled]="actionLoading()" (click)="closeDialog()">
+            {{ 'portal.confirm.cancel' | transloco }}
+          </button>
+          <button type="button" [disabled]="actionLoading()" (click)="submitMoveToWaitingList()">
+            {{ 'portal.applications.detail.dialogs.moveToWaitingListSubmit' | transloco }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Confirm-style lifecycle dialogs -->
+  <se-confirmation-dialog
+    [open]="activeDialog() === 'cancelInterview'"
+    titleKey="portal.applications.detail.dialogs.cancelInterviewTitle"
+    messageKey="portal.applications.detail.dialogs.cancelInterviewMessage"
+    confirmKey="portal.applications.detail.cancelInterview"
+    cancelKey="portal.confirm.cancel"
+    [confirming]="actionLoading()"
+    (confirmed)="confirmCancelInterview()"
+    (cancelled)="closeDialog()"
+  />
+
+  <se-confirmation-dialog
+    [open]="activeDialog() === 'cancelAssessment'"
+    titleKey="portal.applications.detail.dialogs.cancelAssessmentTitle"
+    messageKey="portal.applications.detail.dialogs.cancelAssessmentMessage"
+    confirmKey="portal.applications.detail.cancelAssessment"
+    cancelKey="portal.confirm.cancel"
+    [confirming]="actionLoading()"
+    (confirmed)="confirmCancelAssessment()"
+    (cancelled)="closeDialog()"
+  />
+
+  <se-confirmation-dialog
+    [open]="activeDialog() === 'returnToUnderReview'"
+    titleKey="portal.applications.detail.dialogs.returnToUnderReviewTitle"
+    messageKey="portal.applications.detail.dialogs.returnToUnderReviewMessage"
+    confirmKey="portal.applications.detail.returnToUnderReview"
+    cancelKey="portal.confirm.cancel"
+    [confirming]="actionLoading()"
+    (confirmed)="confirmReturnToUnderReview()"
+    (cancelled)="closeDialog()"
+  />
+
+  <se-confirmation-dialog
+    [open]="activeDialog() === 'markRegistered'"
+    titleKey="portal.applications.detail.dialogs.markRegisteredTitle"
+    messageKey="portal.applications.detail.dialogs.markRegisteredMessage"
+    confirmKey="portal.applications.detail.markRegistered"
+    cancelKey="portal.confirm.cancel"
+    [confirming]="actionLoading()"
+    (confirmed)="confirmMarkRegistered()"
+    (cancelled)="closeDialog()"
+  />
+}

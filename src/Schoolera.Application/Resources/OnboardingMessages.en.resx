@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="NotFound" xml:space="preserve"><value>The onboarding application was not found.</value></data>
+  <data name="Forbidden" xml:space="preserve"><value>You are not allowed to access this onboarding application.</value></data>
+  <data name="OwnerRoleRequired" xml:space="preserve"><value>A School Owner account is required for onboarding.</value></data>
+  <data name="InvalidStatusTransition" xml:space="preserve"><value>This action is not allowed for the current application status.</value></data>
+  <data name="NotEditable" xml:space="preserve"><value>The application cannot be edited in its current status.</value></data>
+  <data name="ConcurrentUpdate" xml:space="preserve"><value>The application was updated elsewhere. Reload and try again.</value></data>
+  <data name="Incomplete" xml:space="preserve"><value>Some required information is missing or invalid.</value></data>
+  <data name="RequiredDocumentMissing" xml:space="preserve"><value>One or more required documents are missing.</value></data>
+  <data name="InvalidDocumentType" xml:space="preserve"><value>The selected document type is invalid.</value></data>
+  <data name="DocumentTooLarge" xml:space="preserve"><value>The uploaded file exceeds the maximum allowed size.</value></data>
+  <data name="UnsupportedDocumentFormat" xml:space="preserve"><value>The uploaded file format is not supported.</value></data>
+  <data name="InvalidFileSignature" xml:space="preserve"><value>The uploaded file content does not match its type.</value></data>
+  <data name="EmptyDocument" xml:space="preserve"><value>The uploaded file is empty.</value></data>
+  <data name="CityDistrictMismatch" xml:space="preserve"><value>The selected district does not belong to the selected city.</value></data>
+  <data name="DuplicateRegistrationNumber" xml:space="preserve"><value>This registration or license number is already in use.</value></data>
+  <data name="AlreadyApproved" xml:space="preserve"><value>The application has already been approved.</value></data>
+  <data name="ApprovalFailed" xml:space="preserve"><value>The application could not be approved. Please try again.</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>An owner-visible reason is required.</value></data>
+  <data name="ReasonTooLong" xml:space="preserve"><value>The reason is too long.</value></data>
+  <data name="InvalidUrl" xml:space="preserve"><value>Enter a valid URL.</value></data>
+  <data name="InvalidPhone" xml:space="preserve"><value>Enter a valid phone number.</value></data>
+  <data name="FieldMaxLength" xml:space="preserve"><value>This field must be at most {0} characters.</value></data>
+  <data name="InvalidFoundedYear" xml:space="preserve"><value>Enter a valid founding year.</value></data>
+  <data name="InvalidCoordinates" xml:space="preserve"><value>Enter valid latitude and longitude values.</value></data>
+  <data name="InvalidCountryCode" xml:space="preserve"><value>Enter a valid two-letter country code.</value></data>
+</root>

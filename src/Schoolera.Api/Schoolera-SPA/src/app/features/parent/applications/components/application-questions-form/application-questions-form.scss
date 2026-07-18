@@ -1,0 +1,86 @@
+.app-questions-form {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.app-questions-form__item {
+  padding: 1rem;
+  border: 1px solid var(--se-border-subtle, #e5e7eb);
+  border-radius: 0.5rem;
+}
+
+.app-questions-form__item.is-incomplete {
+  border-color: var(--se-warning-border, #f59e0b);
+}
+
+.app-questions-form__head {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.app-questions-form__status {
+  font-weight: 700;
+}
+
+.app-questions-form__help,
+.app-questions-form__reason,
+.app-questions-form__meta {
+  margin: 0.25rem 0 0;
+  color: var(--se-text-muted, #6b7280);
+}
+
+.app-questions-form__reason {
+  color: var(--se-warning-text, #b45309);
+}
+
+.app-questions-form__choices {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.app-questions-form__choices label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.app-questions-form__answer {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.app-questions-form__type {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--se-text-muted, #6b7280);
+}
+
+.app-questions-form__file {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.app-questions-form__saving {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--se-text-muted, #6b7280);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

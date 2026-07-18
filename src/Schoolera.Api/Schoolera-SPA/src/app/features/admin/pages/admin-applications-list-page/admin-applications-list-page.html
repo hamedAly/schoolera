@@ -1,0 +1,106 @@
+<se-portal-page-header
+  titleKey="admin.applicationsList.title"
+  subtitleKey="admin.applicationsList.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    <form class="admin-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'admin.applicationsList.filters.status' | transloco }}
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" name="status">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.labelKey | transloco }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        {{ 'admin.applicationsList.filters.search' | transloco }}
+        <input
+          type="search"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          name="search"
+          [placeholder]="'admin.applicationsList.filters.searchPlaceholder' | transloco"
+        />
+      </label>
+
+      <label>
+        {{ 'admin.applicationsList.filters.dateFrom' | transloco }}
+        <input type="date" [ngModel]="dateFrom()" (ngModelChange)="dateFrom.set($event)" name="dateFrom" />
+      </label>
+
+      <label>
+        {{ 'admin.applicationsList.filters.dateTo' | transloco }}
+        <input type="date" [ngModel]="dateTo()" (ngModelChange)="dateTo.set($event)" name="dateTo" />
+      </label>
+
+      <div class="admin-actions">
+        <button type="submit">{{ 'admin.common.apply' | transloco }}</button>
+        <button type="button" (click)="clearFilters()">{{ 'admin.applicationsList.filters.clear' | transloco }}</button>
+        <button type="button" [disabled]="exporting()" (click)="exportCsv()">
+          {{ exporting() ? ('admin.applicationsList.exporting' | transloco) : ('admin.applicationsList.export' | transloco) }}
+        </button>
+      </div>
+    </form>
+
+    @if (items().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.applicationsList.columns.number' | transloco }}</th>
+              <th scope="col">{{ 'admin.applicationsList.columns.school' | transloco }}</th>
+              <th scope="col">{{ 'admin.applicationsList.columns.student' | transloco }}</th>
+              <th scope="col">{{ 'admin.applicationsList.columns.parent' | transloco }}</th>
+              <th scope="col">{{ 'admin.applicationsList.columns.grade' | transloco }}</th>
+              <th scope="col">{{ 'admin.applicationsList.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'admin.applicationsList.columns.submitted' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/admin/applications', item.id]">{{ item.applicationNumber }}</a>
+                </td>
+                <td>
+                  <div>{{ item.schoolName }}</div>
+                  @if (item.cityName) {
+                    <div class="admin-muted">{{ item.cityName }}</div>
+                  }
+                </td>
+                <td>{{ item.studentName }}</td>
+                <td>{{ item.parentName }}</td>
+                <td>{{ item.gradeName }}</td>
+                <td><se-portal-admission-status-badge [status]="item.status" /></td>
+                <td>{{ formatDate(item.submittedAtUtc) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination">
+        <span>
+          {{ 'admin.common.pageInfo' | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 } }}
+        </span>
+        <div class="admin-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'admin.common.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'admin.common.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.applicationsList.empty' | transloco }}</p>
+    }
+  </div>
+}

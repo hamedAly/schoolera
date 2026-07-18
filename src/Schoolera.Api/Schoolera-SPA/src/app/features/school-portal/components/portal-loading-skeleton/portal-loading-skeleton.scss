@@ -1,0 +1,33 @@
+.portal-loading-skeleton {
+  display: grid;
+  gap: var(--se-space-3);
+}
+
+.portal-loading-skeleton__row {
+  block-size: 2.75rem;
+  border-radius: var(--se-radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--se-color-border) 0%,
+    var(--se-color-surface) 50%,
+    var(--se-color-border) 100%
+  );
+  background-size: 200% 100%;
+  animation: portal-skeleton 1.2s ease-in-out infinite;
+}
+
+@keyframes portal-skeleton {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-loading-skeleton__row {
+    animation: none;
+  }
+}

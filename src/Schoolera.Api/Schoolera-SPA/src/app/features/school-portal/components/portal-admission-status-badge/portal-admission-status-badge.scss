@@ -1,0 +1,44 @@
+:host {
+  display: inline-flex;
+}
+
+.portal-admission-badge {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.75rem;
+  padding: 0 var(--se-space-3);
+  border-radius: var(--se-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.portal-admission-badge--draft {
+  background: var(--se-color-brand-soft);
+  color: var(--se-color-brand-strong);
+}
+
+.portal-admission-badge--info {
+  background: #e8f0fe;
+  color: #1a56db;
+}
+
+.portal-admission-badge--warning {
+  background: #fff4e5;
+  color: #b45309;
+}
+
+.portal-admission-badge--success {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.portal-admission-badge--error {
+  background: rgb(180 35 24 / 0.12);
+  color: var(--se-color-danger);
+}
+
+.portal-admission-badge--muted,
+.portal-admission-badge--unknown {
+  background: var(--se-color-border);
+  color: var(--se-color-ink-muted);
+}

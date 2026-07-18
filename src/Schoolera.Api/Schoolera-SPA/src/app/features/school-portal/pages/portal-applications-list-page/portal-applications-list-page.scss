@@ -1,0 +1,47 @@
+.portal-applications-page {
+  display: grid;
+  gap: var(--se-space-5);
+}
+
+.portal-applications-page__filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--se-space-3);
+  align-items: end;
+}
+
+.portal-applications-page__filters label {
+  display: grid;
+  gap: var(--se-space-1);
+  font-size: 0.875rem;
+}
+
+.portal-applications-page__filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+}
+
+.portal-applications-page__table-wrap {
+  overflow-x: auto;
+}
+
+.portal-applications-page__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.portal-applications-page__table th,
+.portal-applications-page__table td {
+  padding: var(--se-space-2) var(--se-space-3);
+  border-bottom: 1px solid var(--se-color-border);
+  text-align: start;
+}
+
+.portal-applications-page__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--se-space-3);
+  align-items: center;
+}

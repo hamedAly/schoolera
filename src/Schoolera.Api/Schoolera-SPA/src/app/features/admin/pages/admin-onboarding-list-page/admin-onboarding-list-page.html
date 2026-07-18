@@ -1,0 +1,70 @@
+<se-portal-page-header
+  titleKey="admin.onboardingList.title"
+  subtitleKey="admin.onboardingList.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    <div class="admin-filters">
+      <label>
+        {{ 'admin.onboardingList.statusFilter' | transloco }}
+        <select [value]="statusFilter()" (change)="onStatusChange($event)">
+          <option value="">{{ 'admin.common.all' | transloco }}</option>
+          @for (status of statusOptions; track status) {
+            @if (status) {
+              <option [value]="status">{{ statusKey(status) | transloco }}</option>
+            }
+          }
+        </select>
+      </label>
+    </div>
+
+    @if (items().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.onboardingList.columns.school' | transloco }}</th>
+              <th scope="col">{{ 'admin.onboardingList.columns.owner' | transloco }}</th>
+              <th scope="col">{{ 'admin.onboardingList.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'admin.onboardingList.columns.submitted' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/admin/onboarding', item.id]">{{ schoolLabel(item) }}</a>
+                </td>
+                <td>
+                  <div>{{ item.ownerDisplayName }}</div>
+                  <div class="admin-muted">{{ item.ownerEmail }}</div>
+                </td>
+                <td>{{ statusKey(item.status) | transloco }}</td>
+                <td>{{ item.submittedAtUtc ? (item.submittedAtUtc | date: 'medium') : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination">
+        <span>{{ 'admin.common.pageInfo' | transloco: { page: page()?.pageNumber ?? 1, total: page()?.totalPages ?? 1 } }}</span>
+        <div class="admin-actions">
+          <button type="button" [disabled]="!page()?.hasPreviousPage" (click)="previousPage()">
+            {{ 'admin.common.previous' | transloco }}
+          </button>
+          <button type="button" [disabled]="!page()?.hasNextPage" (click)="nextPage()">
+            {{ 'admin.common.next' | transloco }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.onboardingList.empty' | transloco }}</p>
+    }
+  </div>
+}

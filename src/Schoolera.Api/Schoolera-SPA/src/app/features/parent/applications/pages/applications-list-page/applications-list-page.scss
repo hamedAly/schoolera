@@ -1,0 +1,72 @@
+@use '../../../styles/parent-shared';
+
+.applications-list__filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--se-space-3);
+  align-items: end;
+}
+
+.applications-list__filters label {
+  display: grid;
+  gap: var(--se-space-1);
+}
+
+.applications-list__filters select,
+.applications-list__filters input {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.applications-list__filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+}
+
+.applications-list__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+}
+
+.applications-list__cards {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--se-space-3);
+}
+
+.applications-list__card {
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+}
+
+.applications-list__card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--se-space-2);
+  align-items: center;
+  margin-bottom: var(--se-space-2);
+}
+
+.applications-list__pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-3);
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .applications-list__table {
+    display: none;
+  }
+
+  .applications-list__cards {
+    display: grid;
+  }
+}

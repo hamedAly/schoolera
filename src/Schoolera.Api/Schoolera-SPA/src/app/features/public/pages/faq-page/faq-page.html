@@ -1,0 +1,100 @@
+<se-public-page-container>
+  <div class="faq-page">
+    <header class="faq-page__header">
+      <h1>{{ 'faq.title' | transloco }}</h1>
+      <p>{{ 'faq.intro' | transloco }}</p>
+    </header>
+
+    @if (state() === 'loading') {
+      <div class="faq-page__status" role="status" aria-live="polite">
+        <p>{{ 'faq.loading' | transloco }}</p>
+      </div>
+    } @else if (state() === 'error') {
+      <div class="faq-page__status" role="alert">
+        <p>{{ 'faq.error' | transloco }}</p>
+        <button type="button" class="se-btn se-btn--outline" (click)="load()">
+          {{ 'faq.retry' | transloco }}
+        </button>
+      </div>
+    } @else {
+      <div class="faq-page__toolbar">
+        <label class="faq-page__search">
+          <span class="visually-hidden">{{ 'faq.searchLabel' | transloco }}</span>
+          <input
+            type="search"
+            [value]="searchQuery()"
+            [attr.placeholder]="'faq.searchPlaceholder' | transloco"
+            (input)="onSearchInput($event)"
+          />
+        </label>
+
+        <nav class="faq-page__cats" [attr.aria-label]="'faq.categoriesLabel' | transloco">
+          <button
+            type="button"
+            class="faq-page__chip"
+            [class.is-active]="!activeCategory()"
+            (click)="selectCategory('')"
+          >
+            {{ 'faq.allCategories' | transloco }}
+          </button>
+          @for (cat of categories(); track cat.slug) {
+            <button
+              type="button"
+              class="faq-page__chip"
+              [class.is-active]="activeCategory() === cat.slug"
+              (click)="selectCategory(cat.slug ?? '')"
+            >
+              {{ cat.name }}
+            </button>
+          }
+        </nav>
+      </div>
+
+      <p class="faq-page__count" aria-live="polite">
+        {{ 'faq.resultCount' | transloco: { count: resultCount() } }}
+      </p>
+
+      @if (filteredItems().length === 0) {
+        <div class="faq-page__empty">
+          <p>{{ 'faq.noResults' | transloco }}</p>
+          <button type="button" class="se-btn se-btn--outline" (click)="clearSearch()">
+            {{ 'faq.clearSearch' | transloco }}
+          </button>
+        </div>
+      } @else {
+        <div class="faq-page__list">
+          @for (item of filteredItems(); track item.id) {
+            <div class="faq-page__item" [attr.id]="anchorId(item.id)">
+              <h2>
+                <button
+                  type="button"
+                  class="faq-page__trigger"
+                  [attr.id]="buttonId(item.id)"
+                  [attr.aria-expanded]="isOpen(item.id)"
+                  [attr.aria-controls]="panelId(item.id)"
+                  (click)="toggleItem(item.id)"
+                >
+                  <span>{{ item.question }}</span>
+                  <span class="faq-page__icon" aria-hidden="true"></span>
+                </button>
+              </h2>
+              <div
+                class="faq-page__panel"
+                [attr.id]="panelId(item.id)"
+                role="region"
+                [attr.aria-labelledby]="buttonId(item.id)"
+                [hidden]="!isOpen(item.id)"
+              >
+                <div class="cms-content" [innerHTML]="item.answerHtml"></div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <p class="faq-page__footer">
+        <a routerLink="/contact">{{ 'faq.contactCta' | transloco }}</a>
+      </p>
+    }
+  </div>
+</se-public-page-container>

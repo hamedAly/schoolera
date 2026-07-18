@@ -1,0 +1,27 @@
+<div class="bilingual-field-group" [formGroup]="formGroup()">
+  <se-form-field [label]="arabicLabelKey() | transloco">
+    @if (multiline()) {
+      <textarea
+        [formControlName]="arabicControlName()"
+        [rows]="rows()"
+        dir="rtl"
+        lang="ar"
+      ></textarea>
+    } @else {
+      <input type="text" [formControlName]="arabicControlName()" dir="rtl" lang="ar" />
+    }
+  </se-form-field>
+
+  <se-form-field [label]="englishLabelKey() | transloco">
+    @if (multiline()) {
+      <textarea
+        [formControlName]="englishControlName()"
+        [rows]="rows()"
+        dir="ltr"
+        lang="en"
+      ></textarea>
+    } @else {
+      <input type="text" [formControlName]="englishControlName()" dir="ltr" lang="en" />
+    }
+  </se-form-field>
+</div>

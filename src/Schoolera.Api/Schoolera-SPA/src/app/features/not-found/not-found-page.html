@@ -1,0 +1,18 @@
+<a class="skip-link" href="#not-found-main">{{ 'app.skipToContent' | transloco }}</a>
+<se-public-header />
+
+<main id="not-found-main" class="not-found-main" tabindex="-1">
+  <se-public-page-container>
+    <section class="not-found" aria-labelledby="not-found-title">
+      <p class="not-found__code" aria-hidden="true">404</p>
+      <h1 id="not-found-title">{{ 'notFound.title' | transloco }}</h1>
+      <p>{{ 'notFound.body' | transloco }}</p>
+      <div class="not-found__actions">
+        <a routerLink="/" class="not-found__btn not-found__btn--primary">{{ 'notFound.homeCta' | transloco }}</a>
+        <a routerLink="/schools" class="not-found__btn">{{ 'notFound.schoolsCta' | transloco }}</a>
+      </div>
+    </section>
+  </se-public-page-container>
+</main>
+
+<se-public-footer />

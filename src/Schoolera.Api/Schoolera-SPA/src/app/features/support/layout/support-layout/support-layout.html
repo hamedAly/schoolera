@@ -1,0 +1,61 @@
+<div class="support-layout">
+  <header class="support-layout__header">
+    <div class="support-layout__header-start">
+      <button
+        type="button"
+        class="support-layout__menu-toggle"
+        [attr.aria-expanded]="mobileNavOpen()"
+        [attr.aria-label]="(mobileNavOpen() ? 'support.layout.closeNav' : 'support.layout.openNav') | transloco"
+        (click)="toggleMobileNav()"
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
+
+      <a routerLink="/support" class="support-layout__brand">{{ 'support.layout.brand' | transloco }}</a>
+    </div>
+
+    <div class="support-layout__header-end">
+      <se-language-switcher />
+
+      <div class="support-layout__user-menu">
+        <button
+          type="button"
+          class="support-layout__user-trigger"
+          [attr.aria-expanded]="userMenuOpen()"
+          (click)="toggleUserMenu()"
+        >
+          {{ authUser()?.displayName }}
+        </button>
+        @if (userMenuOpen()) {
+          <div class="support-layout__user-dropdown" role="menu">
+            <button type="button" role="menuitem" (click)="logout()">
+              {{ 'support.layout.logout' | transloco }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </header>
+
+  <div class="support-layout__body">
+    <nav
+      class="support-layout__nav"
+      [class.support-layout__nav--open]="mobileNavOpen()"
+      [attr.aria-label]="'support.layout.mainNav' | transloco"
+    >
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="['/support', item.path]"
+          routerLinkActive="is-active"
+          (click)="closeMobileNav()"
+        >
+          {{ item.labelKey | transloco }}
+        </a>
+      }
+    </nav>
+
+    <main class="support-layout__main" id="support-main">
+      <router-outlet />
+    </main>
+  </div>
+</div>

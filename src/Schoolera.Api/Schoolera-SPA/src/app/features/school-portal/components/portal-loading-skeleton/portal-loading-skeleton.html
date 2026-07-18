@@ -1,0 +1,6 @@
+<div class="portal-loading-skeleton" aria-busy="true" aria-live="polite">
+  <span class="visually-hidden">{{ 'portal.common.loading' | transloco }}</span>
+  @for (row of rowArray(); track $index) {
+    <div class="portal-loading-skeleton__row"></div>
+  }
+</div>

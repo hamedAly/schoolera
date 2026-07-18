@@ -1,0 +1,47 @@
+<se-portal-page-header titleKey="portal.services.title" subtitleKey="portal.services.subtitle">
+  <se-button type="button" (click)="showForm.set(true)">{{ 'portal.services.add' | transloco }}</se-button>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  }
+
+  @if (showForm()) {
+    <form class="portal-services__form" [formGroup]="form" (ngSubmit)="save()">
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="nameAr"
+        englishControlName="nameEn"
+        [arabicLabelKey]="'portal.services.fields.nameAr'"
+        [englishLabelKey]="'portal.services.fields.nameEn'"
+      />
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="descriptionAr"
+        englishControlName="descriptionEn"
+        [arabicLabelKey]="'portal.services.fields.descriptionAr'"
+        [englishLabelKey]="'portal.services.fields.descriptionEn'"
+        [multiline]="true"
+      />
+      <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+    </form>
+  }
+
+  @if (!services().length) {
+    <se-portal-empty-state titleKey="portal.services.emptyTitle" messageKey="portal.services.emptyMessage" />
+  } @else {
+    <ul class="portal-services__list">
+      @for (service of services(); track service.id) {
+        <li [class.is-inactive]="!service.isActive">
+          <strong>{{ serviceName(service) }}</strong>
+          <se-button type="button" variant="secondary" (click)="toggleActive(service)">
+            {{ (service.isActive ? 'portal.common.deactivate' : 'portal.common.activate') | transloco }}
+          </se-button>
+        </li>
+      }
+    </ul>
+  }
+}

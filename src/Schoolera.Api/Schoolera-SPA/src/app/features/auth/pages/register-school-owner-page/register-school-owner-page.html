@@ -1,0 +1,135 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: 'auth.accountType.breadcrumb' | transloco, route: '/auth/account-type' },
+      { label: 'auth.registerSchoolOwner.breadcrumb' | transloco },
+    ]"
+  />
+  <se-page-hero
+    [title]="'auth.registerSchoolOwner.title' | transloco"
+    [subtitle]="'auth.registerSchoolOwner.subtitle' | transloco"
+  />
+
+  <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <se-form-error-summary [errors]="summaryErrors()" />
+
+    <se-form-field
+      controlId="firstName"
+      [label]="'auth.fields.firstName' | transloco"
+      [error]="fieldError('firstName')"
+    >
+      <input
+        id="firstName"
+        seAutofocus
+        type="text"
+        formControlName="firstName"
+        autocomplete="given-name"
+        [attr.aria-invalid]="hasFieldError('firstName')"
+        [attr.aria-describedby]="hasFieldError('firstName') ? 'firstName-error' : null"
+      />
+    </se-form-field>
+
+    <se-form-field
+      controlId="lastName"
+      [label]="'auth.fields.lastName' | transloco"
+      [error]="fieldError('lastName')"
+    >
+      <input
+        id="lastName"
+        type="text"
+        formControlName="lastName"
+        autocomplete="family-name"
+        [attr.aria-invalid]="hasFieldError('lastName')"
+        [attr.aria-describedby]="hasFieldError('lastName') ? 'lastName-error' : null"
+      />
+    </se-form-field>
+
+    <se-form-field
+      controlId="email"
+      [label]="'auth.fields.email' | transloco"
+      [error]="fieldError('email')"
+    >
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        [attr.aria-invalid]="hasFieldError('email')"
+        [attr.aria-describedby]="hasFieldError('email') ? 'email-error' : null"
+      />
+    </se-form-field>
+
+    <se-form-field
+      controlId="phoneNumber"
+      [label]="'auth.fields.phoneNumber' | transloco"
+      [error]="fieldError('phoneNumber')"
+    >
+      <input
+        id="phoneNumber"
+        type="tel"
+        formControlName="phoneNumber"
+        autocomplete="tel"
+        [attr.aria-invalid]="hasFieldError('phoneNumber')"
+        [attr.aria-describedby]="hasFieldError('phoneNumber') ? 'phoneNumber-error' : null"
+      />
+    </se-form-field>
+
+    <se-form-field
+      controlId="password"
+      [label]="'auth.fields.password' | transloco"
+      [error]="fieldError('password')"
+    >
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        autocomplete="new-password"
+        [attr.aria-invalid]="hasFieldError('password')"
+        [attr.aria-describedby]="hasFieldError('password') ? 'password-error' : null"
+      />
+    </se-form-field>
+
+    <se-form-field
+      controlId="confirmPassword"
+      [label]="'auth.fields.confirmPassword' | transloco"
+      [error]="fieldError('confirmPassword')"
+    >
+      <input
+        id="confirmPassword"
+        type="password"
+        formControlName="confirmPassword"
+        autocomplete="new-password"
+        [attr.aria-invalid]="hasFieldError('confirmPassword')"
+        [attr.aria-describedby]="hasFieldError('confirmPassword') ? 'confirmPassword-error' : null"
+      />
+    </se-form-field>
+
+    <label class="auth-form__checkbox" for="termsAccepted">
+      <input id="termsAccepted" type="checkbox" formControlName="termsAccepted" />
+      <span>{{ 'auth.register.termsLabel' | transloco }}</span>
+    </label>
+    @if (fieldError('termsAccepted')) {
+      <small id="termsAccepted-error" class="auth-form__field-error" role="alert">
+        {{ fieldError('termsAccepted') }}
+      </small>
+    }
+
+    <div class="auth-form__actions">
+      <se-button type="submit" [disabled]="submitting()">
+        {{
+          submitting()
+            ? ('auth.actions.registering' | transloco)
+            : ('auth.actions.createAccount' | transloco)
+        }}
+      </se-button>
+    </div>
+
+    <p class="auth-form__links">
+      <span>
+        {{ 'auth.register.haveAccount' | transloco }}
+        <a routerLink="/auth/login">{{ 'auth.actions.signIn' | transloco }}</a>
+      </span>
+    </p>
+  </form>
+</se-public-page-container>

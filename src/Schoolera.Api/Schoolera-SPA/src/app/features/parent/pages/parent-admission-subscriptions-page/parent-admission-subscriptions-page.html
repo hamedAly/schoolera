@@ -1,0 +1,68 @@
+<se-portal-page-header
+  titleKey="parent.subscriptions.title"
+  subtitleKey="parent.subscriptions.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="6" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+  <div class="parent-actions">
+    <button type="button" (click)="load()">{{ 'parent.common.retry' | transloco }}</button>
+  </div>
+} @else {
+  <div class="parent-page">
+    @if (items().length) {
+      <div class="parent-table-wrap">
+        <table class="parent-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'parent.subscriptions.columns.schoolId' | transloco }}</th>
+              <th scope="col">{{ 'parent.subscriptions.columns.channel' | transloco }}</th>
+              <th scope="col">{{ 'parent.subscriptions.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'parent.subscriptions.columns.created' | transloco }}</th>
+              <th scope="col">{{ 'parent.subscriptions.columns.actions' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>{{ item.schoolId }}</td>
+                <td>{{ channelKey(item.preferredChannel) | transloco }}</td>
+                <td>
+                  {{
+                    (item.isActive
+                      ? 'parent.subscriptions.status.active'
+                      : 'parent.subscriptions.status.inactive'
+                    ) | transloco
+                  }}
+                </td>
+                <td>{{ item.createdAtUtc | date: 'medium' }}</td>
+                <td>
+                  @if (item.isActive) {
+                    <button type="button" (click)="requestUnsubscribe(item.id)">
+                      {{ 'parent.subscriptions.unsubscribe' | transloco }}
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="parent-empty">{{ 'parent.subscriptions.empty' | transloco }}</p>
+    }
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="!!unsubscribeId()"
+  titleKey="parent.subscriptions.confirmUnsubscribeTitle"
+  messageKey="parent.subscriptions.confirmUnsubscribeMessage"
+  confirmKey="parent.confirm.confirm"
+  cancelKey="parent.confirm.cancel"
+  [confirming]="confirming()"
+  (confirmed)="confirmUnsubscribe()"
+  (cancelled)="cancelUnsubscribe()"
+/>

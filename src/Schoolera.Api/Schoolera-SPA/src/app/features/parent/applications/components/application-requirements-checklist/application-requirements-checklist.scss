@@ -1,0 +1,66 @@
+.app-requirements-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.app-requirements-checklist__item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--se-border-subtle, #e5e7eb);
+  border-radius: 0.5rem;
+}
+
+.app-requirements-checklist__item.is-complete {
+  border-color: var(--se-success-border, #86efac);
+}
+
+.app-requirements-checklist__item.is-incomplete {
+  border-color: var(--se-warning-border, #fcd34d);
+}
+
+.app-requirements-checklist__head {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1 1 16rem;
+}
+
+.app-requirements-checklist__status {
+  font-weight: 700;
+  min-width: 1rem;
+}
+
+.app-requirements-checklist__description,
+.app-requirements-checklist__meta,
+.app-requirements-checklist__reason {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--se-text-muted, #6b7280);
+}
+
+.app-requirements-checklist__kind {
+  display: inline-block;
+  margin-inline-start: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--se-text-muted, #6b7280);
+}
+
+.app-requirements-checklist__upload {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.app-requirements-checklist__vault select {
+  min-width: 12rem;
+}
+
+.app-requirements-checklist__attached,
+.app-requirements-checklist__incomplete {
+  font-size: 0.875rem;
+}

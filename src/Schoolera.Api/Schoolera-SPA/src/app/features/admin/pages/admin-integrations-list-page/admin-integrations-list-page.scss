@@ -1,0 +1,11 @@
+@use '../../styles/admin-shared';
+
+.admin-alert--warning {
+  border-color: #f79009;
+  background: #fffaeb;
+  color: #93370d;
+}
+
+.admin-badge {
+  margin-inline-start: var(--se-space-2);
+}

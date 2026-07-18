@@ -1,0 +1,39 @@
+.application-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--se-space-3);
+}
+
+.application-timeline__item {
+  padding: var(--se-space-3);
+  border-inline-start: 3px solid var(--se-color-brand);
+  background: var(--se-color-surface-raised);
+  border-radius: var(--se-radius-md);
+}
+
+.application-timeline__action {
+  font-weight: 600;
+}
+
+.application-timeline__status,
+.application-timeline__time {
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.application-timeline__note {
+  margin: var(--se-space-2) 0 0;
+}
+
+.application-timeline__empty {
+  color: var(--se-color-ink-muted);
+  padding: var(--se-space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .application-timeline__item {
+    transition: none;
+  }
+}

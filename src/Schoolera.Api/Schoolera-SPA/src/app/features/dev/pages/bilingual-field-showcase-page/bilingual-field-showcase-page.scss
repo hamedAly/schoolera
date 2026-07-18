@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+h1 {
+  margin: 0 0 var(--se-space-3);
+}
+
+p {
+  margin: 0 0 var(--se-space-5);
+  color: var(--se-color-ink-muted);
+}
+
+.showcase-form {
+  display: grid;
+  gap: var(--se-space-5);
+}

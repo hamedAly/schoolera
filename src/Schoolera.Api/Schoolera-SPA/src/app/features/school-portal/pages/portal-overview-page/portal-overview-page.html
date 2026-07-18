@@ -1,0 +1,68 @@
+<se-portal-page-header
+  titleKey="portal.overview.title"
+  subtitleKey="portal.overview.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="5" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (dashboard(); as dash) {
+  <div class="portal-overview">
+    <div class="portal-overview__completion">
+      <strong>{{ 'portal.overview.completion' | transloco: { percent: dash.profileCompletionPercent } }}</strong>
+      <div class="portal-overview__bar" role="progressbar" [attr.aria-valuenow]="dash.profileCompletionPercent" aria-valuemin="0" aria-valuemax="100">
+        <span [style.width.%]="dash.profileCompletionPercent"></span>
+      </div>
+    </div>
+
+    <dl class="portal-overview__stats">
+      <div><dt>{{ 'portal.overview.branches' | transloco }}</dt><dd>{{ dash.activeBranchCount }} / {{ dash.branchCount }}</dd></div>
+      <div><dt>{{ 'portal.overview.stages' | transloco }}</dt><dd>{{ dash.activeOfferingCount }} / {{ dash.offeringCount }}</dd></div>
+      <div><dt>{{ 'portal.overview.fees' | transloco }}</dt><dd>{{ dash.activeTuitionFeeCount }} / {{ dash.tuitionFeeCount }}</dd></div>
+      <div><dt>{{ 'portal.overview.facilities' | transloco }}</dt><dd>{{ dash.facilityCount }}</dd></div>
+      <div><dt>{{ 'portal.overview.services' | transloco }}</dt><dd>{{ dash.activeServiceCount }} / {{ dash.serviceCount }}</dd></div>
+      <div><dt>{{ 'portal.overview.team' | transloco }}</dt><dd>{{ dash.teamMemberCount }}</dd></div>
+      <div><dt>{{ 'portal.overview.gallery' | transloco }}</dt><dd>{{ dash.galleryImageCount }}</dd></div>
+    </dl>
+
+    @if (dash.admissionsAvailable) {
+      <section class="portal-overview__admissions" aria-labelledby="portal-admissions-title">
+        <div class="portal-overview__admissions-head">
+          <h2 id="portal-admissions-title">{{ 'portal.overview.admissionsTitle' | transloco }}</h2>
+          <a [routerLink]="['/school', schoolId(), 'applications']">{{ 'portal.overview.viewApplications' | transloco }}</a>
+        </div>
+        <dl class="portal-overview__stats">
+          <div><dt>{{ 'portal.overview.submittedApplications' | transloco }}</dt><dd>{{ dash.submittedApplications ?? 0 }}</dd></div>
+          <div><dt>{{ 'portal.overview.underReviewApplications' | transloco }}</dt><dd>{{ dash.underReviewApplications ?? 0 }}</dd></div>
+          <div><dt>{{ 'portal.overview.acceptedApplications' | transloco }}</dt><dd>{{ dash.acceptedApplications ?? 0 }}</dd></div>
+          <div><dt>{{ 'portal.overview.rejectedApplications' | transloco }}</dt><dd>{{ dash.rejectedApplications ?? 0 }}</dd></div>
+          <div><dt>{{ 'portal.overview.totalActiveApplications' | transloco }}</dt><dd>{{ dash.totalActiveApplications ?? 0 }}</dd></div>
+        </dl>
+        @if (dash.recentSubmittedApplications?.length) {
+          <ul class="portal-overview__recent">
+            @for (item of dash.recentSubmittedApplications!; track item.id) {
+              <li>
+                <a [routerLink]="['/school', schoolId(), 'applications', item.id]">
+                  {{ item.applicationNumber }} — {{ item.studentName }}
+                </a>
+                <se-portal-admission-status-badge [status]="item.status" />
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+
+    @if (dash.warnings?.length) {
+      <section class="portal-overview__warnings" aria-labelledby="portal-warnings-title">
+        <h2 id="portal-warnings-title">{{ 'portal.overview.warningsTitle' | transloco }}</h2>
+        <ul>
+          @for (warning of dash.warnings!; track warning) {
+            <li>{{ warning }}</li>
+          }
+        </ul>
+      </section>
+    }
+  </div>
+}

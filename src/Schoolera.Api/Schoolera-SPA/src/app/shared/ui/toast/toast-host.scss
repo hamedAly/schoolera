@@ -1,0 +1,85 @@
+:host {
+  position: fixed;
+  inset-block-end: var(--se-space-5);
+  inset-inline-end: var(--se-space-5);
+  z-index: 1200;
+  display: grid;
+  gap: var(--se-space-3);
+  width: min(22rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.se-toast {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--se-space-3);
+  align-items: start;
+  padding: var(--se-space-3) var(--se-space-4);
+  border-radius: var(--se-radius-md);
+  border: 1px solid var(--se-color-border);
+  background: var(--se-color-surface-raised);
+  box-shadow: var(--se-shadow-md);
+  pointer-events: auto;
+  animation: se-toast-enter var(--se-motion);
+}
+
+.se-toast--success {
+  border-color: color-mix(in srgb, var(--se-color-brand) 45%, var(--se-color-border));
+  background: color-mix(in srgb, var(--se-color-brand) 10%, var(--se-color-surface-raised));
+}
+
+.se-toast--error {
+  border-color: color-mix(in srgb, var(--se-color-danger) 45%, var(--se-color-border));
+  background: color-mix(in srgb, var(--se-color-danger) 10%, var(--se-color-surface-raised));
+}
+
+.se-toast--warning {
+  border-color: color-mix(in srgb, var(--se-color-accent) 45%, var(--se-color-border));
+  background: color-mix(in srgb, var(--se-color-accent) 12%, var(--se-color-surface-raised));
+}
+
+.se-toast--info {
+  border-color: color-mix(in srgb, var(--se-color-brand-strong) 30%, var(--se-color-border));
+}
+
+.se-toast__message {
+  margin: 0;
+  color: var(--se-color-ink);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.se-toast__dismiss {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--se-color-ink-muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.se-toast__dismiss:focus-visible {
+  outline: none;
+  box-shadow: var(--se-focus-ring);
+  border-radius: var(--se-radius-sm);
+}
+
+@keyframes se-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .se-toast {
+    animation: none;
+  }
+}

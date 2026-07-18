@@ -1,0 +1,36 @@
+:host {
+  display: grid;
+  gap: 6px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+}
+
+span {
+  color: #344054;
+  font-weight: 700;
+}
+
+small,
+.se-field-error {
+  color: var(--se-color-danger, #b42318);
+}
+
+::ng-deep input,
+::ng-deep textarea,
+::ng-deep select {
+  min-height: 40px;
+  padding-block: 0;
+  padding-inline: 12px;
+  border: 1px solid var(--se-color-border, #cfd8e3);
+  border-radius: var(--se-radius-sm, 6px);
+  font: inherit;
+}
+
+::ng-deep input[aria-invalid='true'],
+::ng-deep textarea[aria-invalid='true'],
+::ng-deep select[aria-invalid='true'] {
+  border-color: var(--se-color-danger, #b42318);
+}

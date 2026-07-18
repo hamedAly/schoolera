@@ -1,0 +1,11 @@
+<header class="portal-page-header">
+  <div>
+    <h1 class="portal-page-header__title">{{ titleKey() | transloco }}</h1>
+    @if (subtitleKey()) {
+      <p class="portal-page-header__subtitle">{{ subtitleKey()! | transloco }}</p>
+    }
+  </div>
+  <div class="portal-page-header__actions">
+    <ng-content />
+  </div>
+</header>

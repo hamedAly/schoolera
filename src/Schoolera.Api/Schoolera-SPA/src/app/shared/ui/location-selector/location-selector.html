@@ -1,0 +1,103 @@
+<div class="location-selector">
+  <div class="location-selector__field">
+    <label [for]="idPrefix + '-country'">{{ 'schools.location.country' | transloco }}</label>
+    <select
+      [id]="idPrefix + '-country'"
+      [disabled]="disabled || countriesState() === 'loading' || countriesState() === 'error'"
+      [ngModel]="selectedCountryId"
+      (ngModelChange)="onCountryChange($event)"
+    >
+      <option value="">{{ 'schools.location.any' | transloco }}</option>
+      @for (country of countries(); track country.id) {
+        <option [value]="country.id">{{ itemName(country) }}</option>
+      }
+    </select>
+    @if (countriesState() === 'loading') {
+      <p class="location-selector__status">{{ 'schools.location.loading' | transloco }}</p>
+    } @else if (countriesState() === 'error') {
+      <p class="location-selector__status location-selector__status--error" role="alert">
+        {{ 'schools.location.error' | transloco }}
+        <button type="button" (click)="retryCountries()">{{ 'schools.location.retry' | transloco }}</button>
+      </p>
+    } @else if (countriesState() === 'loaded' && countries().length === 0) {
+      <p class="location-selector__status">{{ 'schools.location.empty' | transloco }}</p>
+    }
+  </div>
+
+  <div class="location-selector__field">
+    <label [for]="idPrefix + '-governorate'">{{ 'schools.location.governorate' | transloco }}</label>
+    <select
+      [id]="idPrefix + '-governorate'"
+      [disabled]="disabled || !selectedCountryId || governoratesState() === 'loading' || governoratesState() === 'error'"
+      [ngModel]="selectedGovernorateId"
+      (ngModelChange)="onGovernorateChange($event)"
+    >
+      <option value="">{{ 'schools.location.any' | transloco }}</option>
+      @for (governorate of governorates(); track governorate.id) {
+        <option [value]="governorate.id">{{ itemName(governorate) }}</option>
+      }
+    </select>
+    @if (governoratesState() === 'loading') {
+      <p class="location-selector__status">{{ 'schools.location.loading' | transloco }}</p>
+    } @else if (governoratesState() === 'error') {
+      <p class="location-selector__status location-selector__status--error" role="alert">
+        {{ 'schools.location.error' | transloco }}
+        <button type="button" (click)="retryGovernorates()">{{ 'schools.location.retry' | transloco }}</button>
+      </p>
+    } @else if (governoratesState() === 'loaded' && governorates().length === 0) {
+      <p class="location-selector__status">{{ 'schools.location.empty' | transloco }}</p>
+    }
+  </div>
+
+  <div class="location-selector__field">
+    <label [for]="idPrefix + '-city'">{{ 'schools.location.city' | transloco }}</label>
+    <select
+      [id]="idPrefix + '-city'"
+      [disabled]="disabled || !selectedGovernorateId || citiesState() === 'loading' || citiesState() === 'error'"
+      [ngModel]="selectedCityId"
+      (ngModelChange)="onCityChange($event)"
+    >
+      <option value="">{{ 'schools.location.any' | transloco }}</option>
+      @for (city of cities(); track city.id) {
+        <option [value]="city.id">{{ itemName(city) }}</option>
+      }
+    </select>
+    @if (citiesState() === 'loading') {
+      <p class="location-selector__status">{{ 'schools.location.loading' | transloco }}</p>
+    } @else if (citiesState() === 'error') {
+      <p class="location-selector__status location-selector__status--error" role="alert">
+        {{ 'schools.location.error' | transloco }}
+        <button type="button" (click)="retryCities()">{{ 'schools.location.retry' | transloco }}</button>
+      </p>
+    } @else if (citiesState() === 'loaded' && cities().length === 0) {
+      <p class="location-selector__status">{{ 'schools.location.empty' | transloco }}</p>
+    }
+  </div>
+
+  @if (showDistrict) {
+    <div class="location-selector__field">
+      <label [for]="idPrefix + '-district'">{{ 'schools.location.district' | transloco }}</label>
+      <select
+        [id]="idPrefix + '-district'"
+        [disabled]="disabled || !selectedCityId || districtsState() === 'loading' || districtsState() === 'error'"
+        [ngModel]="selectedDistrictId"
+        (ngModelChange)="onDistrictChange($event)"
+      >
+        <option value="">{{ 'schools.location.any' | transloco }}</option>
+        @for (district of districts(); track district.id) {
+          <option [value]="district.id">{{ itemName(district) }}</option>
+        }
+      </select>
+      @if (districtsState() === 'loading') {
+        <p class="location-selector__status">{{ 'schools.location.loading' | transloco }}</p>
+      } @else if (districtsState() === 'error') {
+        <p class="location-selector__status location-selector__status--error" role="alert">
+          {{ 'schools.location.error' | transloco }}
+          <button type="button" (click)="retryDistricts()">{{ 'schools.location.retry' | transloco }}</button>
+        </p>
+      } @else if (districtsState() === 'loaded' && districts().length === 0) {
+        <p class="location-selector__status">{{ 'schools.location.empty' | transloco }}</p>
+      }
+    </div>
+  }
+</div>

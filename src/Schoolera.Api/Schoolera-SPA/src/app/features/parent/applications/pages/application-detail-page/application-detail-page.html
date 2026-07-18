@@ -1,0 +1,471 @@
+<se-portal-page-header
+  titleKey="parent.applications.detail.title"
+  subtitleKey="parent.applications.detail.subtitle"
+>
+  <a routerLink="/parent/applications" class="parent-btn secondary">
+    {{ 'parent.applications.detail.backToList' | transloco }}
+  </a>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!">
+    <button type="button" class="parent-btn primary" (click)="retry()">
+      {{ 'parent.common.retry' | transloco }}
+    </button>
+  </se-portal-error-state>
+} @else if (detail(); as app) {
+  <div class="parent-page application-detail">
+    <div class="application-detail__head">
+      <se-application-status-badge [status]="app.status" />
+      <div class="application-detail__actions">
+        @if (app.capabilities?.canEdit) {
+          <a [routerLink]="['/parent/applications', app.id, 'edit']" class="parent-btn primary">
+            {{ 'parent.applications.detail.edit' | transloco }}
+          </a>
+        }
+        @if (app.capabilities?.canResubmitMissingItems) {
+          <button type="button" class="parent-btn primary" (click)="openResubmit()">
+            {{ 'parent.applications.lifecycle.missingItems.resubmit' | transloco }}
+          </button>
+        }
+        @if (app.capabilities?.canCancel) {
+          <button type="button" class="parent-btn danger" (click)="openCancel()">
+            {{ 'parent.applications.detail.cancel' | transloco }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <se-application-summary
+      [applicationNumber]="app.applicationNumber"
+      [childName]="app.childDisplayName"
+      [schoolName]="app.schoolName"
+      [branchName]="app.branchName"
+      [stageName]="app.stageName"
+      [gradeName]="app.gradeName"
+      [academicYearName]="app.academicYearName"
+      [parentNotes]="app.parentNotes"
+      [attachmentCount]="app.attachments?.length ?? 0"
+    />
+
+    <se-courier-availability [applicationId]="app.id!" />
+
+    @if (app.ageEligibility; as eligibility) {
+      <div class="parent-alert" [class.parent-alert--success]="eligibility.canContinue" [class.parent-alert--warning]="!eligibility.canContinue" role="status">
+        <h2>{{ 'parent.applications.ageEligibility.title' | transloco }}</h2>
+        <p>{{ ageEligibilityKey(eligibility.resultCode) | transloco }}</p>
+        @if (eligibility.explanation) { <p>{{ eligibility.explanation }}</p> }
+        @if (eligibility.resultCode === 4 && app.childProfileId) {
+          <a class="parent-btn secondary" [routerLink]="['/parent/children', app.childProfileId, 'edit']">
+            {{ 'parent.applications.ageEligibility.updateBirthDate' | transloco }}
+          </a>
+        }
+      </div>
+    }
+
+    @if (app.policySummary; as policy) {
+      <section class="application-detail__lifecycle" aria-labelledby="application-detail-policy">
+        <h2 id="application-detail-policy">
+          {{ 'parent.applications.detail.policySummaryTitle' | transloco }}
+        </h2>
+        <dl class="application-detail__dates">
+          <div>
+            <dt>{{ 'parent.applications.detail.policyRequirementMode' | transloco }}</dt>
+            <dd>{{ policyRequirementModeLabel(policy.requirementMode) }}</dd>
+          </div>
+          @if (policy.deliveryMode != null) {
+            <div>
+              <dt>{{ 'parent.applications.detail.policyDeliveryMode' | transloco }}</dt>
+              <dd>{{ policyDeliveryModeLabel(policy.deliveryMode) }}</dd>
+            </div>
+          }
+          @if (policy.expectedDurationMinutes != null) {
+            <div>
+              <dt>{{ 'parent.applications.detail.policyDuration' | transloco }}</dt>
+              <dd>{{ policy.expectedDurationMinutes }}</dd>
+            </div>
+          }
+          @if (policy.preparationNotes) {
+            <div>
+              <dt>{{ 'parent.applications.detail.policyPreparationNotes' | transloco }}</dt>
+              <dd>{{ policy.preparationNotes }}</dd>
+            </div>
+          }
+        </dl>
+      </section>
+    }
+
+    @if (appointmentAlert()) {
+      <div class="parent-alert parent-alert--warning" role="status" aria-live="polite">
+        {{ appointmentAlert() }}
+      </div>
+    }
+
+    @if (hasInterviewFaqs()) {
+      <section class="application-detail__lifecycle" aria-labelledby="application-detail-interview-faqs">
+        <h2 id="application-detail-interview-faqs">
+          {{ 'parent.applications.detail.interviewFaqsTitle' | transloco }}
+        </h2>
+        <div class="application-detail__interview-faqs">
+          @for (item of interviewFaqs(); track item.id) {
+            <div class="application-detail__interview-faq">
+              <h3>
+                <button
+                  type="button"
+                  class="application-detail__interview-faq-trigger"
+                  [attr.aria-expanded]="isInterviewFaqOpen(item.id!)"
+                  [attr.aria-controls]="'application-interview-faq-panel-' + item.id"
+                  [attr.id]="'application-interview-faq-button-' + item.id"
+                  (click)="toggleInterviewFaq(item.id!)"
+                >
+                  <span>{{ item.question }}</span>
+                </button>
+              </h3>
+              @if (isInterviewFaqOpen(item.id!)) {
+                <div
+                  class="cms-content application-detail__interview-faq-panel"
+                  [attr.id]="'application-interview-faq-panel-' + item.id"
+                  role="region"
+                  [attr.aria-labelledby]="'application-interview-faq-button-' + item.id"
+                  [innerHTML]="sanitizeInterviewFaqAnswer(item.answer)"
+                ></div>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    @if (app.registeredAtUtc) {
+      <div class="parent-alert parent-alert--success" role="status">
+        <h2>{{ 'parent.applications.lifecycle.registered.title' | transloco }}</h2>
+        <p>{{ 'parent.applications.lifecycle.registered.message' | transloco }}</p>
+        <p>
+          <strong>{{ 'parent.applications.lifecycle.registered.registeredAt' | transloco }}:</strong>
+          {{ formatDate(app.registeredAtUtc) }}
+        </p>
+      </div>
+    }
+
+    @if (app.parentVisibleRejectionReason) {
+      <div class="parent-alert parent-alert--warning" role="status">
+        <h2>{{ 'parent.applications.detail.rejectionTitle' | transloco }}</h2>
+        <p>{{ app.parentVisibleRejectionReason }}</p>
+      </div>
+    }
+
+    @if (missingRequest(); as request) {
+      <section class="application-detail__lifecycle" aria-labelledby="application-detail-missing">
+        <h2 id="application-detail-missing">
+          {{ 'parent.applications.lifecycle.missingItems.title' | transloco }}
+        </h2>
+        <dl class="application-detail__dates">
+          <div>
+            <dt>{{ 'parent.applications.lifecycle.missingItems.reason' | transloco }}</dt>
+            <dd>{{ request.parentVisibleReason || '—' }}</dd>
+          </div>
+          @if (request.instructions) {
+            <div>
+              <dt>{{ 'parent.applications.lifecycle.missingItems.instructions' | transloco }}</dt>
+              <dd>{{ request.instructions }}</dd>
+            </div>
+          }
+          <div>
+            <dt>{{ 'parent.applications.lifecycle.missingItems.deadline' | transloco }}</dt>
+            <dd>{{ formatDate(request.responseDeadlineUtc) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'parent.applications.lifecycle.missingItems.requestedAt' | transloco }}</dt>
+            <dd>{{ formatDate(request.requestedAtUtc) }}</dd>
+          </div>
+        </dl>
+
+        <h3>{{ 'parent.applications.lifecycle.missingItems.itemsTitle' | transloco }}</h3>
+        <ul class="application-detail__missing-items">
+          @for (item of request.items ?? []; track item.id) {
+            <li class="application-detail__missing-item">
+              <div class="application-detail__missing-item-head">
+                <span class="application-detail__missing-item-label">{{ item.label }}</span>
+                <span class="parent-badge parent-badge--{{ item.isMandatory ? 'warning' : 'muted' }}">
+                  {{
+                    (item.isMandatory
+                      ? 'parent.applications.lifecycle.missingItems.mandatory'
+                      : 'parent.applications.lifecycle.missingItems.optional') | transloco
+                  }}
+                </span>
+                <span class="parent-badge parent-badge--{{ item.isCompleted ? 'success' : 'info' }}">
+                  {{
+                    (item.isCompleted
+                      ? 'parent.applications.lifecycle.missingItems.completed'
+                      : 'parent.applications.lifecycle.missingItems.pending') | transloco
+                  }}
+                </span>
+              </div>
+
+              @if (!item.isCompleted) {
+                @if (isCorrectableField(item)) {
+                  @if (correctingItemId() === item.id) {
+                    <div class="application-detail__correction">
+                      <label [attr.for]="'correct-' + item.id">
+                        {{ 'parent.applications.lifecycle.missingItems.correctValue' | transloco }}
+                      </label>
+                      <input
+                        [id]="'correct-' + item.id"
+                        type="text"
+                        [ngModel]="correctionValue()"
+                        (ngModelChange)="correctionValue.set($event)"
+                      />
+                      <div class="application-detail__correction-actions">
+                        <button
+                          type="button"
+                          class="parent-btn primary"
+                          [disabled]="savingCorrection() || !correctionValue().trim()"
+                          (click)="saveCorrection(item)"
+                        >
+                          {{ 'parent.applications.lifecycle.missingItems.save' | transloco }}
+                        </button>
+                        <button type="button" class="parent-btn secondary" (click)="cancelCorrection()">
+                          {{ 'parent.common.cancel' | transloco }}
+                        </button>
+                      </div>
+                    </div>
+                  } @else {
+                    <button type="button" class="parent-btn secondary" (click)="openCorrection(item)">
+                      {{ 'parent.applications.lifecycle.missingItems.correctField' | transloco }}
+                    </button>
+                  }
+                } @else if (isDocumentItem(item)) {
+                  <p class="application-detail__missing-hint">
+                    {{ 'parent.applications.lifecycle.missingItems.documentHint' | transloco }}
+                  </p>
+                  @if (app.capabilities?.canUploadAttachments) {
+                    <label class="parent-btn secondary">
+                      {{ 'parent.applications.wizard.upload' | transloco }}
+                      <input
+                        type="file"
+                        hidden
+                        [disabled]="uploadingItemId() !== null"
+                        (change)="onMissingDocumentSelected($event, item)"
+                      />
+                    </label>
+                  }
+                } @else if (isQuestionItem(item)) {
+                  <p class="application-detail__missing-hint">
+                    {{ 'parent.applications.lifecycle.missingItems.questionHint' | transloco }}
+                  </p>
+                }
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    @for (entry of appointments(); track entry.value.id) {
+      <section class="application-detail__lifecycle application-detail__appointment" [attr.aria-labelledby]="'appointment-' + entry.kind">
+        <h2 [id]="'appointment-' + entry.kind">{{ appointmentKindKey(entry.kind) | transloco }}</h2>
+        <dl class="application-detail__dates">
+          <div><dt>{{ 'parent.applications.appointment.status' | transloco }}</dt><dd>{{ appointmentStatusKey(entry.value.lifecycle) | transloco }}</dd></div>
+          <div><dt>{{ 'parent.applications.appointment.date' | transloco }}</dt><dd>{{ formatDate(entry.value.scheduledAtUtc) }}</dd></div>
+          <div><dt>{{ 'parent.applications.appointment.timezone' | transloco }}</dt><dd>{{ entry.value.timeZoneId || '—' }}</dd></div>
+          <div><dt>{{ 'parent.applications.appointment.mode' | transloco }}</dt><dd>{{ appointmentModeKey(entry.value.mode) | transloco }}</dd></div>
+          <div><dt>{{ 'parent.applications.appointment.participantsLabel' | transloco }}</dt><dd>{{ participantKey(app.policySummary?.requiredParticipants) | transloco }}</dd></div>
+          @if (entry.value.onSiteAttendance) {
+            <div><dt>{{ 'parent.applications.appointment.branch' | transloco }}</dt><dd>{{ localizedBranchName(entry.value.onSiteAttendance) }}</dd></div>
+            <div><dt>{{ 'parent.applications.appointment.address' | transloco }}</dt><dd>{{ localizedBranchAddress(entry.value.onSiteAttendance) || '—' }}</dd></div>
+            @if (entry.value.onSiteAttendance.safeArrivalDirections) { <div><dt>{{ 'parent.applications.appointment.arrivalDirections' | transloco }}</dt><dd>{{ entry.value.onSiteAttendance.safeArrivalDirections }}</dd></div> }
+            @if (!entry.value.onSiteAttendance.branchIsActive) { <div><dt>{{ 'parent.applications.appointment.status' | transloco }}</dt><dd>{{ 'parent.applications.appointment.branchInactive' | transloco }}</dd></div> }
+          }
+          @if (entry.value.onlineMeeting) {
+            <div><dt>{{ 'parent.applications.appointment.meetingState' | transloco }}</dt><dd>{{ meetingStatusKey(entry.value.onlineMeeting.status) | transloco }}</dd></div>
+            @if (entry.value.onlineMeeting.provider) { <div><dt>{{ 'parent.applications.appointment.provider' | transloco }}</dt><dd>{{ localizedProviderName(entry.value.onlineMeeting.provider) }}</dd></div> }
+            @if (entry.value.onlineMeeting.isSimulated) { <div><dt>{{ 'parent.applications.appointment.notice' | transloco }}</dt><dd>{{ 'parent.applications.appointment.simulatedWarning' | transloco }}</dd></div> }
+            @if (!entry.value.onlineMeeting.canParentJoin && entry.value.onlineMeeting.joinUnavailableReasonCode) { <div><dt>{{ 'parent.applications.appointment.joinAvailability' | transloco }}</dt><dd>{{ meetingUnavailableKey(entry.value.onlineMeeting.joinUnavailableReasonCode) | transloco }}</dd></div> }
+          }
+          @if (slotAddress(entry.value)) { <div><dt>{{ 'parent.applications.appointment.address' | transloco }}</dt><dd>{{ slotAddress(entry.value) }}</dd></div> }
+          @if (entry.value.mode === 2 && app.policySummary?.onSiteInstructions) { <div><dt>{{ 'parent.applications.appointment.onSiteInstructions' | transloco }}</dt><dd>{{ app.policySummary?.onSiteInstructions }}</dd></div> }
+          @if (entry.value.preparationInstructions || app.policySummary?.preparationNotes) { <div><dt>{{ 'parent.applications.appointment.preparation' | transloco }}</dt><dd>{{ entry.value.preparationInstructions || app.policySummary?.preparationNotes }}</dd></div> }
+          @if (entry.value.parentVisibleNotes) { <div><dt>{{ 'parent.applications.appointment.notes' | transloco }}</dt><dd>{{ entry.value.parentVisibleNotes }}</dd></div> }
+          @if (entry.value.onlineInstructions || app.policySummary?.onlineInstructions) { <div><dt>{{ 'parent.applications.appointment.onlineInstructions' | transloco }}</dt><dd>{{ entry.value.onlineInstructions || app.policySummary?.onlineInstructions }}</dd></div> }
+          @if (entry.value.capabilities?.remainingRescheduleAttempts != null) { <div><dt>{{ 'parent.applications.appointment.remainingAttempts' | transloco }}</dt><dd>{{ entry.value.capabilities?.remainingRescheduleAttempts }}</dd></div> }
+          @if (entry.value.capabilities?.rescheduleDeadlineUtc) { <div><dt>{{ 'parent.applications.appointment.rescheduleDeadline' | transloco }}</dt><dd>{{ formatDate(entry.value.capabilities?.rescheduleDeadlineUtc) }}</dd></div> }
+          @if (entry.value.capabilities?.cancellationDeadlineUtc) { <div><dt>{{ 'parent.applications.appointment.cancellationDeadline' | transloco }}</dt><dd>{{ formatDate(entry.value.capabilities?.cancellationDeadlineUtc) }}</dd></div> }
+        </dl>
+        <div class="application-detail__appointment-actions">
+          @if (entry.value.capabilities?.canConfirmAppointment) { <button type="button" class="parent-btn primary" (click)="openAppointmentDialog('confirm', entry.kind)">{{ 'parent.applications.appointment.actions.confirm' | transloco }}</button> }
+          @if (entry.value.capabilities?.canSelectAlternateSlot) { <button type="button" class="parent-btn secondary" (click)="openAppointmentDialog('slots', entry.kind)">{{ 'parent.applications.appointment.actions.alternate' | transloco }}</button> }
+          @if (entry.value.capabilities?.canRequestReschedule) { <button type="button" class="parent-btn secondary" (click)="openAppointmentDialog('reschedule', entry.kind)">{{ 'parent.applications.appointment.actions.reschedule' | transloco }}</button> }
+          @if (entry.value.capabilities?.canCancelAppointment) { <button type="button" class="parent-btn danger" (click)="openAppointmentDialog('cancel', entry.kind)">{{ 'parent.applications.appointment.actions.cancel' | transloco }}</button> }
+          @if (entry.value.capabilities?.canJoinOnlineAppointment) { <button type="button" class="parent-btn primary" [disabled]="appointmentMutating()" (click)="joinAppointment(entry.kind)">{{ 'parent.applications.appointment.actions.join' | transloco }}</button> }
+          @if (entry.value.capabilities?.supportRoute) { <a class="parent-btn secondary" [routerLink]="entry.value.capabilities?.supportRoute" [queryParams]="{ admissionApplicationId: app.id }">{{ 'parent.applications.appointment.actions.support' | transloco }}</a> }
+        </div>
+      </section>
+    }
+
+    @if (app.waitingList) {
+      <section class="application-detail__lifecycle" aria-labelledby="application-detail-waiting">
+        <h2 id="application-detail-waiting">
+          {{ 'parent.applications.lifecycle.waitingList.title' | transloco }}
+        </h2>
+        <dl class="application-detail__dates">
+          @if (app.waitingList.position != null) {
+            <div>
+              <dt>{{ 'parent.applications.lifecycle.waitingList.position' | transloco }}</dt>
+              <dd>{{ app.waitingList.position }}</dd>
+            </div>
+          }
+          @if (app.waitingList.reviewDate) {
+            <div>
+              <dt>{{ 'parent.applications.lifecycle.waitingList.reviewDate' | transloco }}</dt>
+              <dd>{{ formatDate(app.waitingList.reviewDate) }}</dd>
+            </div>
+          }
+          @if (app.waitingList.reason) {
+            <div>
+              <dt>{{ 'parent.applications.lifecycle.waitingList.reason' | transloco }}</dt>
+              <dd>{{ app.waitingList.reason }}</dd>
+            </div>
+          }
+          @if (app.waitingList.enteredAtUtc) {
+            <div>
+              <dt>{{ 'parent.applications.lifecycle.waitingList.enteredAt' | transloco }}</dt>
+              <dd>{{ formatDate(app.waitingList.enteredAtUtc) }}</dd>
+            </div>
+          }
+        </dl>
+      </section>
+    }
+
+    <section aria-labelledby="application-detail-dates">
+      <h2 id="application-detail-dates">{{ 'parent.applications.detail.datesTitle' | transloco }}</h2>
+      <dl class="application-detail__dates">
+        <div>
+          <dt>{{ 'parent.applications.detail.createdAt' | transloco }}</dt>
+          <dd>{{ formatDate(app.createdAtUtc) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'parent.applications.detail.submittedAt' | transloco }}</dt>
+          <dd>{{ formatDate(app.submittedAtUtc) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'parent.applications.detail.reviewStartedAt' | transloco }}</dt>
+          <dd>{{ formatDate(app.reviewStartedAtUtc) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'parent.applications.detail.acceptedAt' | transloco }}</dt>
+          <dd>{{ formatDate(app.acceptedAtUtc) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'parent.applications.detail.rejectedAt' | transloco }}</dt>
+          <dd>{{ formatDate(app.rejectedAtUtc) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'parent.applications.detail.cancelledAt' | transloco }}</dt>
+          <dd>{{ formatDate(app.cancelledAtUtc) }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    @if (app.questions?.length) {
+      <section aria-labelledby="application-detail-questions">
+        <h2 id="application-detail-questions">{{ 'parent.applications.detail.questionsTitle' | transloco }}</h2>
+        <se-application-questions-form
+          [applicationId]="app.id!"
+          [questions]="app.questions ?? []"
+          [readOnly]="true"
+        />
+      </section>
+    }
+
+    <section aria-labelledby="application-detail-attachments">
+      <h2 id="application-detail-attachments">{{ 'parent.applications.wizard.attachmentsTitle' | transloco }}</h2>
+      <se-attachment-list
+        [attachments]="app.attachments ?? []"
+        [canUpload]="false"
+        [canRemove]="false"
+        (downloadRequested)="onDownload($event)"
+      />
+    </section>
+
+    <section aria-labelledby="application-detail-timeline">
+      <h2 id="application-detail-timeline">{{ 'parent.applications.timeline.title' | transloco }}</h2>
+      <se-application-timeline [items]="app.timeline ?? []" />
+    </section>
+  </div>
+
+  <se-confirmation-dialog
+    [open]="showCancelDialog()"
+    titleKey="parent.applications.detail.cancelConfirmTitle"
+    messageKey="parent.applications.detail.cancelConfirmMessage"
+    confirmKey="parent.applications.detail.cancelConfirm"
+    cancelKey="parent.confirm.cancel"
+    [confirming]="cancelling()"
+    (confirmed)="confirmCancel()"
+    (cancelled)="showCancelDialog.set(false)"
+  />
+
+  @if (showCancelDialog()) {
+    <div class="application-detail__cancel-reason">
+      <label for="cancel-reason">{{ 'parent.applications.detail.cancelReason' | transloco }}</label>
+      <textarea
+        id="cancel-reason"
+        rows="3"
+        [ngModel]="cancelReason()"
+        (ngModelChange)="cancelReason.set($event)"
+      ></textarea>
+    </div>
+  }
+
+  <se-confirmation-dialog
+    [open]="showResubmitDialog()"
+    titleKey="parent.applications.lifecycle.missingItems.resubmitConfirmTitle"
+    messageKey="parent.applications.lifecycle.missingItems.resubmitConfirmMessage"
+    confirmKey="parent.applications.lifecycle.missingItems.resubmitConfirm"
+    cancelKey="parent.confirm.cancel"
+    [confirming]="resubmitting()"
+    (confirmed)="confirmResubmit()"
+    (cancelled)="showResubmitDialog.set(false)"
+  />
+
+  @if (appointmentDialog(); as dialog) {
+    <div class="application-detail__appointment-dialog" role="dialog" aria-modal="true" aria-labelledby="appointment-dialog-title" (keydown.escape)="closeAppointmentDialog()">
+      <div class="application-detail__appointment-panel">
+        <h2 id="appointment-dialog-title">{{ ('parent.applications.appointment.dialogs.' + dialog + 'Title') | transloco }}</h2>
+        @if (dialog === 'slots') {
+          @if (availableSlotsLoading()) {
+            <p role="status">{{ 'parent.applications.availableSlots.loading' | transloco }}</p>
+          } @else if (availableSlotsError()) {
+            <div role="alert"><p>{{ availableSlotsError() }}</p><button type="button" class="parent-btn secondary" (click)="retryAvailableSlots()">{{ 'parent.common.retry' | transloco }}</button></div>
+          } @else if (!alternateSlots().length) {
+            <p>{{ 'parent.applications.availableSlots.empty' | transloco }}</p>
+          } @else {
+            <fieldset class="application-detail__slot-options">
+              <legend>{{ 'parent.applications.appointment.dialogs.selectSlot' | transloco }}</legend>
+              @for (slot of alternateSlots(); track slot.slotId) {
+                <label>
+                  <input type="radio" name="alternate-slot" [value]="slot.slotId" [checked]="selectedSlotId() === slot.slotId" (change)="selectedSlotId.set(slot.slotId!)" />
+                  <span>{{ formatDate(slot.startAtUtc) }} · {{ slot.timeZoneId }} · {{ availableSlotModeKey(slot.deliveryMode) | transloco }} · {{ slot.remainingSeats }}</span>
+                  @if (slot.branchAddress) { <small>{{ slot.branchAddress }}</small> }
+                  @if (slot.instructions) { <small>{{ slot.instructions }}</small> }
+                </label>
+              }
+            </fieldset>
+          }
+        } @else if (dialog === 'reschedule' || dialog === 'cancel') {
+          <label for="appointment-reason">{{ ('parent.applications.appointment.dialogs.' + dialog + 'Reason') | transloco }}</label>
+          <textarea id="appointment-reason" rows="4" maxlength="500" [required]="dialog === 'reschedule'" [ngModel]="appointmentReason()" (ngModelChange)="appointmentReason.set($event)"></textarea>
+          <small>{{ appointmentReason().length }}/500</small>
+        } @else {
+          <p>{{ 'parent.applications.appointment.dialogs.confirmMessage' | transloco }}</p>
+        }
+        @if (appointmentAlert()) { <p role="alert">{{ appointmentAlert() }}</p> }
+        <div class="application-detail__appointment-actions">
+          <button type="button" class="parent-btn secondary" [disabled]="appointmentMutating()" (click)="closeAppointmentDialog()">{{ 'parent.common.cancel' | transloco }}</button>
+          <button type="button" class="parent-btn primary" [disabled]="appointmentMutating() || (dialog === 'slots' && !selectedSlotId()) || (dialog === 'reschedule' && !appointmentReason().trim())" (click)="confirmAppointmentAction()">{{ 'parent.confirm.confirm' | transloco }}</button>
+        </div>
+      </div>
+    </div>
+  }
+}

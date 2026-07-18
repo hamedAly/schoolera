@@ -1,0 +1,314 @@
+<se-portal-page-header
+  titleKey="portal.interviewAssessmentPolicies.title"
+  subtitleKey="portal.interviewAssessmentPolicies.subtitle"
+>
+  <se-button type="button" (click)="openCreate()">
+    {{ 'portal.interviewAssessmentPolicies.add' | transloco }}
+  </se-button>
+</se-portal-page-header>
+
+<form class="portal-iap__filters" [formGroup]="filterForm" (ngSubmit)="$event.preventDefault()">
+  <se-form-field [label]="'portal.interviewAssessmentPolicies.filters.branch' | transloco">
+    <select formControlName="branchId">
+      <option value="">{{ 'portal.interviewAssessmentPolicies.filters.all' | transloco }}</option>
+      @for (branch of branches(); track branch.id) {
+        <option [value]="branch.id">{{ branch.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewAssessmentPolicies.filters.stage' | transloco">
+    <select formControlName="educationalStageId">
+      <option value="">{{ 'portal.interviewAssessmentPolicies.filters.all' | transloco }}</option>
+      @for (stage of stages(); track stage.id) {
+        <option [value]="stage.id">{{ stage.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewAssessmentPolicies.filters.grade' | transloco">
+    <select formControlName="gradeId">
+      <option value="">{{ 'portal.interviewAssessmentPolicies.filters.all' | transloco }}</option>
+      @for (grade of grades(); track grade.id) {
+        <option [value]="grade.id">{{ grade.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewAssessmentPolicies.filters.academicYear' | transloco">
+    <select formControlName="academicYearId">
+      <option value="">{{ 'portal.interviewAssessmentPolicies.filters.all' | transloco }}</option>
+      @for (year of academicYears(); track year.id) {
+        <option [value]="year.id">{{ year.name }}</option>
+      }
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewAssessmentPolicies.filters.publication' | transloco">
+    <select formControlName="publicationStatus">
+      <option value="">{{ 'portal.interviewAssessmentPolicies.filters.all' | transloco }}</option>
+      <option [value]="PublicationStatus._1">{{ 'portal.interviewAssessmentPolicies.draft' | transloco }}</option>
+      <option [value]="PublicationStatus._2">{{ 'portal.interviewAssessmentPolicies.published' | transloco }}</option>
+    </select>
+  </se-form-field>
+
+  <se-form-field [label]="'portal.interviewAssessmentPolicies.filters.active' | transloco">
+    <select formControlName="isActive">
+      <option value="">{{ 'portal.interviewAssessmentPolicies.filters.all' | transloco }}</option>
+      <option value="true">{{ 'portal.interviewAssessmentPolicies.active' | transloco }}</option>
+      <option value="false">{{ 'portal.interviewAssessmentPolicies.inactive' | transloco }}</option>
+    </select>
+  </se-form-field>
+</form>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!">
+      <se-button type="button" variant="secondary" (click)="retry()">
+        {{ 'portal.interviewAssessmentPolicies.retry' | transloco }}
+      </se-button>
+    </se-portal-error-state>
+  }
+
+  @if (showForm()) {
+    <form class="portal-iap__form" [formGroup]="form" (ngSubmit)="save()">
+      <h2>
+        {{ (isEditMode() ? 'portal.interviewAssessmentPolicies.edit' : 'portal.interviewAssessmentPolicies.add') | transloco }}
+      </h2>
+
+      <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.scopeBranch' | transloco">
+        <select formControlName="schoolBranchId">
+          <option value="">{{ 'portal.interviewAssessmentPolicies.scopeDefault' | transloco }}</option>
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branch.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.scopeStage' | transloco">
+        <select formControlName="educationalStageId">
+          <option value="">{{ 'portal.interviewAssessmentPolicies.scopeDefault' | transloco }}</option>
+          @for (stage of stages(); track stage.id) {
+            <option [value]="stage.id">{{ stage.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.scopeGrade' | transloco">
+        <select formControlName="gradeId">
+          <option value="">{{ 'portal.interviewAssessmentPolicies.scopeDefault' | transloco }}</option>
+          @for (grade of grades(); track grade.id) {
+            <option [value]="grade.id">{{ grade.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.scopeYear' | transloco">
+        <select formControlName="academicYearId">
+          <option value="">{{ 'portal.interviewAssessmentPolicies.scopeDefault' | transloco }}</option>
+          @for (year of academicYears(); track year.id) {
+            <option [value]="year.id">{{ year.name }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.requirementMode' | transloco">
+        <select formControlName="requirementMode">
+          <option [value]="RequirementMode._1">{{ 'portal.interviewAssessmentPolicies.modes.notRequired' | transloco }}</option>
+          <option [value]="RequirementMode._2">{{ 'portal.interviewAssessmentPolicies.modes.interviewOnly' | transloco }}</option>
+          <option [value]="RequirementMode._3">{{ 'portal.interviewAssessmentPolicies.modes.assessmentOnly' | transloco }}</option>
+          <option [value]="RequirementMode._4">{{ 'portal.interviewAssessmentPolicies.modes.interviewAndAssessment' | transloco }}</option>
+        </select>
+      </se-form-field>
+
+      @if (isOperational()) {
+        <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.deliveryMode' | transloco">
+          <select formControlName="deliveryMode">
+            <option [value]="DeliveryMode._1">{{ 'portal.interviewAssessmentPolicies.delivery.online' | transloco }}</option>
+            <option [value]="DeliveryMode._2">{{ 'portal.interviewAssessmentPolicies.delivery.onSite' | transloco }}</option>
+            <option [value]="DeliveryMode._3">{{ 'portal.interviewAssessmentPolicies.delivery.hybrid' | transloco }}</option>
+          </select>
+        </se-form-field>
+
+        <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.requiredParticipants' | transloco">
+          <select formControlName="requiredParticipants">
+            <option [value]="Participants._1">{{ 'portal.interviewAssessmentPolicies.participants.child' | transloco }}</option>
+            <option [value]="Participants._2">{{ 'portal.interviewAssessmentPolicies.participants.parentOrGuardian' | transloco }}</option>
+            <option [value]="Participants._3">{{ 'portal.interviewAssessmentPolicies.participants.both' | transloco }}</option>
+          </select>
+        </se-form-field>
+
+        <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.expectedDurationMinutes' | transloco">
+          <input type="number" formControlName="expectedDurationMinutes" min="1" />
+        </se-form-field>
+
+        <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.bookingWindowOpensDaysBefore' | transloco">
+          <input type="number" formControlName="bookingWindowOpensDaysBefore" min="0" />
+        </se-form-field>
+
+        <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.bookingWindowClosesDaysBefore' | transloco">
+          <input type="number" formControlName="bookingWindowClosesDaysBefore" min="0" />
+        </se-form-field>
+
+        <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.minimumSchedulingLeadTimeHours' | transloco">
+          <input type="number" formControlName="minimumSchedulingLeadTimeHours" min="0" />
+        </se-form-field>
+
+        <label class="portal-iap__checkbox">
+          <input type="checkbox" formControlName="parentReschedulingAllowed" />
+          <span>{{ 'portal.interviewAssessmentPolicies.fields.parentReschedulingAllowed' | transloco }}</span>
+        </label>
+
+        <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.maxParentRescheduleAttempts' | transloco">
+          <input type="number" formControlName="maxParentRescheduleAttempts" min="0" />
+        </se-form-field>
+
+        <label class="portal-iap__checkbox">
+          <input type="checkbox" formControlName="parentCancellationAllowed" />
+          <span>{{ 'portal.interviewAssessmentPolicies.fields.parentCancellationAllowed' | transloco }}</span>
+        </label>
+
+        <se-bilingual-field-group
+          [formGroup]="form"
+          arabicControlName="preparationNotesAr"
+          englishControlName="preparationNotesEn"
+          [arabicLabelKey]="'portal.interviewAssessmentPolicies.fields.preparationNotesAr'"
+          [englishLabelKey]="'portal.interviewAssessmentPolicies.fields.preparationNotesEn'"
+          [multiline]="true"
+        />
+
+        @if (showOnSiteFields()) {
+          <se-bilingual-field-group
+            [formGroup]="form"
+            arabicControlName="onSiteInstructionsAr"
+            englishControlName="onSiteInstructionsEn"
+            [arabicLabelKey]="'portal.interviewAssessmentPolicies.fields.onSiteInstructionsAr'"
+            [englishLabelKey]="'portal.interviewAssessmentPolicies.fields.onSiteInstructionsEn'"
+            [multiline]="true"
+          />
+        }
+
+        @if (showOnlineFields()) {
+          <se-bilingual-field-group
+            [formGroup]="form"
+            arabicControlName="onlineInstructionsAr"
+            englishControlName="onlineInstructionsEn"
+            [arabicLabelKey]="'portal.interviewAssessmentPolicies.fields.onlineInstructionsAr'"
+            [englishLabelKey]="'portal.interviewAssessmentPolicies.fields.onlineInstructionsEn'"
+            [multiline]="true"
+          />
+
+          <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.meetingProvider' | transloco">
+            <select formControlName="meetingProviderCode" data-testid="meeting-provider">
+              <option value="">{{ 'portal.interviewAssessmentPolicies.fields.selectMeetingProvider' | transloco }}</option>
+              @for (provider of meetingProviders(); track provider.providerCode) {
+                <option [value]="provider.providerCode">{{ providerLabel(provider) }}</option>
+              }
+            </select>
+          </se-form-field>
+        }
+
+        @if (showHybridAuthority()) {
+          <se-form-field [label]="'portal.interviewAssessmentPolicies.fields.hybridSelectionAuthority' | transloco">
+            <select formControlName="hybridSelectionAuthority">
+              <option [value]="HybridAuthority._1">{{ 'portal.interviewAssessmentPolicies.hybridAuthority.schoolSelects' | transloco }}</option>
+              <option [value]="HybridAuthority._2">{{ 'portal.interviewAssessmentPolicies.hybridAuthority.parentMayChoose' | transloco }}</option>
+            </select>
+          </se-form-field>
+        }
+      }
+
+      <div class="portal-iap__form-actions">
+        <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+        <se-button type="button" variant="secondary" (click)="cancelForm()">
+          {{ 'portal.confirm.cancel' | transloco }}
+        </se-button>
+      </div>
+    </form>
+  }
+
+  @if (!items().length && !errorMessage()) {
+    <se-portal-empty-state
+      titleKey="portal.interviewAssessmentPolicies.emptyTitle"
+      messageKey="portal.interviewAssessmentPolicies.emptyMessage"
+    />
+  } @else if (items().length) {
+    <ul class="portal-iap__list">
+      @for (item of items(); track item.id) {
+        <li [class.is-inactive]="item.isActive === false">
+          <div>
+            <strong>{{ requirementModeLabel(item.requirementMode) }}</strong>
+            <p>
+              {{ deliveryModeLabel(item.deliveryMode) }} · {{ statusKey(item) | transloco }}
+              @if (item.policyVersion != null) {
+                · v{{ item.policyVersion }}
+              }
+            </p>
+          </div>
+          <div class="portal-iap__actions">
+            @if (item.publicationStatus !== PublicationStatus._2) {
+              <se-button type="button" variant="secondary" (click)="openEdit(item)">
+                {{ 'portal.interviewAssessmentPolicies.edit' | transloco }}
+              </se-button>
+            }
+            @if (item.publicationStatus === PublicationStatus._2) {
+              <se-button type="button" variant="secondary" (click)="unpublish(item)">
+                {{ 'portal.interviewAssessmentPolicies.unpublish' | transloco }}
+              </se-button>
+            } @else if (item.isActive !== false) {
+              <se-button type="button" variant="secondary" (click)="publish(item)">
+                {{ 'portal.interviewAssessmentPolicies.publish' | transloco }}
+              </se-button>
+            }
+            @if (item.isActive !== false && item.publicationStatus !== PublicationStatus._2) {
+              <se-button type="button" variant="secondary" (click)="requestDeactivate(item)">
+                {{ 'portal.interviewAssessmentPolicies.deactivate' | transloco }}
+              </se-button>
+            }
+            <se-button type="button" variant="secondary" (click)="requestClone(item)">
+              {{ 'portal.interviewAssessmentPolicies.clone' | transloco }}
+            </se-button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+
+  <section class="portal-iap__preview" aria-labelledby="portal-iap-preview-heading">
+    <div class="portal-iap__preview-head">
+      <h2 id="portal-iap-preview-heading">
+        {{ 'portal.interviewAssessmentPolicies.previewTitle' | transloco }}
+      </h2>
+      <se-button type="button" variant="secondary" [disabled]="previewLoading()" (click)="loadPreview()">
+        {{ 'portal.interviewAssessmentPolicies.previewLoad' | transloco }}
+      </se-button>
+    </div>
+    <p>{{ 'portal.interviewAssessmentPolicies.previewHint' | transloco }}</p>
+    @if (previewLoading()) {
+      <se-portal-loading-skeleton [rows]="2" />
+    } @else if (previewResult()?.matchedPolicy; as matched) {
+      <div class="portal-iap__preview-card">
+        <strong>{{ requirementModeLabel(matched.requirementMode) }}</strong>
+        <p>
+          {{ deliveryModeLabel(matched.deliveryMode) }}
+          @if (previewResult()?.specificityScore != null) {
+            · {{ 'portal.interviewAssessmentPolicies.previewScore' | transloco }}:
+            {{ previewResult()!.specificityScore }}
+          }
+        </p>
+      </div>
+    } @else {
+      <p>{{ 'portal.interviewAssessmentPolicies.previewEmpty' | transloco }}</p>
+    }
+  </section>
+}
+
+<se-confirmation-dialog
+  [open]="!!confirmAction()"
+  [titleKey]="confirmDialogTitleKey()"
+  [messageKey]="confirmDialogMessageKey()"
+  (confirmed)="runConfirmedAction()"
+  (cancelled)="confirmAction.set(null)"
+/>

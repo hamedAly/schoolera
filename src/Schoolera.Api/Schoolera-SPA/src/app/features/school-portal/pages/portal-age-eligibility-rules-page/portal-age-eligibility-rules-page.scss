@@ -1,0 +1,40 @@
+.age-rules__filters,
+.age-rules__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+}
+
+.age-rules__filters,
+.age-rules__panel,
+.age-rules__list {
+  margin-bottom: 1.5rem;
+}
+
+.age-rules__panel,
+.age-rules__preview {
+  padding: 1rem;
+  border: 1px solid var(--se-border-subtle, #e5e7eb);
+  border-radius: 0.5rem;
+}
+
+.age-rules__list {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.age-rules__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--se-border-subtle, #e5e7eb);
+  border-radius: 0.5rem;
+}
+
+.age-rules__list li.is-inactive { opacity: 0.65; }
+.age-rules__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.age-rules__check { display: flex; align-items: center; gap: 0.5rem; }
+.age-rules__result { margin-top: 1rem; padding: 1rem; background: var(--se-surface-subtle, #f8fafc); }

@@ -1,0 +1,57 @@
+<section class="schools-map-panel" [attr.aria-label]="'schools.search.map.regionLabel' | transloco">
+  <div class="schools-map-panel__toolbar">
+    <button type="button" class="schools-map-panel__action" (click)="onSearchThisArea()">
+      {{ 'schools.search.map.searchThisArea' | transloco }}
+    </button>
+    <p class="schools-map-panel__status" aria-live="polite">
+      @if (pinsLoading()) {
+        {{ 'schools.search.map.loadingPins' | transloco }}
+      } @else if (statusMessage()) {
+        {{ statusMessage() }}
+      }
+    </p>
+  </div>
+
+  @if (mapLoading()) {
+    <p class="schools-map-panel__message">{{ 'schools.search.map.loading' | transloco }}</p>
+  }
+
+  @if (mapError()) {
+    <div class="schools-map-panel__fallback" role="alert">
+      <p>{{ mapError() }}</p>
+      <p>{{ 'schools.search.map.useList' | transloco }}</p>
+    </div>
+  }
+
+  <div
+    #mapHost
+    class="schools-map-panel__canvas"
+    [class.schools-map-panel__canvas--hidden]="!!mapError()"
+    role="presentation"
+  ></div>
+
+  @if (isTruncated()) {
+    <p class="schools-map-panel__truncated" role="status">
+      {{ 'schools.search.map.zoomIn' | transloco }}
+    </p>
+  }
+
+  @if (selectedPin(); as pin) {
+    <aside class="schools-map-panel__preview" [attr.aria-label]="'schools.search.map.previewLabel' | transloco">
+      <button type="button" class="schools-map-panel__close" (click)="closePreview()">
+        {{ 'schools.search.map.closePreview' | transloco }}
+      </button>
+      <h2>{{ pin.schoolName }}</h2>
+      <p>{{ pin.branchName }}</p>
+      @if (pin.locationSummary) {
+        <p>{{ pin.locationSummary }}</p>
+      }
+      @if (pin.isAdmissionOpen) {
+        <p class="schools-map-panel__badge">{{ 'schools.search.admissionOpen' | transloco }}</p>
+      }
+      <a [routerLink]="['/schools', pin.schoolSlug]" class="schools-map-panel__link">
+        {{ 'schools.search.viewSchool' | transloco }}
+      </a>
+    </aside>
+  }
+</section>

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+.public-page-container {
+  width: min(100% - (var(--se-space-4) * 2), var(--se-container-max));
+  margin-inline: auto;
+  padding-block: var(--se-space-6) var(--se-space-7);
+}

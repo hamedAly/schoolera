@@ -1,0 +1,22 @@
+<section class="se-parent-payment-return">
+  <se-portal-page-header
+    titleKey="parent.payments.returnTitle"
+    subtitleKey="parent.payments.returnSubtitle"
+  />
+
+  @if (loading()) {
+    <se-portal-loading-skeleton />
+  } @else if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  } @else if (intent(); as i) {
+    <p class="se-parent-payment-return__pending" role="status">
+      {{ 'parent.payments.pendingNotice' | transloco }}
+    </p>
+    <p>{{ 'parent.payments.status' | transloco }}: {{ i.status }}</p>
+    <p>{{ i.reference }} — {{ i.amount }} {{ i.currencyCode }}</p>
+    @if (i.isSandbox) {
+      <p>{{ 'parent.payments.sandboxBadge' | transloco }}</p>
+    }
+    <a [routerLink]="['/parent/payments', i.id]">{{ 'parent.payments.viewDetails' | transloco }}</a>
+  }
+</section>

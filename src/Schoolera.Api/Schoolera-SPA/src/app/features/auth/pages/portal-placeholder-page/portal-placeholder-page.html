@@ -1,0 +1,24 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: breadcrumbKey | transloco },
+    ]"
+  />
+  <se-page-hero [title]="titleKey | transloco" [subtitle]="subtitleKey | transloco" />
+
+  <div class="portal-placeholder">
+    <p>{{ 'auth.portals.signedInAs' | transloco: { name: auth.currentUser()?.displayName } }}</p>
+    @if (showSchoolOnboardingCta()) {
+      <a routerLink="/school/onboarding" class="portal-placeholder__cta">
+        {{ 'auth.portals.school.onboardingCta' | transloco }}
+      </a>
+      <a routerLink="/school/onboarding/status" class="portal-placeholder__cta portal-placeholder__cta--secondary">
+        {{ 'auth.portals.school.onboardingStatusCta' | transloco }}
+      </a>
+    }
+    <se-button type="button" variant="secondary" (click)="auth.logout().subscribe()">
+      {{ 'auth.actions.signOut' | transloco }}
+    </se-button>
+  </div>
+</se-public-page-container>

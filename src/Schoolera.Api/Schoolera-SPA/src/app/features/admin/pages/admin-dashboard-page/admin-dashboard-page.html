@@ -1,0 +1,163 @@
+<se-portal-page-header
+  titleKey="admin.dashboard.title"
+  subtitleKey="admin.dashboard.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="6" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (dashboard(); as dash) {
+  <div class="admin-page">
+    <section class="admin-stats" aria-labelledby="admin-schools-stats">
+      <h2 id="admin-schools-stats" class="visually-hidden">{{ 'admin.dashboard.schoolsSection' | transloco }}</h2>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.totalSchools' | transloco }}</dt>
+        <dd>{{ dash.totalSchools ?? 0 }}</dd>
+        <a routerLink="/admin/schools">{{ 'admin.dashboard.viewSchools' | transloco }}</a>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.publishedSchools' | transloco }}</dt>
+        <dd>{{ dash.publishedSchools ?? 0 }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.unpublishedSchools' | transloco }}</dt>
+        <dd>{{ dash.unpublishedSchools ?? 0 }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.suspendedSchools' | transloco }}</dt>
+        <dd>{{ dash.suspendedSchools ?? 0 }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.draftSchools' | transloco }}</dt>
+        <dd>{{ dash.draftSchools ?? 0 }}</dd>
+      </div>
+    </section>
+
+    <section class="admin-stats" aria-labelledby="admin-onboarding-stats">
+      <h2 id="admin-onboarding-stats" class="visually-hidden">{{ 'admin.dashboard.onboardingSection' | transloco }}</h2>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.pendingOnboarding' | transloco }}</dt>
+        <dd>{{ dash.pendingOnboardingApplications ?? 0 }}</dd>
+        <a routerLink="/admin/onboarding">{{ 'admin.dashboard.viewOnboarding' | transloco }}</a>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.underReviewOnboarding' | transloco }}</dt>
+        <dd>{{ dash.underReviewOnboardingApplications ?? 0 }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.changesRequestedOnboarding' | transloco }}</dt>
+        <dd>{{ dash.changesRequestedApplications ?? 0 }}</dd>
+      </div>
+    </section>
+
+    <section class="admin-stats" aria-labelledby="admin-users-stats">
+      <h2 id="admin-users-stats" class="visually-hidden">{{ 'admin.dashboard.usersSection' | transloco }}</h2>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.totalUsers' | transloco }}</dt>
+        <dd>{{ dash.totalUsers ?? 0 }}</dd>
+        <a routerLink="/admin/users">{{ 'admin.dashboard.viewUsers' | transloco }}</a>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.activeParents' | transloco }}</dt>
+        <dd>{{ dash.activeParents ?? 0 }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.activeSchoolOwners' | transloco }}</dt>
+        <dd>{{ dash.activeSchoolOwners ?? 0 }}</dd>
+      </div>
+      <div class="admin-stat-card">
+        <dt>{{ 'admin.dashboard.activeSchoolAdmins' | transloco }}</dt>
+        <dd>{{ dash.activeSchoolAdmins ?? 0 }}</dd>
+      </div>
+    </section>
+
+    <section class="admin-stats" aria-labelledby="admin-admissions-stats">
+      <h2 id="admin-admissions-stats" class="visually-hidden">{{ 'admin.dashboard.admissionsSection' | transloco }}</h2>
+      @if (dash.admissionsAvailable) {
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionTotal' | transloco }}</dt>
+          <dd>{{ dash.admissionApplicationsCount ?? 0 }}</dd>
+          <a routerLink="/admin/applications">{{ 'admin.dashboard.viewApplications' | transloco }}</a>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionSubmitted' | transloco }}</dt>
+          <dd>{{ dash.admissionSubmittedCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionUnderReview' | transloco }}</dt>
+          <dd>{{ dash.admissionUnderReviewCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionMissingDocuments' | transloco }}</dt>
+          <dd>{{ dash.admissionMissingDocumentsCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionInterviewRequired' | transloco }}</dt>
+          <dd>{{ dash.admissionInterviewRequiredCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionAssessmentRequired' | transloco }}</dt>
+          <dd>{{ dash.admissionAssessmentRequiredCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionWaitingList' | transloco }}</dt>
+          <dd>{{ dash.admissionWaitingListCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionAccepted' | transloco }}</dt>
+          <dd>{{ dash.admissionAcceptedCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionRejected' | transloco }}</dt>
+          <dd>{{ dash.admissionRejectedCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionRegistered' | transloco }}</dt>
+          <dd>{{ dash.admissionRegisteredCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionPendingReview' | transloco }}</dt>
+          <dd>{{ dash.admissionPendingSchoolReviewCount ?? 0 }}</dd>
+        </div>
+        <div class="admin-stat-card">
+          <dt>{{ 'admin.dashboard.admissionToday' | transloco }}</dt>
+          <dd>{{ dash.admissionApplicationsTodayCount ?? 0 }}</dd>
+        </div>
+      } @else {
+        <p class="admin-empty">{{ 'admin.dashboard.admissionsNotAvailable' | transloco }}</p>
+      }
+    </section>
+
+    @if (recentAudit().length) {
+      <section aria-labelledby="admin-recent-audit-title">
+        <div class="admin-section-header">
+          <h2 id="admin-recent-audit-title">{{ 'admin.dashboard.recentAudit' | transloco }}</h2>
+          <a routerLink="/admin/audit">{{ 'admin.dashboard.viewAllAudit' | transloco }}</a>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'admin.audit.columns.action' | transloco }}</th>
+                <th scope="col">{{ 'admin.audit.columns.entityType' | transloco }}</th>
+                <th scope="col">{{ 'admin.audit.columns.summary' | transloco }}</th>
+                <th scope="col">{{ 'admin.audit.columns.createdAt' | transloco }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (event of recentAudit(); track event.id) {
+                <tr>
+                  <td>{{ event.action }}</td>
+                  <td>{{ event.entityType }}</td>
+                  <td>{{ event.summary }}</td>
+                  <td>{{ event.createdAtUtc | date: 'medium' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </div>
+}

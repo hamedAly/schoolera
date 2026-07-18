@@ -1,0 +1,11 @@
+@use '../../styles/admin-shared';
+
+.admin-form-panel h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.admin-form-panel form {
+  display: grid;
+  gap: var(--se-space-4);
+}

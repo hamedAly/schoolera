@@ -1,0 +1,58 @@
+:host {
+  display: block;
+}
+
+.account-type-grid {
+  display: grid;
+  gap: var(--se-space-4);
+}
+
+.account-type-card {
+  display: grid;
+  gap: var(--se-space-3);
+  padding: var(--se-space-5);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-lg);
+  background: var(--se-color-surface-raised);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: var(--se-shadow-sm);
+  transition: border-color var(--se-motion), box-shadow var(--se-motion);
+}
+
+.account-type-card:hover,
+.account-type-card:focus-visible {
+  border-color: var(--se-color-brand);
+  box-shadow: var(--se-shadow-md);
+}
+
+.account-type-card h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.account-type-card p {
+  margin: 0;
+  color: var(--se-color-ink-muted);
+}
+
+.account-type-card span {
+  color: var(--se-color-brand-strong);
+  font-weight: 700;
+}
+
+.account-type-login {
+  margin-block-start: var(--se-space-5);
+  color: var(--se-color-ink-muted);
+}
+
+.account-type-login a {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (min-width: 720px) {
+  .account-type-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

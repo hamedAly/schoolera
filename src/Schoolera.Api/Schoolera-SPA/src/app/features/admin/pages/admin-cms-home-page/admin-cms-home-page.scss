@@ -1,0 +1,37 @@
+@use '../../styles/admin-shared';
+
+.admin-form {
+  display: grid;
+  gap: var(--se-space-4);
+}
+
+.admin-form h3 {
+  margin: var(--se-space-2) 0 0;
+  font-size: 1.05rem;
+}
+
+.admin-field {
+  display: grid;
+  gap: var(--se-space-1);
+  font-size: 0.875rem;
+  color: var(--se-color-ink-muted);
+}
+
+.admin-field input {
+  min-block-size: 2.75rem;
+  padding: 0 var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+  font: inherit;
+  color: var(--se-color-ink);
+}
+
+.admin-field small {
+  color: var(--se-color-ink-muted);
+}
+
+.admin-meta {
+  margin: 0;
+  color: var(--se-color-ink-muted);
+}

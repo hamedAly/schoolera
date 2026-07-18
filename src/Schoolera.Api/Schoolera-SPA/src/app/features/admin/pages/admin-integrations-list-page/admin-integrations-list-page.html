@@ -1,0 +1,124 @@
+<se-portal-page-header
+  titleKey="admin.integrations.list.title"
+  subtitleKey="admin.integrations.list.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+  <div class="admin-actions">
+    <button type="button" (click)="load()">{{ 'admin.common.retry' | transloco }}</button>
+  </div>
+} @else {
+  <div class="admin-page">
+    <p class="admin-alert admin-alert--warning" role="status">
+      {{ 'admin.integrations.plaintextWarning' | transloco }}
+    </p>
+
+    <div class="admin-actions">
+      <a routerLink="/admin/integrations/new" class="se-btn se-btn--primary">
+        {{ 'admin.integrations.list.create' | transloco }}
+      </a>
+    </div>
+
+    <form class="admin-filters" (ngSubmit)="applyFilters()">
+      <label>
+        {{ 'admin.integrations.list.typeFilter' | transloco }}
+        <select [(ngModel)]="typeFilter" name="type">
+          @for (opt of typeOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.labelKey | transloco }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.integrations.list.providerFilter' | transloco }}
+        <input type="search" [(ngModel)]="providerFilter" name="provider" />
+      </label>
+      <label>
+        {{ 'admin.integrations.list.activeFilter' | transloco }}
+        <select [(ngModel)]="activeFilter" name="active">
+          <option value="">{{ 'admin.common.all' | transloco }}</option>
+          <option value="true">{{ 'admin.integrations.status.active' | transloco }}</option>
+          <option value="false">{{ 'admin.integrations.status.inactive' | transloco }}</option>
+        </select>
+      </label>
+      <button type="submit">{{ 'admin.common.apply' | transloco }}</button>
+    </form>
+
+    @if (filteredItems().length) {
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.integrations.list.columns.name' | transloco }}</th>
+              <th scope="col">{{ 'admin.integrations.list.columns.type' | transloco }}</th>
+              <th scope="col">{{ 'admin.integrations.list.columns.provider' | transloco }}</th>
+              <th scope="col">{{ 'admin.integrations.list.columns.status' | transloco }}</th>
+              <th scope="col">{{ 'admin.integrations.list.columns.health' | transloco }}</th>
+              <th scope="col">{{ 'admin.integrations.list.columns.updated' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filteredItems(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/admin/integrations', item.id]">{{ displayName(item) }}</a>
+                  @if (item.isDefault) {
+                    <span class="admin-badge admin-badge--active">
+                      {{ 'admin.integrations.status.default' | transloco }}
+                    </span>
+                  }
+                </td>
+                <td>{{ typeKey(item.integrationType) | transloco }}</td>
+                <td>{{ item.providerCode }}</td>
+                <td>
+                  {{
+                    (item.isActive
+                      ? 'admin.integrations.status.active'
+                      : 'admin.integrations.status.inactive'
+                    ) | transloco
+                  }}
+                </td>
+                <td>{{ healthKey(item.healthStatus) | transloco }}</td>
+                <td>{{ item.updatedAtUtc ? (item.updatedAtUtc | date: 'medium') : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="admin-empty">{{ 'admin.integrations.list.empty' | transloco }}</p>
+    }
+
+    <section aria-labelledby="failed-meetings-title">
+      <h2 id="failed-meetings-title">{{ 'admin.integrations.meeting.failedMonitor' | transloco }}</h2>
+      @if (failedMeetings().length) {
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr>
+              <th>{{ 'admin.integrations.meeting.appointment' | transloco }}</th>
+              <th>{{ 'admin.integrations.list.columns.provider' | transloco }}</th>
+              <th>{{ 'admin.integrations.meeting.failureCode' | transloco }}</th>
+              <th>{{ 'admin.integrations.meeting.attempts' | transloco }}</th>
+              <th>{{ 'admin.common.actions' | transloco }}</th>
+            </tr></thead>
+            <tbody>
+              @for (meeting of failedMeetings(); track meeting.meetingSessionId) {
+                <tr>
+                  <td>{{ meeting.appointmentId }}</td>
+                  <td>{{ meeting.providerCode }}</td>
+                  <td>{{ meeting.safeFailureCode || '—' }}</td>
+                  <td>{{ meeting.attemptCount }}</td>
+                  <td><button type="button" [disabled]="retryingMeetingId() === meeting.meetingSessionId" (click)="retryMeeting(meeting)">{{ 'admin.integrations.meeting.retry' | transloco }}</button></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="admin-empty">{{ 'admin.integrations.meeting.noFailures' | transloco }}</p>
+      }
+    </section>
+  </div>
+}

@@ -1,0 +1,32 @@
+<se-public-page-container>
+  <div class="cms-page">
+    @if (state() === 'loading') {
+      <div class="cms-page__skeleton" role="status" aria-live="polite">
+        <span class="cms-page__skel cms-page__skel--title"></span>
+        <span class="cms-page__skel cms-page__skel--line"></span>
+        <span class="cms-page__skel cms-page__skel--line"></span>
+        <span class="cms-page__skel cms-page__skel--line cms-page__skel--short"></span>
+        <p class="visually-hidden">{{ 'cms.loading' | transloco }}</p>
+      </div>
+    } @else if (state() === 'notFound') {
+      <div class="cms-page__status" role="alert">
+        <h1>{{ 'cms.notFoundTitle' | transloco }}</h1>
+        <p>{{ 'cms.notFoundBody' | transloco }}</p>
+        <a routerLink="/" class="se-btn se-btn--primary">{{ 'pages.backHome' | transloco }}</a>
+      </div>
+    } @else if (state() === 'error') {
+      <div class="cms-page__status" role="alert">
+        <h1>{{ 'cms.errorTitle' | transloco }}</h1>
+        <p>{{ 'cms.errorBody' | transloco }}</p>
+        <button type="button" class="se-btn se-btn--outline" (click)="retry()">
+          {{ 'cms.retry' | transloco }}
+        </button>
+      </div>
+    } @else if (page(); as p) {
+      <header class="cms-page__header">
+        <h1>{{ p.title }}</h1>
+      </header>
+      <article class="cms-content" [innerHTML]="sanitizedContent()"></article>
+    }
+  </div>
+</se-public-page-container>

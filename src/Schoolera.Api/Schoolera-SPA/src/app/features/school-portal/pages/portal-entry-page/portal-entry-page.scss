@@ -1,0 +1,40 @@
+.portal-entry {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: var(--se-space-6) var(--se-space-4);
+}
+
+.portal-entry h1 {
+  margin: 0;
+}
+
+.portal-entry__subtitle {
+  color: var(--se-color-ink-muted);
+}
+
+.portal-entry__list {
+  display: grid;
+  gap: var(--se-space-3);
+  margin: var(--se-space-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-entry__card {
+  display: flex;
+  align-items: center;
+  gap: var(--se-space-3);
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: var(--se-space-3) var(--se-space-4);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+  text-align: start;
+  cursor: pointer;
+}
+
+.portal-entry__card img {
+  border-radius: var(--se-radius-sm);
+  object-fit: cover;
+}

@@ -1,0 +1,92 @@
+<se-portal-page-header
+  titleKey="parent.supportTickets.detail.title"
+  subtitleKey="parent.supportTickets.detail.subtitle"
+/>
+
+<p>
+  <a routerLink="/parent/support-tickets">{{ 'parent.supportTickets.detail.back' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="10" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as d) {
+  <div class="parent-page parent-ticket-detail">
+    <dl class="parent-dl">
+      <div>
+        <dt>{{ 'parent.supportTickets.columns.reference' | transloco }}</dt>
+        <dd>{{ d.reference }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.supportTickets.columns.subject' | transloco }}</dt>
+        <dd>{{ d.subject }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.supportTickets.columns.status' | transloco }}</dt>
+        <dd>{{ statusKey(d.status) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.supportTickets.columns.priority' | transloco }}</dt>
+        <dd>{{ priorityKey(d.priority) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.supportTickets.columns.category' | transloco }}</dt>
+        <dd>{{ categoryKey(d.category) | transloco }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'parent.supportTickets.detail.created' | transloco }}</dt>
+        <dd>{{ d.createdAtUtc | date: 'medium' }}</dd>
+      </div>
+    </dl>
+
+    @if (canReopen()) {
+      <div class="parent-actions">
+        <button type="button" class="se-btn se-btn--outline" [disabled]="acting()" (click)="reopen()">
+          {{ 'parent.supportTickets.detail.reopen' | transloco }}
+        </button>
+      </div>
+    }
+
+    <section class="parent-ticket-thread">
+      <h2>{{ 'parent.supportTickets.detail.messages' | transloco }}</h2>
+      @if (visibleMessages().length) {
+        <ul>
+          @for (msg of visibleMessages(); track msg.id) {
+            <li>
+              <div class="parent-ticket-thread__meta">
+                <strong>{{ 'parent.supportTickets.detail.messageAuthor' | transloco }}</strong>
+                <time>{{ msg.createdAtUtc | date: 'medium' }}</time>
+              </div>
+              <p>{{ msg.body }}</p>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="parent-empty">{{ 'parent.supportTickets.detail.noMessages' | transloco }}</p>
+      }
+    </section>
+
+    @if (canReply()) {
+      <section class="parent-ticket-reply">
+        <h2>{{ 'parent.supportTickets.detail.replyTitle' | transloco }}</h2>
+        <textarea
+          rows="5"
+          [(ngModel)]="replyBody"
+          name="replyBody"
+          [attr.aria-label]="'parent.supportTickets.detail.replyTitle' | transloco"
+        ></textarea>
+        <div class="parent-actions">
+          <button
+            type="button"
+            class="se-btn se-btn--primary"
+            [disabled]="acting() || !replyBody.trim()"
+            (click)="sendReply()"
+          >
+            {{ 'parent.supportTickets.detail.sendReply' | transloco }}
+          </button>
+        </div>
+      </section>
+    }
+  </div>
+}

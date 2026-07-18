@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.bilingual-field-group {
+  display: grid;
+  gap: var(--se-space-4);
+}
+
+:host ::ng-deep textarea,
+:host ::ng-deep input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--se-space-2) var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  font: inherit;
+}
+
+:host ::ng-deep textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+@media (min-width: 800px) {
+  .bilingual-field-group {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

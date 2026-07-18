@@ -1,0 +1,14 @@
+{
+  "/api": {
+    "target": "http://127.0.0.1:5085",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "silent"
+  },
+  "/swagger": {
+    "target": "http://127.0.0.1:5085",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "silent"
+  }
+}

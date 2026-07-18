@@ -1,0 +1,550 @@
+<se-public-page-container>
+  <div class="school-search">
+    <header class="school-search__hero">
+      <div class="school-search__hero-copy">
+        <p class="school-search__eyebrow">{{ 'schools.search.eyebrow' | transloco }}</p>
+        <h1>{{ 'schools.search.title' | transloco }}</h1>
+        <p class="school-search__subtitle">{{ 'schools.search.subtitle' | transloco }}</p>
+      </div>
+
+      <div class="school-search__searchbar">
+        <label class="school-search__search-label" for="school-search-input">
+          {{ 'schools.search.searchLabel' | transloco }}
+        </label>
+        <div class="school-search__search-field">
+          <se-home-icon name="search" class="school-search__search-icon" />
+          <input
+            id="school-search-input"
+            type="search"
+            autocomplete="off"
+            [placeholder]="'schools.search.searchPlaceholder' | transloco"
+            [ngModel]="searchDraft()"
+            (ngModelChange)="onSearchInput($event)"
+          />
+        </div>
+      </div>
+    </header>
+
+    <div class="school-search__toolbar">
+      <button
+        type="button"
+        class="school-search__filters-toggle"
+        [attr.aria-expanded]="mobileFiltersOpen()"
+        aria-controls="school-search-filters-drawer"
+        (click)="openMobileFilters()"
+      >
+        <se-home-icon name="search" />
+        <span>{{ 'schools.search.mobileFilters' | transloco }}</span>
+        @if (activeFilterCount() > 0) {
+          <span class="school-search__filters-badge">{{ activeFilterCount() }}</span>
+        }
+      </button>
+
+      <div
+        class="school-search__view-toggle"
+        role="group"
+        [attr.aria-label]="'schools.search.map.viewToggle' | transloco"
+      >
+        <button
+          type="button"
+          class="school-search__view-btn"
+          [class.school-search__view-btn--active]="!isMapView()"
+          [attr.aria-pressed]="!isMapView()"
+          (click)="setView('list')"
+        >
+          {{ 'schools.search.map.listView' | transloco }}
+        </button>
+        <button
+          type="button"
+          class="school-search__view-btn"
+          [class.school-search__view-btn--active]="isMapView()"
+          [attr.aria-pressed]="isMapView()"
+          (click)="setView('map')"
+        >
+          {{ 'schools.search.map.mapView' | transloco }}
+        </button>
+      </div>
+
+      <div class="school-search__toolbar-meta">
+        <p class="school-search__count" aria-live="polite">
+          @if (loading()) {
+            {{ 'schools.search.loadingCount' | transloco }}
+          } @else if (!error() && !isMapView()) {
+            {{ 'schools.search.resultCount' | transloco: { count: totalCount() } }}
+          } @else if (isMapView()) {
+            {{ 'schools.search.map.listCountHint' | transloco: { count: totalCount() } }}
+          }
+        </p>
+
+        <label class="school-search__sort">
+          <span>{{ 'schools.search.sortLabel' | transloco }}</span>
+          <select [ngModel]="query().sort ?? ''" (ngModelChange)="onSortChange($event)">
+            <option value="">{{ 'schools.search.sort.relevance' | transloco }}</option>
+            @for (option of sortOptions; track option) {
+              @if (option !== 'relevance') {
+                <option [value]="option">{{ 'schools.search.sort.' + option | transloco }}</option>
+              }
+            }
+          </select>
+        </label>
+      </div>
+    </div>
+
+    @if (hasActiveFilters()) {
+      <div class="school-search__chips" [attr.aria-label]="'schools.search.activeFilters' | transloco">
+        @if (query().search) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('search')">
+            <span>{{ chipLabel('search') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().stageId) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('stageId')">
+            <span>{{ chipLabel('stageId') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().gradeId) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('gradeId')">
+            <span>{{ chipLabel('gradeId') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().schoolType !== undefined) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('schoolType')">
+            <span>{{ chipLabel('schoolType') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().genderType !== undefined) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('genderType')">
+            <span>{{ chipLabel('genderType') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @for (id of query().curriculumIds; track id) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('curriculumIds', id)">
+            <span>{{ chipLabel('curriculumIds', id) }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @for (id of query().facilityIds; track id) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('facilityIds', id)">
+            <span>{{ chipLabel('facilityIds', id) }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().minimumTuition !== undefined) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('minimumTuition')">
+            <span>{{ chipLabel('minimumTuition') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().maximumTuition !== undefined) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('maximumTuition')">
+            <span>{{ chipLabel('maximumTuition') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().academicYearId) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('academicYearId')">
+            <span>{{ chipLabel('academicYearId') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (query().admissionOpen) {
+          <button type="button" class="school-search__chip" (click)="clearFilter('admissionOpen')">
+            <span>{{ chipLabel('admissionOpen') }}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+
+        <button type="button" class="school-search__chip school-search__chip--clear" (click)="clearAllFilters()">
+          {{ 'schools.search.clearAll' | transloco }}
+        </button>
+      </div>
+    }
+
+    <div class="school-search__layout">
+      <aside class="school-search__sidebar" [attr.aria-label]="'schools.search.filtersTitle' | transloco">
+        <ng-container *ngTemplateOutlet="filtersPanel" />
+      </aside>
+
+      @if (isMapView()) {
+        <se-schools-map-panel
+          [query]="query()"
+          (searchThisArea)="onSearchThisArea($event)"
+          (selectBranch)="onMapBranchSelected($event)"
+        />
+      } @else {
+      <section class="school-search__results" aria-labelledby="school-search-results-title">
+        <h2 id="school-search-results-title" class="visually-hidden">
+          {{ 'schools.search.resultsTitle' | transloco }}
+        </h2>
+
+        @if (loading()) {
+          <ul class="school-search__grid" aria-hidden="true">
+            @for (_ of [1, 2, 3, 4, 5, 6]; track $index) {
+              <li class="school-card school-card--skeleton">
+                <span class="school-search__skeleton school-search__skeleton--cover"></span>
+                <span class="school-search__skeleton school-search__skeleton--title"></span>
+                <span class="school-search__skeleton school-search__skeleton--line"></span>
+                <span class="school-search__skeleton school-search__skeleton--line school-search__skeleton--short"></span>
+              </li>
+            }
+          </ul>
+        } @else if (error()) {
+          <div class="school-search__status" role="alert">
+            <h3>{{ 'schools.search.errorTitle' | transloco }}</h3>
+            <p>{{ 'schools.search.errorMessage' | transloco }}</p>
+            <button type="button" class="se-btn se-btn--outline" (click)="retryLoad()">
+              {{ 'schools.search.retry' | transloco }}
+            </button>
+          </div>
+        } @else if (schools().length === 0) {
+          <div class="school-search__status">
+            <h3>{{ 'schools.search.emptyTitle' | transloco }}</h3>
+            <p>{{ 'schools.search.emptyMessage' | transloco }}</p>
+            @if (hasActiveFilters()) {
+              <button type="button" class="se-btn se-btn--outline" (click)="clearAllFilters()">
+                {{ 'schools.search.resetFilters' | transloco }}
+              </button>
+            }
+          </div>
+        } @else {
+          <ul class="school-search__grid">
+            @for (school of schools(); track school.id) {
+              <li class="school-card">
+                <div class="school-card__media">
+                  <img
+                    [src]="schoolCover(school)"
+                    width="480"
+                    height="220"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    (error)="onSchoolImageError($event)"
+                  />
+                  @if (school.logoUrl) {
+                    <img
+                      class="school-card__logo"
+                      [src]="schoolLogo(school)"
+                      width="56"
+                      height="56"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      (error)="onSchoolImageError($event)"
+                    />
+                  }
+                </div>
+
+                <div class="school-card__body">
+                  <div class="school-card__head">
+                    <h3>{{ school.name }}</h3>
+                    @if (school.isAdmissionOpen) {
+                      <span class="school-card__badge">{{ 'schools.search.admissionOpen' | transloco }}</span>
+                    }
+                  </div>
+
+                  <p class="school-card__location">
+                    <se-home-icon name="pin" />
+                    <span>{{ locationText(school) }}</span>
+                  </p>
+
+                  <ul class="school-card__meta">
+                    @if (school.schoolType !== undefined) {
+                      <li>{{ schoolTypeLabel(school.schoolType) }}</li>
+                    }
+                    @if (school.genderType !== undefined) {
+                      <li>{{ genderTypeLabel(school.genderType) }}</li>
+                    }
+                  </ul>
+
+                  @if (summaryText(school.curriculumSummary)) {
+                    <p class="school-card__summary">{{ summaryText(school.curriculumSummary) }}</p>
+                  }
+                  @if (summaryText(school.educationalStageSummary)) {
+                    <p class="school-card__summary">{{ summaryText(school.educationalStageSummary) }}</p>
+                  }
+
+                  <div class="school-card__footer">
+                    <div class="school-card__pricing">
+                      @if (formatFee(school); as fee) {
+                        <p>{{ fee }}</p>
+                      }
+                      @if (formatDistance(school.distanceKm); as distance) {
+                        <p class="school-card__distance">{{ distance }}</p>
+                        <p class="school-card__distance-note">
+                          {{ 'schools.search.distanceApproximate' | transloco }}
+                        </p>
+                      }
+                    </div>
+
+                    <div class="school-card__actions">
+                      @if (favoritesEnabled) {
+                        <button
+                          type="button"
+                          class="se-btn se-btn--outline"
+                          [disabled]="isFavoriteBusy(school.id)"
+                          [attr.aria-pressed]="isFavorite(school)"
+                          (click)="toggleFavorite(school, $event)"
+                        >
+                          {{
+                            (isFavorite(school)
+                              ? 'schools.profile.unfavorite'
+                              : 'schools.profile.favorite'
+                            ) | transloco
+                          }}
+                        </button>
+                      }
+                      <a class="se-btn se-btn--primary" [routerLink]="['/schools', school.slug]">
+                        {{ 'schools.search.viewSchool' | transloco }}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+
+          @if (showPagination()) {
+            <nav class="school-search__pagination" [attr.aria-label]="'schools.search.pagination' | transloco">
+              <button
+                type="button"
+                class="school-search__page-btn"
+                [disabled]="query().pageNumber <= 1"
+                (click)="goToPage(query().pageNumber - 1)"
+              >
+                {{ 'schools.search.previousPage' | transloco }}
+              </button>
+
+              @for (page of pageNumbers(); track page) {
+                <button
+                  type="button"
+                  class="school-search__page-btn"
+                  [class.is-active]="page === query().pageNumber"
+                  [attr.aria-current]="page === query().pageNumber ? 'page' : null"
+                  (click)="goToPage(page)"
+                >
+                  {{ page }}
+                </button>
+              }
+
+              <button
+                type="button"
+                class="school-search__page-btn"
+                [disabled]="query().pageNumber >= totalPages()"
+                (click)="goToPage(query().pageNumber + 1)"
+              >
+                {{ 'schools.search.nextPage' | transloco }}
+              </button>
+            </nav>
+          }
+        }
+      </section>
+      }
+    </div>
+  </div>
+
+  @if (mobileFiltersOpen()) {
+    <div class="school-search__drawer-backdrop" (click)="closeMobileFilters()"></div>
+    <aside
+      id="school-search-filters-drawer"
+      class="school-search__drawer"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="'schools.search.filtersTitle' | transloco"
+    >
+      <header class="school-search__drawer-header">
+        <h2>{{ 'schools.search.filtersTitle' | transloco }}</h2>
+        <button
+          type="button"
+          class="school-search__drawer-close"
+          (click)="closeMobileFilters()"
+          [attr.aria-label]="'schools.search.closeFilters' | transloco"
+        >
+          ×
+        </button>
+      </header>
+      <div class="school-search__drawer-body">
+        <ng-container *ngTemplateOutlet="filtersPanel" />
+      </div>
+      <footer class="school-search__drawer-footer">
+        <button type="button" class="se-btn se-btn--primary se-btn--block" (click)="closeMobileFilters()">
+          {{ 'schools.search.showResults' | transloco: { count: totalCount() } }}
+        </button>
+      </footer>
+    </aside>
+  }
+</se-public-page-container>
+
+<ng-template #filtersPanel>
+  <div class="school-search__filters">
+    <se-location-selector
+      idPrefix="school-search-location"
+      [countryId]="query().countryId"
+      [governorateId]="query().governorateId"
+      [cityId]="query().cityId"
+      [districtId]="query().districtId"
+      (selectionChange)="onLocationChange($event)"
+    />
+
+    <div class="school-search__geolocation">
+      <button type="button" class="se-btn se-btn--outline" (click)="useCurrentLocation()">
+        {{ 'schools.search.geolocation.useCurrent' | transloco }}
+      </button>
+      @if (query().latitude !== undefined && query().longitude !== undefined) {
+        <button type="button" class="se-btn se-btn--outline" (click)="clearCurrentLocation()">
+          {{ 'schools.search.geolocation.clear' | transloco }}
+        </button>
+      }
+    </div>
+    <p class="school-search__geolocation-status" aria-live="polite">
+      @if (geolocationStatusKey()) {
+        {{ geolocationStatusKey()! | transloco }}
+      }
+    </p>
+
+    <div class="school-search__filter">
+      <label for="filter-stage">{{ 'schools.search.filters.stage' | transloco }}</label>
+      <select
+        id="filter-stage"
+        [ngModel]="query().stageId ?? ''"
+        (ngModelChange)="onStageChange($event)"
+      >
+        <option value="">{{ 'schools.search.filters.any' | transloco }}</option>
+        @for (stage of stages(); track stage.id) {
+          <option [value]="stage.id">{{ taxonomyName(stage) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="school-search__filter">
+      <label for="filter-grade">{{ 'schools.search.filters.grade' | transloco }}</label>
+      <select
+        id="filter-grade"
+        [disabled]="!query().stageId"
+        [ngModel]="query().gradeId ?? ''"
+        (ngModelChange)="onGradeChange($event)"
+      >
+        <option value="">{{ 'schools.search.filters.any' | transloco }}</option>
+        @for (grade of grades(); track grade.id) {
+          <option [value]="grade.id">{{ taxonomyName(grade) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="school-search__filter">
+      <label for="filter-school-type">{{ 'schools.search.filters.schoolType' | transloco }}</label>
+      <select
+        id="filter-school-type"
+        [ngModel]="query().schoolType ?? ''"
+        (ngModelChange)="onSchoolTypeChange($event)"
+      >
+        <option value="">{{ 'schools.search.filters.any' | transloco }}</option>
+        @for (type of schoolTypes; track type.value) {
+          <option [value]="type.value">{{ type.labelKey | transloco }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="school-search__filter">
+      <label for="filter-gender-type">{{ 'schools.search.filters.genderType' | transloco }}</label>
+      <select
+        id="filter-gender-type"
+        [ngModel]="query().genderType ?? ''"
+        (ngModelChange)="onGenderTypeChange($event)"
+      >
+        <option value="">{{ 'schools.search.filters.any' | transloco }}</option>
+        @for (type of genderTypes; track type.value) {
+          <option [value]="type.value">{{ type.labelKey | transloco }}</option>
+        }
+      </select>
+    </div>
+
+    <fieldset class="school-search__filter">
+      <legend>{{ 'schools.search.filters.curricula' | transloco }}</legend>
+      <ul class="school-search__checkbox-list">
+        @for (item of curricula(); track item.id) {
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                [checked]="isCurriculumSelected(item.id!)"
+                (change)="toggleCurriculum(item.id!, $any($event.target).checked)"
+              />
+              <span>{{ taxonomyName(item) }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </fieldset>
+
+    <fieldset class="school-search__filter">
+      <legend>{{ 'schools.search.filters.facilities' | transloco }}</legend>
+      <ul class="school-search__checkbox-list">
+        @for (item of facilities(); track item.id) {
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                [checked]="isFacilitySelected(item.id!)"
+                (change)="toggleFacility(item.id!, $any($event.target).checked)"
+              />
+              <span>{{ taxonomyName(item) }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </fieldset>
+
+    <div class="school-search__filter-row">
+      <div class="school-search__filter">
+        <label for="filter-min-fee">{{ 'schools.search.filters.minimumTuition' | transloco }}</label>
+        <input
+          id="filter-min-fee"
+          type="number"
+          min="0"
+          step="1000"
+          [ngModel]="query().minimumTuition ?? ''"
+          (ngModelChange)="onMinimumTuitionChange($event)"
+        />
+      </div>
+      <div class="school-search__filter">
+        <label for="filter-max-fee">{{ 'schools.search.filters.maximumTuition' | transloco }}</label>
+        <input
+          id="filter-max-fee"
+          type="number"
+          min="0"
+          step="1000"
+          [ngModel]="query().maximumTuition ?? ''"
+          (ngModelChange)="onMaximumTuitionChange($event)"
+        />
+      </div>
+    </div>
+
+    <div class="school-search__filter">
+      <label for="filter-academic-year">{{ 'schools.search.filters.academicYear' | transloco }}</label>
+      <select
+        id="filter-academic-year"
+        [ngModel]="query().academicYearId ?? ''"
+        (ngModelChange)="onAcademicYearChange($event)"
+      >
+        <option value="">{{ 'schools.search.filters.any' | transloco }}</option>
+        @for (year of academicYears(); track year.id) {
+          <option [value]="year.id">{{ taxonomyName(year) }}</option>
+        }
+      </select>
+    </div>
+
+    <label class="school-search__checkbox">
+      <input
+        type="checkbox"
+        [checked]="query().admissionOpen === true"
+        (change)="onAdmissionOpenChange($any($event.target).checked)"
+      />
+      <span>{{ 'schools.search.filters.admissionOpen' | transloco }}</span>
+    </label>
+  </div>
+</ng-template>

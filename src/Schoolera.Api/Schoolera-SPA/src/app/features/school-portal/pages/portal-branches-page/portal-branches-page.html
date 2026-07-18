@@ -1,0 +1,82 @@
+<se-portal-page-header titleKey="portal.branches.title" subtitleKey="portal.branches.subtitle">
+  <se-button type="button" (click)="openCreate()">{{ 'portal.branches.add' | transloco }}</se-button>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="4" />
+} @else if (errorMessage() && !branches().length) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  @if (errorMessage()) {
+    <se-portal-error-state [message]="errorMessage()!" />
+  }
+
+  @if (showForm()) {
+    <form class="portal-branches__form" [formGroup]="form" (ngSubmit)="save()">
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="nameAr"
+        englishControlName="nameEn"
+        [arabicLabelKey]="'portal.branches.fields.nameAr'"
+        [englishLabelKey]="'portal.branches.fields.nameEn'"
+      />
+      <div class="portal-branches__grid">
+        <se-form-field [label]="'portal.branches.fields.city' | transloco">
+          <select formControlName="cityId">
+            <option value="">{{ 'portal.common.select' | transloco }}</option>
+            @for (city of cities(); track city.id) {
+              <option [value]="city.id">{{ taxonomyName(city) }}</option>
+            }
+          </select>
+        </se-form-field>
+        <se-form-field [label]="'portal.branches.fields.district' | transloco">
+          <select formControlName="districtId">
+            <option value="">{{ 'portal.common.select' | transloco }}</option>
+            @for (district of districts(); track district.id) {
+              <option [value]="district.id">{{ taxonomyName(district) }}</option>
+            }
+          </select>
+        </se-form-field>
+      </div>
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="addressLineAr"
+        englishControlName="addressLineEn"
+        [arabicLabelKey]="'portal.branches.fields.addressAr'"
+        [englishLabelKey]="'portal.branches.fields.addressEn'"
+        [multiline]="true"
+      />
+      <label class="portal-branches__checkbox">
+        <input type="checkbox" formControlName="isMainBranch" />
+        {{ 'portal.branches.fields.mainBranch' | transloco }}
+      </label>
+      <se-button type="submit" [disabled]="saving()">{{ 'common.save' | transloco }}</se-button>
+    </form>
+  }
+
+  @if (!branches().length) {
+    <se-portal-empty-state titleKey="portal.branches.emptyTitle" messageKey="portal.branches.emptyMessage" />
+  } @else {
+    <ul class="portal-branches__list">
+      @for (branch of branches(); track branch.id) {
+        <li class="portal-branches__item" [class.is-inactive]="!branch.isActive">
+          <div>
+            <strong>{{ branchName(branch) }}</strong>
+            <p>{{ branch.cityNameAr }} — {{ branch.districtNameAr }}</p>
+            @if (branch.isMainBranch) {
+              <span class="portal-branches__badge">{{ 'portal.branches.mainBadge' | transloco }}</span>
+            }
+          </div>
+          <div class="portal-branches__actions">
+            <se-button type="button" variant="secondary" (click)="openEdit(branch)">
+              {{ 'portal.common.edit' | transloco }}
+            </se-button>
+            <se-button type="button" variant="secondary" (click)="toggleActive(branch)">
+              {{ (branch.isActive ? 'portal.common.deactivate' : 'portal.common.activate') | transloco }}
+            </se-button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+}

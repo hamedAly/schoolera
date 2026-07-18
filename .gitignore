@@ -8,9 +8,26 @@ node_modules/
 dist/
 .angular/
 
+# Project-local portable toolchains (session PATH only; not committed)
+.tools/
+.artifacts/
+
+# Angular production output hosted by ASP.NET Core
+src/Schoolera.Api/wwwroot/**
+!src/Schoolera.Api/wwwroot/.gitkeep
+
+# Local uploaded user files (keep folder structure via .gitkeep)
+src/Schoolera.Api/App_Data/uploads/**
+!src/Schoolera.Api/App_Data/uploads/.gitkeep
+
+# Local private runtime documents (admission/child/onboarding). Keep structure via .gitkeep.
+src/Schoolera.Api/App_Data/private/**
+!src/Schoolera.Api/App_Data/private/.gitkeep
+
 # Local runtime logs
 *.log
 
 # User/editor files
 .vs/
 .vscode/*.user
+*.csproj.user

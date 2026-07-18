@@ -1,0 +1,15 @@
+.portal-error-state {
+  padding: var(--se-space-5);
+  border: 1px solid rgb(180 35 24 / 0.25);
+  border-radius: var(--se-radius-md);
+  background: rgb(180 35 24 / 0.06);
+  color: var(--se-color-danger);
+}
+
+.portal-error-state p {
+  margin: 0;
+}
+
+.portal-error-state__actions {
+  margin-top: var(--se-space-3);
+}

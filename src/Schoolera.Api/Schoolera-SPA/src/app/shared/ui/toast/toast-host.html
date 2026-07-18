@@ -1,0 +1,22 @@
+<div class="se-toast-host" aria-live="polite" aria-relevant="additions text">
+  @for (item of toast.items(); track item.id) {
+    <div
+      class="se-toast"
+      [class.se-toast--success]="item.variant === 'success'"
+      [class.se-toast--error]="item.variant === 'error'"
+      [class.se-toast--info]="item.variant === 'info'"
+      [class.se-toast--warning]="item.variant === 'warning'"
+      [attr.role]="item.variant === 'error' ? 'alert' : 'status'"
+    >
+      <p class="se-toast__message">{{ item.message }}</p>
+      <button
+        type="button"
+        class="se-toast__dismiss"
+        [attr.aria-label]="'toast.dismiss' | transloco"
+        (click)="dismiss(item.id)"
+      >
+        ×
+      </button>
+    </div>
+  }
+</div>

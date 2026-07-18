@@ -1,0 +1,75 @@
+<se-portal-page-header
+  titleKey="admin.schoolDetail.title"
+  subtitleKey="admin.schoolDetail.subtitle"
+/>
+
+<p class="admin-back">
+  <a routerLink="/admin/schools">{{ 'admin.schoolDetail.backToList' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="6" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (school(); as s) {
+  <div class="admin-page">
+    <section class="admin-detail-grid">
+      <h2>{{ localizedName(s.nameAr, s.nameEn) }}</h2>
+      <dl>
+        <div>
+          <dt>{{ 'admin.schoolDetail.slug' | transloco }}</dt>
+          <dd>{{ s.slug }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.schoolDetail.status' | transloco }}</dt>
+          <dd>{{ statusKey(s.status) | transloco }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.schoolDetail.type' | transloco }}</dt>
+          <dd>{{ s.schoolType ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.schoolDetail.ownerEmail' | transloco }}</dt>
+          <dd>{{ s.ownerEmail ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.schoolDetail.createdAt' | transloco }}</dt>
+          <dd>{{ s.createdAtUtc ? (s.createdAtUtc | date: 'medium') : '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'admin.schoolDetail.updatedAt' | transloco }}</dt>
+          <dd>{{ s.updatedAtUtc ? (s.updatedAtUtc | date: 'medium') : '—' }}</dd>
+        </div>
+      </dl>
+      @if (s.shortDescriptionAr || s.shortDescriptionEn) {
+        <p>{{ localizedName(s.shortDescriptionAr, s.shortDescriptionEn) }}</p>
+      }
+    </section>
+
+    <section class="admin-form-panel">
+      <h2>{{ 'admin.schoolDetail.changeStatus' | transloco }}</h2>
+      @if (statusMessage()) {
+        <div
+          class="admin-alert"
+          [class.admin-alert--error]="statusIsError()"
+          [class.admin-alert--success]="!statusIsError()"
+        >
+          {{ statusMessage() }}
+        </div>
+      }
+      <label>
+        {{ 'admin.schoolDetail.newStatus' | transloco }}
+        <select [(ngModel)]="selectedStatus" name="status">
+          @for (status of statusOptions; track status) {
+            <option [value]="status">{{ statusKey(status) | transloco }}</option>
+          }
+        </select>
+      </label>
+      <div class="admin-actions">
+        <button type="button" class="primary" [disabled]="saving()" (click)="saveStatus()">
+          {{ 'admin.schoolDetail.saveStatus' | transloco }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

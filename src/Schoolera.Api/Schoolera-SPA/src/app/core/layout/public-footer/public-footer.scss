@@ -1,0 +1,104 @@
+:host {
+  display: block;
+  margin-block-start: auto;
+}
+
+.public-footer {
+  border-block-start: 3px solid var(--se-color-accent);
+  background: linear-gradient(180deg, var(--se-primary-900), #052f2b);
+  color: #d7ece9;
+}
+
+.public-footer__inner {
+  display: grid;
+  gap: var(--se-space-6);
+  max-width: var(--se-container-max);
+  margin-inline: auto;
+  padding: var(--se-space-7) clamp(var(--se-space-4), 3vw, var(--se-space-8)) var(--se-space-5);
+}
+
+.public-footer__brand-title,
+.public-footer__group h2 {
+  margin: 0 0 var(--se-space-3);
+  color: #fff;
+  font-size: 1rem;
+}
+
+.public-footer__brand p {
+  margin: 0;
+  max-width: 28rem;
+  color: #a9cfca;
+}
+
+.public-footer__social {
+  display: flex;
+  gap: var(--se-space-2);
+  margin-block-start: var(--se-space-4);
+}
+
+.public-footer__social-item {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: var(--se-radius-md);
+  color: #8fc0ba;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: default;
+  user-select: none;
+}
+
+.public-footer__group ul {
+  display: grid;
+  gap: var(--se-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.public-footer__group a,
+.public-footer__group .is-disabled {
+  color: #bfdedb;
+  text-decoration: none;
+}
+
+.public-footer__group a:hover {
+  color: #fff;
+}
+
+.public-footer__group .is-disabled {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+  align-items: baseline;
+  opacity: 0.72;
+}
+
+.public-footer__group .is-disabled em {
+  font-style: normal;
+  font-size: 0.75rem;
+  color: #7fb0aa;
+}
+
+.public-footer__copy {
+  margin: 0;
+  padding: var(--se-space-4);
+  border-block-start: 1px solid rgb(255 255 255 / 0.1);
+  text-align: center;
+  color: #7fb0aa;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 720px) {
+  .public-footer__inner {
+    grid-template-columns: 1.4fr repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1040px) {
+  .public-footer__inner {
+    grid-template-columns: 1.6fr repeat(4, 1fr);
+  }
+}

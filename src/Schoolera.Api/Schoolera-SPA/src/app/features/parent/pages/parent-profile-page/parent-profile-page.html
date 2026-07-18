@@ -1,0 +1,106 @@
+<se-portal-page-header
+  titleKey="parent.profile.title"
+  subtitleKey="parent.profile.subtitle"
+/>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="8" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <form class="parent-page" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    @if (summaryErrors().length) {
+      <se-form-error-summary
+        [title]="'parent.profile.errorSummaryTitle' | transloco"
+        [errors]="summaryErrors()"
+      />
+    }
+
+    <div class="parent-form-panel">
+      <se-form-field [label]="'parent.profile.fields.email' | transloco" controlId="parent-email">
+        <input id="parent-email" type="email" [value]="email()" readonly />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.profile.fields.firstName' | transloco"
+        [error]="fieldError('firstName')"
+        controlId="parent-firstName"
+      >
+        <input id="parent-firstName" type="text" formControlName="firstName" autocomplete="given-name" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.profile.fields.lastName' | transloco"
+        [error]="fieldError('lastName')"
+        controlId="parent-lastName"
+      >
+        <input id="parent-lastName" type="text" formControlName="lastName" autocomplete="family-name" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.profile.fields.phone' | transloco"
+        [error]="fieldError('phone')"
+        controlId="parent-phone"
+      >
+        <input id="parent-phone" type="tel" formControlName="phone" autocomplete="tel" />
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.profile.fields.alternatePhone' | transloco"
+        controlId="parent-alternatePhone"
+      >
+        <input id="parent-alternatePhone" type="tel" formControlName="alternatePhone" autocomplete="tel" />
+      </se-form-field>
+
+      <se-form-field [label]="'parent.profile.fields.addressLine' | transloco" controlId="parent-addressLine">
+        <input id="parent-addressLine" type="text" formControlName="addressLine" autocomplete="street-address" />
+      </se-form-field>
+
+      <se-form-field [label]="'parent.profile.fields.city' | transloco" controlId="parent-cityId">
+        <select id="parent-cityId" formControlName="cityId">
+          <option value="">{{ 'parent.common.select' | transloco }}</option>
+          @for (city of cities(); track city.id) {
+            <option [value]="city.id">{{ taxonomyName(city) }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field [label]="'parent.profile.fields.district' | transloco" controlId="parent-districtId">
+        <select id="parent-districtId" formControlName="districtId" [disabled]="!form.controls.cityId.value">
+          <option value="">{{ 'parent.common.select' | transloco }}</option>
+          @for (district of districts(); track district.id) {
+            <option [value]="district.id">{{ taxonomyName(district) }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.profile.fields.preferredContactMethod' | transloco"
+        controlId="parent-preferredContactMethod"
+      >
+        <select id="parent-preferredContactMethod" formControlName="preferredContactMethod">
+          @for (method of contactMethods; track method.value) {
+            <option [value]="method.value">{{ method.labelKey | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+
+      <se-form-field
+        [label]="'parent.profile.fields.preferredLanguage' | transloco"
+        controlId="parent-preferredLanguage"
+      >
+        <select id="parent-preferredLanguage" formControlName="preferredLanguage">
+          @for (lang of languages; track lang.value) {
+            <option [value]="lang.value">{{ lang.labelKey | transloco }}</option>
+          }
+        </select>
+      </se-form-field>
+    </div>
+
+    <div class="parent-actions">
+      <se-button type="submit" variant="primary" [disabled]="saving()">
+        {{ (saving() ? 'parent.common.saving' : 'parent.common.save') | transloco }}
+      </se-button>
+    </div>
+  </form>
+}

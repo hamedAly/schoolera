@@ -1,0 +1,27 @@
+@use '../../styles/parent-shared';
+
+.parent-replace-identity {
+  display: grid;
+  gap: var(--se-space-3);
+  padding: var(--se-space-3);
+  border: 1px dashed var(--se-color-border);
+  border-radius: var(--se-radius-md);
+}
+
+.parent-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--se-space-2);
+  font-size: 0.875rem;
+}
+
+.parent-checkbox input {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+}
+
+.parent-privacy-note {
+  margin: calc(var(--se-space-2) * -1) 0 var(--se-space-2);
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}

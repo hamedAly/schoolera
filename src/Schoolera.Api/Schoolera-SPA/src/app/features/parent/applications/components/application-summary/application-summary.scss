@@ -1,0 +1,33 @@
+.application-summary__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--se-space-3);
+  margin: 0;
+}
+
+.application-summary__grid dt {
+  margin: 0;
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.application-summary__grid dd {
+  margin: var(--se-space-1) 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.application-summary__notes {
+  margin-top: var(--se-space-4);
+}
+
+.application-summary__notes h3 {
+  margin: 0 0 var(--se-space-2);
+  font-size: 1rem;
+}
+
+.application-summary__notes p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

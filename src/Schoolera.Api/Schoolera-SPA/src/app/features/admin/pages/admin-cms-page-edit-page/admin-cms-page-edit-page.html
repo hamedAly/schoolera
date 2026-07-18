@@ -1,0 +1,99 @@
+<se-portal-page-header
+  [titleKey]="isCreate() ? 'admin.cms.pageEdit.createTitle' : 'admin.cms.pageEdit.editTitle'"
+  subtitleKey="admin.cms.pageEdit.subtitle"
+/>
+
+<p>
+  <a routerLink="/admin/cms/pages">{{ 'admin.cms.pageEdit.back' | transloco }}</a>
+</p>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="10" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else {
+  <div class="admin-page">
+    @if (page(); as p) {
+      <p class="admin-meta">
+        {{ 'admin.cms.pageEdit.status' | transloco }}:
+        <strong>{{ statusKey(p.status) | transloco }}</strong>
+      </p>
+    }
+
+    <form class="admin-form" [formGroup]="form" (ngSubmit)="save()">
+      <label class="admin-field">
+        {{ 'admin.cms.pageEdit.slug' | transloco }}
+        <input type="text" formControlName="slug" />
+      </label>
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="titleAr"
+        englishControlName="titleEn"
+        arabicLabelKey="admin.cms.pageEdit.titleAr"
+        englishLabelKey="admin.cms.pageEdit.titleEn"
+      />
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="contentAr"
+        englishControlName="contentEn"
+        arabicLabelKey="admin.cms.pageEdit.contentAr"
+        englishLabelKey="admin.cms.pageEdit.contentEn"
+        [multiline]="true"
+        [rows]="12"
+      />
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="metaTitleAr"
+        englishControlName="metaTitleEn"
+        arabicLabelKey="admin.cms.pageEdit.metaTitleAr"
+        englishLabelKey="admin.cms.pageEdit.metaTitleEn"
+      />
+
+      <se-bilingual-field-group
+        [formGroup]="form"
+        arabicControlName="metaDescriptionAr"
+        englishControlName="metaDescriptionEn"
+        arabicLabelKey="admin.cms.pageEdit.metaDescriptionAr"
+        englishLabelKey="admin.cms.pageEdit.metaDescriptionEn"
+        [multiline]="true"
+        [rows]="3"
+      />
+
+      <div class="admin-actions">
+        <button type="submit" class="se-btn se-btn--primary" [disabled]="saving()">
+          {{ 'admin.cms.pageEdit.save' | transloco }}
+        </button>
+
+        @if (!isCreate() && page(); as p) {
+          @if (p.status !== publishedStatus) {
+            <button type="button" class="se-btn se-btn--outline" (click)="requestAction('publish')">
+              {{ 'admin.cms.pageEdit.publish' | transloco }}
+            </button>
+          }
+          @if (p.status === publishedStatus) {
+            <button type="button" class="se-btn se-btn--outline" (click)="requestAction('unpublish')">
+              {{ 'admin.cms.pageEdit.unpublish' | transloco }}
+            </button>
+          }
+          @if (p.status !== archivedStatus) {
+            <button type="button" class="se-btn se-btn--outline" (click)="requestAction('archive')">
+              {{ 'admin.cms.pageEdit.archive' | transloco }}
+            </button>
+          }
+        }
+      </div>
+    </form>
+  </div>
+}
+
+<se-confirmation-dialog
+  [open]="!!confirmAction()"
+  [titleKey]="confirmTitleKey()"
+  [messageKey]="confirmMessageKey()"
+  [confirming]="confirming()"
+  (confirmed)="confirmPending()"
+  (cancelled)="cancelConfirm()"
+/>

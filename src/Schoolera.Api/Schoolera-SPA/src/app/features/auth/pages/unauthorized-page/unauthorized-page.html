@@ -1,0 +1,23 @@
+<se-public-page-container>
+  <se-breadcrumbs
+    [items]="[
+      { label: 'common.home' | transloco, route: '/' },
+      { label: 'auth.unauthorized.breadcrumb' | transloco },
+    ]"
+  />
+  <se-page-hero
+    [title]="'auth.unauthorized.title' | transloco"
+    [subtitle]="'auth.unauthorized.subtitle' | transloco"
+  />
+
+  <div class="unauthorized-actions">
+    <a routerLink="/">{{ 'auth.unauthorized.home' | transloco }}</a>
+    @if (auth.isSignedIn()) {
+      <a [routerLink]="auth.currentUser()?.postLoginDestination ?? '/'">
+        {{ 'auth.unauthorized.portal' | transloco }}
+      </a>
+    } @else {
+      <a routerLink="/auth/login">{{ 'auth.actions.signIn' | transloco }}</a>
+    }
+  </div>
+</se-public-page-container>

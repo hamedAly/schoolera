@@ -1,0 +1,18 @@
+<se-public-page-container>
+  @if (breadcrumbs().length) {
+    <se-breadcrumbs [items]="breadcrumbs()" />
+  }
+
+  <se-page-hero
+    [title]="title()"
+    [subtitle]="description()"
+    [primaryAction]="primaryAction()"
+    [secondaryAction]="secondaryAction()"
+  />
+
+  <p class="public-placeholder__note">{{ note() }}</p>
+
+  <p>
+    <a routerLink="/">{{ backHome() }}</a>
+  </p>
+</se-public-page-container>

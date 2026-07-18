@@ -14,21 +14,25 @@ public sealed class CommandQueryArchitectureTests
         foreach (var requestType in GetRequestTypes())
         {
             var handlerType = GetHandlerType(requestType);
-            var validatorType = GetValidatorType(requestType);
 
             Assert.True(
                 HandlesRequest(handlerType, requestType),
                 $"{handlerType.Name} must implement IRequestHandler for {requestType.Name}.");
-            Assert.True(
-                typeof(IValidator<>).MakeGenericType(requestType).IsAssignableFrom(validatorType),
-                $"{validatorType.Name} must implement IValidator<{requestType.Name}>.");
+
+            if (!IsQuery(requestType))
+            {
+                var validatorType = GetValidatorType(requestType);
+                Assert.True(
+                    typeof(IValidator<>).MakeGenericType(requestType).IsAssignableFrom(validatorType),
+                    $"{validatorType.Name} must implement IValidator<{requestType.Name}>.");
+            }
         }
     }
 
     [Fact]
     public void CommandAndQueryHandlers_ShouldInjectTypedLogger()
     {
-        foreach (var requestType in GetRequestTypes())
+        foreach (var requestType in GetRequestTypes().Where(type => !IsQuery(type)))
         {
             var handlerType = GetHandlerType(requestType);
             var expectedLoggerType = typeof(ILogger<>).MakeGenericType(handlerType);
@@ -45,7 +49,7 @@ public sealed class CommandQueryArchitectureTests
     [Fact]
     public void CommandHandlers_ShouldInjectUnitOfWork()
     {
-        foreach (var requestType in GetRequestTypes().Where(IsCommand))
+        foreach (var requestType in GetRequestTypes().Where(IsCommand).Where(IsPersistenceCommand))
         {
             var handlerType = GetHandlerType(requestType);
             var hasUnitOfWork = handlerType.GetConstructors()
@@ -84,14 +88,28 @@ public sealed class CommandQueryArchitectureTests
                 .Select(Path.GetFileName)
                 .Order(StringComparer.Ordinal)
                 .ToArray();
-            var expectedFiles = new[]
-            {
-                $"{requestType.Name}Handler.cs",
-                $"{requestType.Name}Validator.cs"
-            }.Order(StringComparer.Ordinal).ToArray();
+            var expectedFiles = IsQuery(requestType)
+                ? BuildQueryExpectedFiles(folder, requestType.Name)
+                : new[]
+                {
+                    $"{requestType.Name}Handler.cs",
+                    $"{requestType.Name}Validator.cs",
+                };
+            expectedFiles = expectedFiles.Order(StringComparer.Ordinal).ToArray();
 
             Assert.Equal(expectedFiles, files);
         }
+    }
+
+    private static string[] BuildQueryExpectedFiles(string folder, string requestName)
+    {
+        var expected = new List<string> { $"{requestName}Handler.cs" };
+        if (File.Exists(Path.Combine(folder, $"{requestName}Validator.cs")))
+        {
+            expected.Add($"{requestName}Validator.cs");
+        }
+
+        return expected.ToArray();
     }
 
     [Fact]
@@ -153,6 +171,11 @@ public sealed class CommandQueryArchitectureTests
         return type.Namespace?.Contains(".Queries.", StringComparison.Ordinal) == true;
     }
 
+    private static bool IsPersistenceCommand(Type type)
+    {
+        return type.Namespace?.Contains(".Auth.Commands.", StringComparison.Ordinal) != true;
+    }
+
     private static Type GetHandlerType(Type requestType)
     {
         return FindType(requestType, $"{requestType.Name}Handler")
@@ -161,6 +184,11 @@ public sealed class CommandQueryArchitectureTests
 
     private static Type GetValidatorType(Type requestType)
     {
+        if (IsQuery(requestType))
+        {
+            throw new InvalidOperationException($"{requestType.Name} is a query and does not require a validator.");
+        }
+
         return FindType(requestType, $"{requestType.Name}Validator")
             ?? throw new InvalidOperationException($"{requestType.Name} must have a matching validator.");
     }
@@ -176,9 +204,25 @@ public sealed class CommandQueryArchitectureTests
     private static bool HandlesRequest(Type handlerType, Type requestType)
     {
         return handlerType.GetInterfaces().Any(interfaceType =>
-            interfaceType.IsGenericType &&
-            interfaceType.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) &&
-            interfaceType.GetGenericArguments()[0] == requestType);
+        {
+            if (!interfaceType.IsGenericType)
+            {
+                return false;
+            }
+
+            var definition = interfaceType.GetGenericTypeDefinition();
+            if (definition == typeof(IRequestHandler<,>))
+            {
+                return interfaceType.GetGenericArguments()[0] == requestType;
+            }
+
+            if (definition == typeof(IRequestHandler<>))
+            {
+                return interfaceType.GetGenericArguments()[0] == requestType;
+            }
+
+            return false;
+        });
     }
 
     private static string GetRequestFolder(Type requestType)

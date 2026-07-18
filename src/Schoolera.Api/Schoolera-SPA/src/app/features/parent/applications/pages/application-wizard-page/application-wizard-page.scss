@@ -1,0 +1,119 @@
+@use '../../../styles/parent-shared';
+
+.application-wizard {
+  padding-bottom: 5.5rem;
+}
+
+.application-wizard__children {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--se-space-3);
+  margin-bottom: var(--se-space-3);
+}
+
+.application-wizard__child-card {
+  display: grid;
+  gap: var(--se-space-1);
+  text-align: start;
+  min-height: 2.75rem;
+  padding: var(--se-space-3);
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface-raised);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.application-wizard__child-card.is-selected,
+.application-wizard__child-card[aria-selected='true'] {
+  border-color: var(--se-color-brand);
+  box-shadow: 0 0 0 2px var(--se-color-brand-050);
+}
+
+.application-wizard__child-card:focus-visible {
+  outline: 2px solid var(--se-color-brand);
+  outline-offset: 2px;
+}
+
+.application-wizard__school-head {
+  display: flex;
+  gap: var(--se-space-3);
+  align-items: center;
+  margin-bottom: var(--se-space-4);
+}
+
+.application-wizard__school-head img {
+  border-radius: var(--se-radius-md);
+  object-fit: cover;
+}
+
+.application-wizard__school-head h3 {
+  margin: 0;
+}
+
+.application-wizard__parent-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--se-space-3);
+  margin: 0;
+}
+
+.application-wizard__parent-facts dt {
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.application-wizard__parent-facts dd {
+  margin: var(--se-space-1) 0 0;
+  overflow-wrap: anywhere;
+}
+
+.application-wizard__hint {
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.application-wizard__consent {
+  display: flex;
+  gap: var(--se-space-2);
+  align-items: flex-start;
+  margin: var(--se-space-3) 0;
+  min-height: 2.75rem;
+}
+
+.application-wizard__consent input {
+  margin-top: 0.35rem;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.application-wizard__actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+  justify-content: flex-end;
+  padding: var(--se-space-3);
+  margin-inline: calc(-1 * var(--se-space-3));
+  background: color-mix(in srgb, var(--se-color-surface) 92%, transparent);
+  border-top: 1px solid var(--se-color-border);
+  z-index: 2;
+}
+
+.application-wizard__save {
+  margin: 0;
+  color: var(--se-color-ink-muted);
+  font-size: 0.875rem;
+}
+
+.application-wizard__save--error {
+  color: #b42318;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .application-wizard__child-card,
+  .application-wizard__actions {
+    transition: none;
+  }
+}

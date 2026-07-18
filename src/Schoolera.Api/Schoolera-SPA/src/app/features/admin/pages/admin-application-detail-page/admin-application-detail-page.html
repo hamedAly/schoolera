@@ -1,0 +1,77 @@
+<se-portal-page-header
+  titleKey="admin.applicationsDetail.title"
+  subtitleKey="admin.applicationsDetail.subtitle"
+>
+  <a routerLink="/admin/applications" class="admin-link-button">
+    {{ 'admin.applicationsDetail.backToList' | transloco }}
+  </a>
+</se-portal-page-header>
+
+@if (loading()) {
+  <se-portal-loading-skeleton [rows]="10" />
+} @else if (errorMessage()) {
+  <se-portal-error-state [message]="errorMessage()!" />
+} @else if (detail(); as app) {
+  <div class="admin-page admin-application-detail">
+    <se-portal-admission-status-badge [status]="app.status" />
+
+    <section aria-labelledby="admin-application-summary">
+      <h2 id="admin-application-summary">{{ 'admin.applicationsDetail.summaryTitle' | transloco }}</h2>
+      <dl class="admin-application-detail__summary">
+        <div><dt>{{ 'admin.applicationsDetail.applicationNumber' | transloco }}</dt><dd>{{ app.applicationNumber }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.school' | transloco }}</dt><dd>{{ app.schoolName }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.city' | transloco }}</dt><dd>{{ app.cityName || '—' }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.student' | transloco }}</dt><dd>{{ app.studentName }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.parent' | transloco }}</dt><dd>{{ app.parentName }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.branch' | transloco }}</dt><dd>{{ app.branchName }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.stage' | transloco }}</dt><dd>{{ app.stageName }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.grade' | transloco }}</dt><dd>{{ app.gradeName }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.academicYear' | transloco }}</dt><dd>{{ app.academicYearName }}</dd></div>
+        @if (app.parentEmail) {
+          <div><dt>{{ 'admin.applicationsDetail.parentEmail' | transloco }}</dt><dd>{{ app.parentEmail }}</dd></div>
+        }
+        @if (app.parentPhone) {
+          <div><dt>{{ 'admin.applicationsDetail.parentPhone' | transloco }}</dt><dd>{{ app.parentPhone }}</dd></div>
+        }
+        @if (app.parentNotes) {
+          <div><dt>{{ 'admin.applicationsDetail.parentNotes' | transloco }}</dt><dd>{{ app.parentNotes }}</dd></div>
+        }
+        @if (app.schoolNotes) {
+          <div><dt>{{ 'admin.applicationsDetail.schoolNotes' | transloco }}</dt><dd>{{ app.schoolNotes }}</dd></div>
+        }
+        @if (app.parentVisibleRejectionReason) {
+          <div>
+            <dt>{{ 'admin.applicationsDetail.parentVisibleRejectionReason' | transloco }}</dt>
+            <dd>{{ app.parentVisibleRejectionReason }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <section aria-labelledby="admin-application-dates">
+      <h2 id="admin-application-dates">{{ 'admin.applicationsDetail.datesTitle' | transloco }}</h2>
+      <dl class="admin-application-detail__summary">
+        <div><dt>{{ 'admin.applicationsDetail.createdAt' | transloco }}</dt><dd>{{ formatDate(app.createdAtUtc) }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.submittedAt' | transloco }}</dt><dd>{{ formatDate(app.submittedAtUtc) }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.reviewStartedAt' | transloco }}</dt><dd>{{ formatDate(app.reviewStartedAtUtc) }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.acceptedAt' | transloco }}</dt><dd>{{ formatDate(app.acceptedAtUtc) }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.rejectedAt' | transloco }}</dt><dd>{{ formatDate(app.rejectedAtUtc) }}</dd></div>
+        <div><dt>{{ 'admin.applicationsDetail.cancelledAt' | transloco }}</dt><dd>{{ formatDate(app.cancelledAtUtc) }}</dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="admin-application-attachments">
+      <h2 id="admin-application-attachments">{{ 'admin.applicationsDetail.attachmentsTitle' | transloco }}</h2>
+      <se-attachment-list
+        [attachments]="app.attachments ?? []"
+        [canUpload]="false"
+        [canRemove]="false"
+      />
+    </section>
+
+    <section aria-labelledby="admin-application-timeline">
+      <h2 id="admin-application-timeline">{{ 'admin.applicationsDetail.timelineTitle' | transloco }}</h2>
+      <se-portal-application-timeline [items]="app.timeline ?? []" />
+    </section>
+  </div>
+}

@@ -1,0 +1,65 @@
+.application-stepper__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--se-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.application-stepper__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--se-space-2);
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--se-color-border);
+  border-radius: var(--se-radius-md);
+  background: var(--se-color-surface);
+  color: inherit;
+  cursor: pointer;
+}
+
+.application-stepper__button:focus-visible {
+  outline: 2px solid var(--se-color-brand);
+  outline-offset: 2px;
+}
+
+.application-stepper__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.application-stepper__item.is-current .application-stepper__button {
+  border-color: var(--se-color-brand);
+  background: var(--se-color-brand-050);
+  font-weight: 600;
+}
+
+.application-stepper__item.is-complete .application-stepper__index {
+  background: var(--se-color-brand);
+  color: #fff;
+}
+
+.application-stepper__index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--se-color-surface-raised);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .application-stepper__label {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .application-stepper__button {
+    transition: none;
+  }
+}

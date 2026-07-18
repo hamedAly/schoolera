@@ -1,0 +1,108 @@
+{
+  "layout": {
+    "brand": "Support portal",
+    "mainNav": "Support navigation",
+    "openNav": "Open menu",
+    "closeNav": "Close menu",
+    "logout": "Log out"
+  },
+  "nav": {
+    "tickets": "Tickets"
+  },
+  "common": {
+    "apply": "Apply",
+    "clear": "Clear",
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {{page}} of {{total}}"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again."
+  },
+  "tickets": {
+    "list": {
+      "title": "Ticket queue",
+      "subtitle": "Manage customer support tickets.",
+      "empty": "No matching tickets."
+    },
+    "detail": {
+      "title": "Ticket details",
+      "subtitle": "Reply, assign, and update status.",
+      "back": "Back to queue",
+      "parent": "Parent",
+      "assigned": "Assigned",
+      "unassigned": "Unassigned",
+      "slaOk": "Within SLA",
+      "assignToMe": "Assign to me",
+      "unassign": "Unassign",
+      "assignSuccess": "Assigned.",
+      "unassignSuccess": "Unassigned.",
+      "actions": "Ticket actions",
+      "updateStatus": "Update status",
+      "updatePriority": "Update priority",
+      "updateCategory": "Update category",
+      "statusSuccess": "Status updated.",
+      "prioritySuccess": "Priority updated.",
+      "categorySuccess": "Category updated.",
+      "messages": "Messages and notes",
+      "noMessages": "No messages.",
+      "internalNote": "Internal note",
+      "customerVisible": "Customer visible",
+      "replyTitle": "Reply to customer",
+      "sendReply": "Send reply",
+      "replySuccess": "Reply sent.",
+      "noteTitle": "Internal note",
+      "addNote": "Add note",
+      "noteSuccess": "Note added.",
+      "history": "History",
+      "noHistory": "No history."
+    },
+    "filters": {
+      "search": "Search",
+      "status": "Status",
+      "priority": "Priority",
+      "category": "Category",
+      "allStatuses": "All statuses",
+      "allPriorities": "All priorities",
+      "allCategories": "All categories",
+      "unassignedOnly": "Unassigned only",
+      "firstResponseOverdue": "First response overdue",
+      "resolutionOverdue": "Resolution overdue"
+    },
+    "columns": {
+      "reference": "Reference",
+      "subject": "Subject",
+      "status": "Status",
+      "priority": "Priority",
+      "category": "Category",
+      "sla": "SLA",
+      "updated": "Updated"
+    },
+    "overdue": "Overdue"
+  },
+  "status": {
+    "open": "Open",
+    "inProgress": "In progress",
+    "waitingForCustomer": "Waiting for customer",
+    "resolved": "Resolved",
+    "closed": "Closed",
+    "unknown": "Unknown"
+  },
+  "priority": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "urgent": "Urgent",
+    "unknown": "Unknown"
+  },
+  "category": {
+    "generalSupport": "General support",
+    "account": "Account",
+    "schoolInformation": "School information",
+    "admissionApplication": "Admission application",
+    "documents": "Documents",
+    "technicalIssue": "Technical issue",
+    "other": "Other",
+    "unknown": "Unknown"
+  }
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AppointmentNotFound" xml:space="preserve"><value>Appointment not found.</value></data>
+  <data name="AppointmentInvalidTransition" xml:space="preserve"><value>This appointment action is not allowed in its current state.</value></data>
+  <data name="AppointmentPolicyMismatch" xml:space="preserve"><value>The appointment does not match the application policy.</value></data>
+  <data name="AppointmentRescheduleNotAllowed" xml:space="preserve"><value>Rescheduling is not allowed.</value></data>
+  <data name="AppointmentRescheduleLimitReached" xml:space="preserve"><value>The rescheduling limit has been reached.</value></data>
+  <data name="AppointmentDeadlinePassed" xml:space="preserve"><value>The appointment action deadline has passed.</value></data>
+  <data name="AppointmentCancellationNotAllowed" xml:space="preserve"><value>Appointment cancellation is not allowed.</value></data>
+  <data name="AppointmentSlotUnavailable" xml:space="preserve"><value>The selected slot is unavailable.</value></data>
+  <data name="AppointmentSlotFull" xml:space="preserve"><value>The selected slot is full.</value></data>
+  <data name="AppointmentConcurrencyConflict" xml:space="preserve"><value>The appointment was changed by another operation.</value></data>
+  <data name="AppointmentIdempotencyConflict" xml:space="preserve"><value>The idempotency key was already used for another action.</value></data>
+  <data name="AppointmentJoinTooEarly" xml:space="preserve"><value>The appointment join window has not opened.</value></data>
+  <data name="AppointmentJoinExpired" xml:space="preserve"><value>The appointment join window has closed.</value></data>
+  <data name="AppointmentJoinProviderUnavailable" xml:space="preserve"><value>The online appointment provider is currently unavailable.</value></data>
+  <data name="MeetingNotFound" xml:space="preserve"><value>The Meeting Session was not found.</value></data>
+  <data name="MeetingAccessUnavailable" xml:space="preserve"><value>Secure Meeting access is currently unavailable.</value></data>
+  <data name="MeetingRetryRejected" xml:space="preserve"><value>The Meeting Session retry was rejected because its state changed or the request was invalid.</value></data>
+  <data name="EvaluationNotFound" xml:space="preserve"><value>The evaluation was not found.</value></data>
+  <data name="EvaluationInvalidTransition" xml:space="preserve"><value>This evaluation action is not allowed in its current state.</value></data>
+  <data name="EvaluationMissingTemplate" xml:space="preserve"><value>No applicable active published evaluation template is configured.</value></data>
+  <data name="EvaluationInvalidAttendance" xml:space="preserve"><value>The required attendance values are invalid or incomplete.</value></data>
+  <data name="EvaluationInvalidAnswers" xml:space="preserve"><value>One or more evaluation answers are invalid or incomplete.</value></data>
+  <data name="EvaluationInvalidRecommendation" xml:space="preserve"><value>The evaluation recommendation or its required instructions are invalid.</value></data>
+  <data name="EvaluationTooEarly" xml:space="preserve"><value>This action is not available at the current appointment time.</value></data>
+  <data name="EvaluationConcurrencyConflict" xml:space="preserve"><value>The evaluation was changed by another operation.</value></data>
+  <data name="EvaluationIdempotencyConflict" xml:space="preserve"><value>The idempotency key was already used for another evaluation action.</value></data>
+  <data name="EvaluationCorrectionBlocked" xml:space="preserve"><value>This finalized result cannot be corrected in the current admission state.</value></data>
+  <data name="EvaluationTemplateConflict" xml:space="preserve"><value>A published evaluation template already applies at the same scope.</value></data>
+  <data name="EvaluationTemplateInvalidScope" xml:space="preserve"><value>The evaluation template scope is invalid.</value></data>
+</root>
