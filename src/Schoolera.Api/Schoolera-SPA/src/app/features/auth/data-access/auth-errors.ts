@@ -28,6 +28,9 @@ const AUTH_ERROR_CODE_TO_KEY: Record<string, string> = {
   'auth.passwordRequiresUppercase': 'auth.errors.passwordRequiresUppercase',
   'auth.passwordRequiresDigit': 'auth.errors.passwordRequiresDigit',
   'auth.passwordRequiresUniqueChars': 'auth.errors.passwordRequiresUniqueChars',
+  'legal.terms_required': 'auth.errors.termsRequired',
+  'legal.privacy_required': 'auth.errors.privacyRequired',
+  'legal.current_version_missing': 'auth.errors.legalVersionMissing',
   'error.validation': 'auth.errors.validation',
   'error.unexpected': 'auth.errors.generic',
 };
@@ -45,6 +48,8 @@ const AUTH_FIELD_BY_ERROR_CODE: Record<string, string> = {
   'auth.passwordRequiresDigit': 'password',
   'auth.passwordRequiresUniqueChars': 'password',
   'auth.invalidResetToken': 'token',
+  'legal.terms_required': 'termsAccepted',
+  'legal.privacy_required': 'privacyAccepted',
 };
 
 const PASSWORD_FIELD_ALIASES: Record<string, string> = {

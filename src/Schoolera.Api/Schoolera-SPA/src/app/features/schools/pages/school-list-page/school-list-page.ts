@@ -16,6 +16,7 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  EMPTY,
   map,
   merge,
   of,
@@ -34,6 +35,8 @@ import {
 import { AuthService } from '../../../../core/auth/auth.service';
 import { hasAnyRole, SchooleraRoles } from '../../../../core/auth/auth.models';
 import { FeatureFlagsService } from '../../../../core/features/feature-flags.service';
+import { isHttpRequestCanceled } from '../../../../core/http/is-http-canceled';
+import { switchMapLatestLoading } from '../../../../core/http/switch-map-latest-loading';
 import { LocaleFormatService } from '../../../../core/i18n/locale-format.service';
 import { HomeIcon } from '../../../home/components/home-icon/home-icon';
 import { TaxonomiesApi } from '../../../taxonomies/data-access/taxonomies.api';
@@ -625,12 +628,17 @@ export class SchoolListPage implements OnInit {
 
     merge(filters$, this.retry$.pipe(switchMap(() => filters$.pipe(take(1)))))
       .pipe(
-        switchMap((filters) => {
-          this.loading.set(true);
+        switchMapLatestLoading(this.loading, (filters) => {
           this.error.set(false);
           this.query.set(filters);
           return this.schoolsApi.getSchools(filters).pipe(
-            catchError(() => of(null)),
+            catchError((error: unknown) => {
+              if (isHttpRequestCanceled(error)) {
+                return EMPTY;
+              }
+
+              return of(null);
+            }),
             map((result) => ({ filters, result })),
           );
         }),
@@ -642,7 +650,6 @@ export class SchoolListPage implements OnInit {
           this.totalCount.set(0);
           this.totalPages.set(0);
           this.error.set(true);
-          this.loading.set(false);
           return;
         }
 
@@ -650,7 +657,6 @@ export class SchoolListPage implements OnInit {
         this.totalCount.set(result.totalCount);
         this.totalPages.set(result.totalPages);
         this.error.set(false);
-        this.loading.set(false);
       });
   }
 

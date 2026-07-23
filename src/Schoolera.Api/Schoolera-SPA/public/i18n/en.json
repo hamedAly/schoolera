@@ -25,7 +25,22 @@
     "contact": "Contact us",
     "login": "Log in",
     "register": "Create account",
-    "searchCta": "Search schools"
+    "searchCta": "Search schools",
+    "account": {
+      "menu": "Account menu",
+      "openMenu": "Open account menu",
+      "closeMenu": "Close account menu",
+      "dashboard": "Dashboard",
+      "parentDashboard": "Parent dashboard",
+      "profile": "My profile",
+      "children": "My children",
+      "applications": "My applications",
+      "notifications": "Notifications",
+      "schoolPortal": "School portal",
+      "adminDashboard": "Admin dashboard",
+      "support": "Support",
+      "logout": "Log out"
+    }
   },
   "footer": {
     "brandTitle": "Schoolera",

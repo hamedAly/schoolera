@@ -106,8 +106,18 @@
     </se-form-field>
 
     <label class="auth-form__checkbox" for="termsAccepted">
-      <input id="termsAccepted" type="checkbox" formControlName="termsAccepted" />
-      <span>{{ 'auth.register.termsLabel' | transloco }}</span>
+      <input
+        id="termsAccepted"
+        type="checkbox"
+        formControlName="termsAccepted"
+        [attr.aria-invalid]="hasFieldError('termsAccepted')"
+        [attr.aria-describedby]="hasFieldError('termsAccepted') ? 'termsAccepted-error' : null"
+      />
+      <span>
+        {{ 'auth.register.termsAcceptBefore' | transloco }}
+        <a routerLink="/terms">{{ 'auth.register.termsLink' | transloco }}</a>
+        {{ 'auth.register.termsAcceptAfter' | transloco }}
+      </span>
     </label>
     @if (fieldError('termsAccepted')) {
       <small id="termsAccepted-error" class="auth-form__field-error" role="alert">
@@ -115,8 +125,28 @@
       </small>
     }
 
+    <label class="auth-form__checkbox" for="privacyAccepted">
+      <input
+        id="privacyAccepted"
+        type="checkbox"
+        formControlName="privacyAccepted"
+        [attr.aria-invalid]="hasFieldError('privacyAccepted')"
+        [attr.aria-describedby]="hasFieldError('privacyAccepted') ? 'privacyAccepted-error' : null"
+      />
+      <span>
+        {{ 'auth.register.privacyAcceptBefore' | transloco }}
+        <a routerLink="/privacy">{{ 'auth.register.privacyLink' | transloco }}</a>
+        {{ 'auth.register.privacyAcceptAfter' | transloco }}
+      </span>
+    </label>
+    @if (fieldError('privacyAccepted')) {
+      <small id="privacyAccepted-error" class="auth-form__field-error" role="alert">
+        {{ fieldError('privacyAccepted') }}
+      </small>
+    }
+
     <div class="auth-form__actions">
-      <se-button type="submit" [disabled]="submitting()">
+      <se-button type="submit" [disabled]="submitting() || form.invalid">
         {{
           submitting()
             ? ('auth.actions.registering' | transloco)

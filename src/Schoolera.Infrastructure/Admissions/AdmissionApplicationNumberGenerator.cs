@@ -12,6 +12,7 @@ namespace Schoolera.Infrastructure.Admissions;
 /// increment is durable before the number is returned. When an ambient transaction is present
 /// (e.g. a future UnitOfWork transaction around SaveChanges), the sequence entity stays tracked
 /// and is persisted with that ambient SaveChanges — the lock is held until the outer commit.
+/// Sequence persistence never flushes unrelated pending aggregates on the shared DbContext.
 /// </summary>
 public sealed class AdmissionApplicationNumberGenerator(SchooleraDbContext dbContext)
     : IAdmissionApplicationNumberGenerator
@@ -44,14 +45,14 @@ public sealed class AdmissionApplicationNumberGenerator(SchooleraDbContext dbCon
                 {
                     sequence = new AdmissionApplicationNumberSequence(year);
                     dbContext.AdmissionApplicationNumberSequences.Add(sequence);
-                    await dbContext.SaveChangesAsync(cancellationToken);
+                    await PersistSequenceOnlyAsync(sequence, cancellationToken);
                 }
 
                 var next = sequence.Next();
 
                 if (ownsTransaction)
                 {
-                    await dbContext.SaveChangesAsync(cancellationToken);
+                    await PersistSequenceOnlyAsync(sequence, cancellationToken);
                     await dbContext.Database.CommitTransactionAsync(cancellationToken);
                 }
 
@@ -67,5 +68,42 @@ public sealed class AdmissionApplicationNumberGenerator(SchooleraDbContext dbCon
                 throw;
             }
         });
+    }
+
+    /// <summary>
+    /// Saves only the sequence row. Pending Added/Modified/Deleted entities for other aggregates
+    /// remain pending so a number allocation cannot insert a colliding admission application.
+    /// </summary>
+    private async Task PersistSequenceOnlyAsync(
+        AdmissionApplicationNumberSequence sequence,
+        CancellationToken cancellationToken)
+    {
+        var suspended = new List<(object Entity, EntityState State)>();
+
+        foreach (var entry in dbContext.ChangeTracker.Entries())
+        {
+            if (ReferenceEquals(entry.Entity, sequence))
+            {
+                continue;
+            }
+
+            if (entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
+            {
+                suspended.Add((entry.Entity, entry.State));
+                entry.State = EntityState.Detached;
+            }
+        }
+
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        finally
+        {
+            foreach (var (entity, state) in suspended)
+            {
+                dbContext.Entry(entity).State = state;
+            }
+        }
     }
 }

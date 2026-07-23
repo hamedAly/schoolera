@@ -24,6 +24,12 @@
     "subtitle": "أكمل النموذج أدناه لإنشاء حسابك على Schoolera.",
     "haveAccount": "لديك حساب بالفعل؟",
     "termsLabel": "أوافق على الشروط والأحكام.",
+    "termsAcceptBefore": "أوافق على",
+    "termsLink": "الشروط والأحكام",
+    "termsAcceptAfter": ".",
+    "privacyAcceptBefore": "أوافق على",
+    "privacyLink": "سياسة الخصوصية",
+    "privacyAcceptAfter": ".",
     "successToast": "تم إنشاء الحساب. يرجى تأكيد بريدك الإلكتروني."
   },
   "registerParent": {
@@ -128,7 +134,10 @@
     "passwordRequiresLowercase": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل.",
     "passwordRequiresUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل.",
     "passwordRequiresDigit": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل.",
-    "passwordRequiresUniqueChars": "يجب أن تحتوي كلمة المرور على أحرف فريدة أكثر."
+    "passwordRequiresUniqueChars": "يجب أن تحتوي كلمة المرور على أحرف فريدة أكثر.",
+    "termsRequired": "يجب الموافقة على الشروط والأحكام للمتابعة.",
+    "privacyRequired": "يجب الموافقة على سياسة الخصوصية للمتابعة.",
+    "legalVersionMissing": "المستندات القانونية الحالية غير متاحة. يرجى المحاولة لاحقًا."
   },
   "portals": {
     "signedInAs": "مسجّل الدخول باسم {{name}}.",

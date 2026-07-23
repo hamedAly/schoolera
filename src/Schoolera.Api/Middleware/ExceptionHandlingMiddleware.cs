@@ -38,13 +38,32 @@ public sealed class ExceptionHandlingMiddleware(
                 [localizer["ConcurrentUpdate"].Value],
                 [exception.ErrorCode]);
         }
+        catch (OperationCanceledException) when (IsClientAborted(context))
+        {
+            // Client disconnected (tab switch, navigation, replaced request). Not an application fault.
+            logger.LogInformation(
+                "Client canceled request. CorrelationId={CorrelationId} Method={Method} Path={Path}",
+                context.TraceIdentifier,
+                context.Request.Method,
+                context.Request.Path.Value);
+        }
+        catch (Exception exception) when (IsClientAborted(context) && IsCancellationException(exception))
+        {
+            logger.LogDebug(
+                exception,
+                "Client canceled request (wrapped). CorrelationId={CorrelationId} Method={Method} Path={Path}",
+                context.TraceIdentifier,
+                context.Request.Method,
+                context.Request.Path.Value);
+        }
         catch (Exception exception)
         {
             logger.LogError(
                 exception,
-                "Unhandled exception while processing {Method} {Path}.",
+                "Unhandled exception while processing {Method} {Path}. CorrelationId={CorrelationId}",
                 context.Request.Method,
-                context.Request.Path);
+                context.Request.Path,
+                context.TraceIdentifier);
 
             await WriteFailureAsync(
                 context,
@@ -52,6 +71,22 @@ public sealed class ExceptionHandlingMiddleware(
                 [localizer["UnexpectedError"].Value],
                 [ErrorCodes.Unexpected]);
         }
+    }
+
+    private static bool IsClientAborted(HttpContext context) =>
+        context.RequestAborted.IsCancellationRequested;
+
+    private static bool IsCancellationException(Exception exception)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            if (current is OperationCanceledException)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static string ResolveValidationErrorCode(FluentValidation.Results.ValidationFailure failure)
@@ -71,6 +106,12 @@ public sealed class ExceptionHandlingMiddleware(
         IReadOnlyCollection<string> errors,
         IReadOnlyCollection<string> errorCodes)
     {
+        // Never write after the client has disconnected or a response has already started.
+        if (context.RequestAborted.IsCancellationRequested || context.Response.HasStarted)
+        {
+            return;
+        }
+
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
 

@@ -26,4 +26,5 @@ export const registerFormValidators = {
   password: [requiredTextValidator(), Validators.minLength(8), Validators.maxLength(128)],
   confirmPassword: [requiredTextValidator()],
   termsAccepted: [Validators.requiredTrue],
+  privacyAccepted: [Validators.requiredTrue],
 };

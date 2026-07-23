@@ -24,6 +24,12 @@
     "subtitle": "Complete the form below to create your Schoolera account.",
     "haveAccount": "Already have an account?",
     "termsLabel": "I accept the terms and conditions.",
+    "termsAcceptBefore": "I agree to the",
+    "termsLink": "Terms and Conditions",
+    "termsAcceptAfter": ".",
+    "privacyAcceptBefore": "I agree to the",
+    "privacyLink": "Privacy Policy",
+    "privacyAcceptAfter": ".",
     "successToast": "Account created. Please verify your email."
   },
   "registerParent": {
@@ -128,7 +134,10 @@
     "passwordRequiresLowercase": "Password must include at least one lowercase letter.",
     "passwordRequiresUppercase": "Password must include at least one uppercase letter.",
     "passwordRequiresDigit": "Password must include at least one number.",
-    "passwordRequiresUniqueChars": "Password must include more unique characters."
+    "passwordRequiresUniqueChars": "Password must include more unique characters.",
+    "termsRequired": "You must accept the Terms and Conditions to continue.",
+    "privacyRequired": "You must accept the Privacy Policy to continue.",
+    "legalVersionMissing": "Current legal documents are unavailable. Please try again later."
   },
   "portals": {
     "signedInAs": "Signed in as {{name}}.",

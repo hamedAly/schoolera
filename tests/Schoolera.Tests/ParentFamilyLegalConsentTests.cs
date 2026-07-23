@@ -65,6 +65,35 @@ public sealed class ParentFamilyLegalConsentTests : IClassFixture<SchooleraWebAp
     }
 
     [Fact]
+    public async Task RegisterParent_WithTermsAndPrivacy_Succeeds()
+    {
+        using var client = AuthTestHelpers.CreateCookieClient(_factory);
+        var me = await client.GetAsync("/api/auth/me");
+        AuthTestHelpers.ApplyAntiforgeryFromResponse(client, me);
+
+        var email = $"legal-ok-{Guid.NewGuid():N}@example.invalid";
+        var response = await client.PostAsJsonAsync(
+            "/api/auth/register/parent",
+            new
+            {
+                firstName = "Legal",
+                lastName = "Ok",
+                email,
+                phoneNumber = $"+201{Random.Shared.NextInt64(100000000, 999999999)}",
+                password = "Schoolera@Dev1",
+                confirmPassword = "Schoolera@Dev1",
+                termsAccepted = true,
+                privacyAccepted = true,
+                preferredLanguage = "ar",
+            });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(json.GetProperty("succeeded").GetBoolean());
+        Assert.Equal(email, json.GetProperty("data").GetProperty("email").GetString(), ignoreCase: true);
+    }
+
+    [Fact]
     public async Task ParentProfile_GuardianFields_AndMaskedIdentityPreservation()
     {
         await Gate.WaitAsync();

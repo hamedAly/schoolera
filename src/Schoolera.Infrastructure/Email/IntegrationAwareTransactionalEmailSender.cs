@@ -44,10 +44,21 @@ public sealed class IntegrationAwareTransactionalEmailSender(
 
         if (IntegrationProviderCodes.IsSimulated(integration.ProviderCode))
         {
+            // ProviderCode is authoritative. SettingsJson SMTP fields are ignored for Simulated.
+            // A Simulated row that still contains Host means the admin never switched ProviderCode to Smtp —
+            // returning here would report deliverySucceeded=true without calling SMTP.
+            if (SettingsJsonLooksLikeSmtp(integration.SettingsJson))
+            {
+                throw new InvalidOperationException(
+                    "Active Email integration ProviderCode is Simulated but SettingsJson contains SMTP Host. " +
+                    "Set ProviderCode to Smtp to send real email.");
+            }
+
             // Do not log OTP. Verification code remains in VerificationCodes table.
             logger.LogInformation(
-                "Simulated/Development email integration accepted verification message for {MaskedRecipient}.",
-                NotificationRecipientMasking.MaskEmail(message.RecipientEmail));
+                "Simulated/Development email integration accepted verification message for {MaskedRecipient} (provider {ProviderCode}).",
+                NotificationRecipientMasking.MaskEmail(message.RecipientEmail),
+                integration.ProviderCode);
             return;
         }
 
@@ -166,5 +177,18 @@ public sealed class IntegrationAwareTransactionalEmailSender(
         }
 
         return mail;
+    }
+
+    private static bool SettingsJsonLooksLikeSmtp(string settingsJson)
+    {
+        try
+        {
+            var settings = IntegrationSettingsSerializer.Deserialize<EmailIntegrationSettings>(settingsJson);
+            return !string.IsNullOrWhiteSpace(settings.Host);
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

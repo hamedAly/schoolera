@@ -6,6 +6,7 @@ import {
   API_BASE_URL,
   CurrentUserDtoResult,
   MessageResultDtoResult,
+  RegisterParentCommand,
 } from '../../../core/api-client/SwaggerClient.service';
 import { ApiResult } from '../../../core/http/api-result';
 
@@ -24,6 +25,7 @@ export interface RegisterResultData {
   codeExpiresInMinutes?: number;
 }
 
+/** School-owner registration body (privacy consent is Parent-only on the API). */
 export interface RegisterRequest {
   firstName: string;
   lastName: string;
@@ -34,6 +36,8 @@ export interface RegisterRequest {
   termsAccepted: boolean;
   preferredLanguage: string;
 }
+
+export type { RegisterParentCommand };
 
 export interface VerifyRequest {
   email: string;
@@ -78,7 +82,7 @@ export class AuthApi {
     return this.http.post<MessageResultDtoResult>(this.url('/api/auth/logout'), {});
   }
 
-  registerParent(body: RegisterRequest): Observable<ApiResult<RegisterResultData>> {
+  registerParent(body: RegisterParentCommand): Observable<ApiResult<RegisterResultData>> {
     return this.http.post<ApiResult<RegisterResultData>>(this.url('/api/auth/register/parent'), body);
   }
 

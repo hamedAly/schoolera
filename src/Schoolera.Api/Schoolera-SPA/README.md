@@ -34,6 +34,7 @@ dotnet run --project src/Schoolera.Api/Schoolera.Api.csproj --launch-profile htt
 2. Start Angular (proxy forwards `/api` to `:5085`):
 
 ```bash
+cd 'D:\Test2\School\Project\src\Schoolera.Api\Schoolera-SPA'
 npm start -- --port 5100
 # or
 npm start -- --port 4201 --host 127.0.0.1

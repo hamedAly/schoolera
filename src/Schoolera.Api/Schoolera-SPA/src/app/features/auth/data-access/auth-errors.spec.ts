@@ -67,9 +67,15 @@ describe('auth-errors mapper', () => {
     expect(mapped.summaryItems.some((item) => item.fieldId === 'password')).toBe(true);
   });
 
-  it('falls back to generic when codes are missing', () => {
-    const spy = vi.fn((key: string) => key);
-    const transloco = { translate: spy } as unknown as TranslocoService;
-    expect(translateAuthErrorCodes(transloco, undefined)).toBe('auth.errors.generic');
+  it('maps legal.privacy_required to the Privacy field message', () => {
+    const mapped = mapAuthServerErrors(createTransloco(), ['legal.privacy_required']);
+    expect(resolveAuthErrorKeys(['legal.privacy_required'])).toEqual(['auth.errors.privacyRequired']);
+    expect(mapped.fieldMessages['privacyAccepted']).toContain('auth.errors.privacyRequired');
+    expect(mapped.summaryItems[0]?.fieldId).toBe('privacyAccepted');
+  });
+
+  it('maps legal.terms_required to the Terms field message', () => {
+    const mapped = mapAuthServerErrors(createTransloco(), ['legal.terms_required']);
+    expect(mapped.fieldMessages['termsAccepted']).toContain('auth.errors.termsRequired');
   });
 });

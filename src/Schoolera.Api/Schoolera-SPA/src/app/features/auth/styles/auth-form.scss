@@ -49,6 +49,11 @@
   margin-block-start: 0.2rem;
 }
 
+.auth-form__checkbox a {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 .auth-form__field-error {
   color: var(--se-color-danger);
 }

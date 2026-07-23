@@ -732,8 +732,40 @@ public sealed class AdmissionApplicationSeeder(
             .ToListAsync(cancellationToken);
 
         var occupied = occupiedGradeIds.ToHashSet();
+
+        // Include applications queued in this DbContext but not yet flushed — otherwise
+        // consecutive Ensure* seeds can pick the same active duplicate key.
+        foreach (var entry in dbContext.ChangeTracker.Entries<AdmissionApplication>())
+        {
+            if (entry.State is not (EntityState.Added or EntityState.Modified))
+            {
+                continue;
+            }
+
+            var application = entry.Entity;
+            if (application.ChildProfileId == childId &&
+                application.SchoolId == schoolId &&
+                application.SchoolBranchId == branchId &&
+                application.AcademicYearId == yearId &&
+                IsActiveDuplicateSeedStatus(application.Status))
+            {
+                occupied.Add(application.GradeId);
+            }
+        }
+
         return slots.FirstOrDefault(slot => !occupied.Contains(slot.GradeId));
     }
+
+    private static bool IsActiveDuplicateSeedStatus(AdmissionApplicationStatus status) =>
+        status is AdmissionApplicationStatus.Draft
+            or AdmissionApplicationStatus.Submitted
+            or AdmissionApplicationStatus.UnderReview
+            or AdmissionApplicationStatus.Accepted
+            or AdmissionApplicationStatus.MissingDocuments
+            or AdmissionApplicationStatus.InterviewRequired
+            or AdmissionApplicationStatus.AssessmentRequired
+            or AdmissionApplicationStatus.WaitingList
+            or AdmissionApplicationStatus.Registered;
 
     private async Task SeedDraftAsync(
         Guid parentUserId,

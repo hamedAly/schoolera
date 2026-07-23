@@ -25,7 +25,22 @@
     "contact": "تواصل معنا",
     "login": "تسجيل الدخول",
     "register": "إنشاء حساب",
-    "searchCta": "ابحث عن مدرسة"
+    "searchCta": "ابحث عن مدرسة",
+    "account": {
+      "menu": "قائمة الحساب",
+      "openMenu": "فتح قائمة الحساب",
+      "closeMenu": "إغلاق قائمة الحساب",
+      "dashboard": "لوحة التحكم",
+      "parentDashboard": "لوحة ولي الأمر",
+      "profile": "ملفي الشخصي",
+      "children": "أبنائي",
+      "applications": "طلباتي",
+      "notifications": "الإشعارات",
+      "schoolPortal": "بوابة المدرسة",
+      "adminDashboard": "لوحة الإدارة",
+      "support": "الدعم",
+      "logout": "تسجيل الخروج"
+    }
   },
   "footer": {
     "brandTitle": "Schoolera",

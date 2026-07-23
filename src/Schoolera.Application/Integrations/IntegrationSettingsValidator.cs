@@ -402,6 +402,12 @@ public sealed class IntegrationSettingsValidator : IIntegrationSettingsValidator
                 errors.Add("integrations.email.invalidPort");
             }
         }
+        else if (IntegrationProviderCodes.IsSimulated(providerCode) &&
+                 !string.IsNullOrWhiteSpace(settings.Host))
+        {
+            // SMTP Host under Simulated never reaches SmtpClient — require ProviderCode=Smtp.
+            errors.Add("integrations.email.simulatedMustNotConfigureSmtpHost");
+        }
 
         ValidateTimeout(settings.RequestTimeoutSeconds, errors);
         ValidateOptionalUrl(settings.Endpoint, errors);

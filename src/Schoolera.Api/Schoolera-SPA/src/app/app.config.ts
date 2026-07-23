@@ -12,6 +12,7 @@ import { API_BASE_URL } from './core/api-client/SwaggerClient.service';
 import { acceptLanguageInterceptor } from './core/http/accept-language.interceptor';
 import { apiCredentialsInterceptor } from './core/http/api-credentials.interceptor';
 import { httpErrorInterceptor } from './core/http/http-error.interceptor';
+import { httpLoadingInterceptor } from './core/http/http-loading.interceptor';
 import { provideSchooleraI18n } from './core/i18n/provide-schoolera-i18n';
 import { TranslocoTitleStrategy } from './core/i18n/transloco-title.strategy';
 
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([
         apiCredentialsInterceptor,
         acceptLanguageInterceptor,
+        httpLoadingInterceptor,
         httpErrorInterceptor,
       ]),
     ),

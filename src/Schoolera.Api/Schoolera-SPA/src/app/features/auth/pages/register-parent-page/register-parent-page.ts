@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { RegisterParentCommand } from '../../../../core/api-client/SwaggerClient.service';
 import { resolveSchooleraLang } from '../../../../core/i18n/schoolera-lang';
 import {
   mapAuthServerErrors,
@@ -66,9 +67,26 @@ export class RegisterParentPage {
       password: ['', registerFormValidators.password],
       confirmPassword: ['', registerFormValidators.confirmPassword],
       termsAccepted: [false, registerFormValidators.termsAccepted],
+      privacyAccepted: [false, registerFormValidators.privacyAccepted],
     },
     { validators: passwordMatchValidator() },
   );
+
+  /** Builds the generated NSwag parent registration contract from the form. */
+  buildRegisterRequest(): RegisterParentCommand {
+    const value = this.form.getRawValue();
+    return {
+      firstName: value.firstName,
+      lastName: value.lastName,
+      email: value.email,
+      phoneNumber: value.phoneNumber,
+      password: value.password,
+      confirmPassword: value.confirmPassword,
+      termsAccepted: value.termsAccepted,
+      privacyAccepted: value.privacyAccepted,
+      preferredLanguage: resolveSchooleraLang(this.transloco.getActiveLang()),
+    };
+  }
 
   protected submit(): void {
     clearServerFieldErrors(this.form);
@@ -77,41 +95,37 @@ export class RegisterParentPage {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.summaryErrors.set(this.collectClientSummaryErrors());
+      this.focusFirstInvalidConsent();
       return;
     }
 
     this.submitting.set(true);
 
-    const value = this.form.getRawValue();
-    this.auth
-      .registerParent({
-        ...value,
-        preferredLanguage: resolveSchooleraLang(this.transloco.getActiveLang()),
-      })
-      .subscribe({
-        next: (result) => {
-          this.submitting.set(false);
+    const body = this.buildRegisterRequest();
+    this.auth.registerParent(body).subscribe({
+      next: (result) => {
+        this.submitting.set(false);
 
-          if (!result.succeeded || !result.data) {
-            this.applyApiFailure(resolveAuthFailureCodes(result, result.errorCodes));
-            return;
-          }
+        if (!result.succeeded || !result.data) {
+          this.applyApiFailure(resolveAuthFailureCodes(result, result.errorCodes));
+          return;
+        }
 
-          this.toast.success(this.transloco.translate('auth.register.successToast'));
-          void this.router.navigate(['/auth/verify'], {
-            queryParams: { email: result.data.email ?? value.email },
-            state: {
-              deliverySucceeded: result.data.verificationDeliverySucceeded ?? true,
-              deliveryMode: result.data.verificationDeliveryMode ?? null,
-              codeExpiresInMinutes: result.data.codeExpiresInMinutes ?? 15,
-            },
-          });
-        },
-        error: (error: unknown) => {
-          this.submitting.set(false);
-          this.applyApiFailure(resolveAuthFailureCodes(error));
-        },
-      });
+        this.toast.success(this.transloco.translate('auth.register.successToast'));
+        void this.router.navigate(['/auth/verify'], {
+          queryParams: { email: result.data.email ?? body.email },
+          state: {
+            deliverySucceeded: result.data.verificationDeliverySucceeded ?? true,
+            deliveryMode: result.data.verificationDeliveryMode ?? null,
+            codeExpiresInMinutes: result.data.codeExpiresInMinutes ?? 15,
+          },
+        });
+      },
+      error: (error: unknown) => {
+        this.submitting.set(false);
+        this.applyApiFailure(resolveAuthFailureCodes(error));
+      },
+    });
   }
 
   protected fieldError(controlName: keyof typeof this.form.controls): string | undefined {
@@ -132,6 +146,23 @@ export class RegisterParentPage {
     this.toast.error(
       mapped.summaryItems[0]?.message ?? this.transloco.translate('auth.errors.generic'),
     );
+
+    this.focusFirstInvalidConsent();
+  }
+
+  private focusFirstInvalidConsent(): void {
+    const consentFields: Array<keyof typeof this.form.controls> = [
+      'termsAccepted',
+      'privacyAccepted',
+    ];
+    for (const name of consentFields) {
+      if (this.form.controls[name].invalid) {
+        queueMicrotask(() => {
+          document.getElementById(String(name))?.focus();
+        });
+        return;
+      }
+    }
   }
 
   private clientFieldError(controlName: keyof typeof this.form.controls): string | undefined {
@@ -145,7 +176,7 @@ export class RegisterParentPage {
     }
 
     if (control.errors && !control.errors['server']) {
-      return this.validationMessage(control.errors);
+      return this.validationMessage(controlName, control.errors);
     }
 
     return undefined;
@@ -165,7 +196,18 @@ export class RegisterParentPage {
     return items;
   }
 
-  private validationMessage(errors: Record<string, unknown>): string {
+  private validationMessage(
+    controlName: keyof typeof this.form.controls,
+    errors: Record<string, unknown>,
+  ): string {
+    if (errors['requiredTrue'] && controlName === 'termsAccepted') {
+      return this.transloco.translate('auth.errors.termsRequired');
+    }
+
+    if (errors['requiredTrue'] && controlName === 'privacyAccepted') {
+      return this.transloco.translate('auth.errors.privacyRequired');
+    }
+
     if (errors['required'] || errors['requiredTrue']) {
       return this.transloco.translate('validation.required');
     }

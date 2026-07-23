@@ -9,6 +9,7 @@ import {
   AuthApi,
   ForgotPasswordRequest,
   LoginRequest,
+  RegisterParentCommand,
   RegisterRequest,
   ResendVerificationRequest,
   ResetPasswordRequest,
@@ -86,7 +87,7 @@ export class AuthService {
     );
   }
 
-  registerParent(request: RegisterRequest) {
+  registerParent(request: RegisterParentCommand) {
     return this.authApi.registerParent(request);
   }
 
