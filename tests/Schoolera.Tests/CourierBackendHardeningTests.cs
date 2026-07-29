@@ -19,6 +19,7 @@ using Schoolera.Api.Controllers;
 
 namespace Schoolera.Tests;
 
+[Collection(WebApplicationFactoryCollection.Name)]
 public sealed class CourierBackendHardeningTests : IClassFixture<SchooleraWebApplicationFactory>
 {
     private readonly SchooleraWebApplicationFactory _factory;

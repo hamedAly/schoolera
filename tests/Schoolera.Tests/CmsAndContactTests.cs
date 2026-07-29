@@ -7,10 +7,7 @@ using Schoolera.Infrastructure.Cms;
 
 namespace Schoolera.Tests;
 
-[Collection("CmsContactSerial")]
-public sealed class CmsContactCollection;
-
-[Collection("CmsContactSerial")]
+[Collection(WebApplicationFactoryCollection.Name)]
 public sealed class CmsAndContactTests : IClassFixture<SchooleraWebApplicationFactory>
 {
     private static readonly SemaphoreSlim ContactGate = new(1, 1);

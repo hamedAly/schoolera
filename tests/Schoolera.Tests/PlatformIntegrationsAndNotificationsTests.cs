@@ -11,6 +11,7 @@ using Schoolera.Infrastructure.Persistence;
 
 namespace Schoolera.Tests;
 
+[Collection(WebApplicationFactoryCollection.Name)]
 public sealed class PlatformIntegrationsAndNotificationsTests : IClassFixture<SchooleraWebApplicationFactory>
 {
     private readonly WebApplicationFactory<Program> _factory;
