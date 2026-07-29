@@ -427,10 +427,9 @@ With Development + `Nswag:Enabled=true`, `ApplicationStarted` refreshes `Swagger
 
 ### Remaining (release)
 
-1. **Authenticated browser Journeys B–E** UI walkthrough incomplete in the readiness pass (API/CSRF smoke passed; browser credential automation declined).
-2. **Full viewport matrix** (1440 / 1024 / 768 / 390 × AR+EN) not exhaustively signed off — see [phase-1-qa.md](./phase-1-qa.md).
-3. Production **bundle budget warnings** (initial JS / home SCSS) — non-blocking.
-4. Sass `@import` deprecation warnings — non-blocking.
+1. **Full viewport matrix** (1024 / 768 × AR+EN) not exhaustively signed off — Playwright covers 390×844 and 1440×900 spot checks; see [phase-1-qa.md](./phase-1-qa.md) and [e2e-playwright.md](./e2e-playwright.md).
+2. Production **bundle budget warnings** (initial JS / home SCSS) — non-blocking.
+3. Sass `@import` deprecation warnings — non-blocking.
 5. Scaffold ops routes (`/dashboard`, `/students`, `/staff`, `/classes`) remain non-product placeholders.
 6. NSwag generated client class is named `Client` (OpenAPI tags can improve naming later).
 7. Runtime SEO only (no SSR) — documented limitation.
@@ -486,7 +485,7 @@ Use this order to avoid rework. Each item depends on all items above it unless m
 | **20** | Classes feature (frontend) | 19, 10 | Regen client + `ClassesApi` |
 | **21** | Cross-cutting validation messages (AR) | 8, 9 | Arabic validation/error copy |
 | **22** | Design system expansion | 10 | Shared UI reuse rules |
-| **23** | E2E/smoke automation | 2, 4, 7 | Scripted smoke |
+| **23** | E2E/smoke automation | 2, 4, 7 | Playwright .NET — see [e2e-playwright.md](./e2e-playwright.md) |
 | **24** | Publish pipeline | 2, 3 | `dotnet publish` includes wwwroot SPA |
 | **25** | Performance / accessibility pass | 10–20 | Responsive + a11y |
 | **26** | Release readiness review | 1–25 | Checklist sign-off |

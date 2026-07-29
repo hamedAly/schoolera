@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Schoolera.Tests/Schoolera.Tests.csproj" />
+    <Project Path="tests/Schoolera.E2E/Schoolera.E2E.csproj" />
   </Folder>
 </Solution>

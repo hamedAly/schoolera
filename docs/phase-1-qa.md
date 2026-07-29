@@ -179,34 +179,42 @@ Official `@jsverse/transloco-keys-manager` `find` is incompatible with Angular 2
 
 | Route | AR | EN | Notes |
 |-------|----|----|-------|
-| `/` | Yes | Partial (lang switch from contact) | Featured schools, H1, RTL |
-| `/schools` | Yes | — | 2 results, filters present |
-| `/schools/cairo-international-school` | Yes | — | SEO title/OG/canonical set |
-| `/contact` | Yes | Yes | Form + CMS intro |
-| `/faq`, `/about`, `/how-it-works` | SPA shell 200 | SPA shell 200 | HTML shell only via HTTP smoke |
-| `/auth/login` | — | Yes (form visible) | Credential login in browser **not** completed (automation declined) |
-| Parent / School / Admin authenticated UI | — | — | Covered by **HTTP smoke** + unit tests; full UI journeys incomplete |
+| `/` | Yes | Yes | Playwright Journey A + page-load + viewport |
+| `/schools` | Yes | Yes | Search, filters, pagination |
+| `/schools/cairo-international-school` | Yes | — | Profile loads |
+| `/contact` | Yes | Yes | Form submit + viewport (form usable) |
+| `/faq`, `/about`, `/auth/*` | Yes | Yes | Page-load matrix |
+| Parent / School / Admin / Support | Yes | Yes | Journeys B–E + authenticated page-load matrices |
 
 ## Remaining issues
 
-1. Authenticated browser Journeys **B–E** UI not fully walked (browser credential entry declined during automation).
-2. Viewport matrix incomplete for 1440 / 1024 / 768 across AR+EN for all journeys.
-3. Production bundle budget warnings (initial ~645 kB vs 500 kB; home SCSS over budget) — non-blocking.
+1. Viewport matrix incomplete for 1024 / 768 across AR+EN for all journeys (390 and 1440 covered by Playwright).
+2. Contact page document-level horizontal overflow on some viewports (form remains usable; tracked separately from strict overflow checks).
+3. Production bundle budget warnings — non-blocking.
 4. Sass `@import` deprecation warnings — non-blocking.
-5. Homepage journey CMS HTML previously escaped as text; fixed to sanitized `[innerHTML]` (re-verify visually after deploy).
+
+## Automated browser E2E
+
+See [e2e-playwright.md](./e2e-playwright.md). **112 Playwright tests** in `tests/Schoolera.E2E` (Journeys A–E strengthened, page-load matrices, mutations, AR/EN, viewport spot-checks).
+
+Local verification (2026-07-27): `dotnet test tests/Schoolera.E2E` → **112 passed, 0 failed** (single-origin `http://127.0.0.1:5085`).
+
+CI: configure `E2E_SEED_PASSWORD` and branch protection per [github-ci-setup.md](./github-ci-setup.md).
 
 ## Sign-off
 
 | Field | Value |
 |-------|-------|
-| Tester | Auto (Composer) + local toolchain |
-| Date | 2026-07-17 |
-| Environment (DB / Node / .NET) | SQL Server local; Node **24.18.0** (portable); .NET **10.0.302** |
+| Tester | Auto + local toolchain |
+| Date | 2026-07-27 |
+| Environment (DB / Node / .NET) | SQL Server local; Node **24.18.0** (portable `.tools/`); .NET **10.0.9** |
 | Backend tests | **Pass** (310/310) |
-| Angular `npm ci` / build / tests | **Pass** (`npm ci`; build to wwwroot; 94/94) |
+| Playwright E2E | **Pass** (112/112 local) |
+| Angular build / Vitest | **Pass** (build to wwwroot; Vitest per CI workflow) |
 | Localization | **Pass** (parity + find) |
-| Journeys A–E | **A partial browser**; B–E **API smoke pass / UI incomplete** |
-| CSRF + fallback | **Pass** |
-| Localization spot-check | **Pass** (AR RTL / EN LTR on contact) |
+| Journeys A–E | **Pass** (Playwright browser automation) |
+| CSRF + fallback | **Pass** (HTTP integration + SPA implicit in E2E) |
+| Localization spot-check | **Pass** (AR RTL / EN LTR in Playwright) |
+| CI E2E gate | **Pending** — add `E2E_SEED_PASSWORD` secret + enable `e2e / playwright` required check |
 | Known issues | See Remaining issues |
-| Ready for Phase 1 release? | **No — PARTIALLY READY** (authenticated UI journeys + full viewport matrix still open) |
+| Ready for Phase 1 release? | **PARTIALLY READY** — CI E2E gate + 1024/768 viewport matrix still open |

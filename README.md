@@ -30,6 +30,7 @@ If your Node is below the engine range, Angular CLI will refuse `npm run build` 
 - `src/Schoolera.Domain` — entities and domain rules
 - `src/Schoolera.Infrastructure` — EF Core, Identity, seed, file storage
 - `tests/Schoolera.Tests` — architecture + integration tests
+- `tests/Schoolera.E2E` — Playwright .NET browser regression
 
 ## Documentation
 
@@ -37,6 +38,8 @@ If your Node is below the engine range, Angular CLI will refuse `npm run build` 
 |-----|--------|
 | [docs/implementation-baseline.md](docs/implementation-baseline.md) | Architecture baseline and Phase 1 status |
 | [docs/phase-1-qa.md](docs/phase-1-qa.md) | **Phase 1 QA checklist and sign-off** |
+| [docs/e2e-playwright.md](docs/e2e-playwright.md) | **Playwright .NET E2E + CI required check** |
+| [docs/github-ci-setup.md](docs/github-ci-setup.md) | GitHub secret + branch protection for E2E |
 | [docs/localization.md](docs/localization.md) | Arabic + English (Transloco) |
 | [docs/authentication.md](docs/authentication.md) | Cookie auth, CSRF, roles |
 | [docs/development-database.md](docs/development-database.md) | Migrations and seed |
@@ -144,7 +147,11 @@ npm run i18n:validate
 
 ```powershell
 dotnet build Schoolera.slnx -c Debug
-dotnet test Schoolera.slnx -c Debug
+dotnet test tests/Schoolera.Tests/Schoolera.Tests.csproj -c Debug
+# Browser E2E (API + SPA must be running — see docs/e2e-playwright.md)
+$env:E2E_BASE_URL = "http://localhost:5100"
+$env:E2E_SEED_PASSWORD = "<seed-password>"
+dotnet test tests/Schoolera.E2E/Schoolera.E2E.csproj -c Debug --settings tests/Schoolera.E2E/.runsettings
 cd src/Schoolera.Api/Schoolera-SPA
 npm run build
 npm test -- --watch=false
@@ -153,10 +160,12 @@ npm test -- --watch=false
 Phase 1 QA filter (subset):
 
 ```powershell
-dotnet test Schoolera.slnx -c Debug --filter "FullyQualifiedName~Phase1ReleaseReadinessTests|FullyQualifiedName~CmsAndContactTests|FullyQualifiedName~SchoolAdmissionReviewTests"
+dotnet test tests/Schoolera.Tests/Schoolera.Tests.csproj -c Debug --filter "FullyQualifiedName~Phase1ReleaseReadinessTests|FullyQualifiedName~CmsAndContactTests|FullyQualifiedName~SchoolAdmissionReviewTests"
 ```
 
 ## Phase 1 QA
 
 Full practical checklist, journeys, CSRF/fallback checks, and sign-off fields: **[docs/phase-1-qa.md](docs/phase-1-qa.md)**.
+
+Playwright browser automation: **[docs/e2e-playwright.md](docs/e2e-playwright.md)**.
 

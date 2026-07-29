@@ -1,0 +1,131 @@
+name: e2e
+
+on:
+  pull_request:
+  push:
+    branches: [Phase1, main]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  playwright:
+    name: playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: "Schoolera_E2E_Sql_Passw0rd!"
+        ports:
+          - 1433:1433
+
+    env:
+      E2E_SEED_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD }}
+      E2E_BASE_URL: http://127.0.0.1:5085
+      ConnectionStrings__DefaultConnection: "Server=127.0.0.1,1433;Database=SchooleraDb;User Id=sa;Password=Schoolera_E2E_Sql_Passw0rd!;TrustServerCertificate=True;Encrypt=False"
+      Auth__SeedUsers__DefaultPassword: ${{ secrets.E2E_SEED_PASSWORD }}
+      Database__ApplyMigrations: "true"
+      Database__SeedData: "true"
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://127.0.0.1:5085
+      Nswag__Enabled: "false"
+      HttpsRedirection__Enabled: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24.18.0"
+          cache: npm
+          cache-dependency-path: src/Schoolera.Api/Schoolera-SPA/package-lock.json
+
+      - name: Require E2E_SEED_PASSWORD secret
+        run: |
+          if [ -z "$E2E_SEED_PASSWORD" ]; then
+            echo "Repository secret E2E_SEED_PASSWORD is required."
+            exit 1
+          fi
+
+      - name: Wait for SQL Server
+        run: |
+          for i in $(seq 1 60); do
+            if docker ps >/dev/null 2>&1; then
+              echo "Waiting for SQL Server to accept connections... ($i)"
+            fi
+            if timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433' 2>/dev/null; then
+              echo "SQL port is open"
+              sleep 10
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "SQL Server did not become ready"
+          exit 1
+
+      - name: Restore .NET
+        run: dotnet restore Schoolera.slnx
+
+      - name: Install SPA dependencies
+        working-directory: src/Schoolera.Api/Schoolera-SPA
+        run: npm ci
+
+      - name: Build SPA into wwwroot
+        working-directory: src/Schoolera.Api/Schoolera-SPA
+        run: npm run build
+
+      - name: Build solution
+        run: dotnet build Schoolera.slnx -c Release --no-restore
+
+      - name: Install Playwright Chromium
+        working-directory: tests/Schoolera.E2E
+        run: pwsh bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+
+      - name: Start API
+        run: |
+          nohup dotnet run --project src/Schoolera.Api/Schoolera.Api.csproj -c Release --no-build --launch-profile http > api.log 2>&1 &
+          echo $! > api.pid
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:5085/swagger/v1/swagger.json >/dev/null; then
+              echo "API is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API failed to become ready"
+          cat api.log || true
+          exit 1
+
+      - name: Run Playwright E2E
+        run: dotnet test tests/Schoolera.E2E/Schoolera.E2E.csproj -c Release --no-build --settings tests/Schoolera.E2E/.runsettings --logger "trx;LogFileName=e2e.trx"
+
+      - name: Upload API log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-log
+          path: api.log
+          if-no-files-found: ignore
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-results
+          path: |
+            tests/Schoolera.E2E/TestResults/**
+            **/test-results/**
+          if-no-files-found: ignore

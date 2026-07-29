@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <EnvironmentVariables>
+      <!-- Set E2E_BASE_URL / E2E_SEED_PASSWORD in the shell or CI; do not put secrets here. -->
+    </EnvironmentVariables>
+  </RunConfiguration>
+  <Playwright>
+    <BrowserName>chromium</BrowserName>
+    <ExpectTimeout>15000</ExpectTimeout>
+    <LaunchOptions>
+      <Headless>true</Headless>
+    </LaunchOptions>
+  </Playwright>
+</RunSettings>

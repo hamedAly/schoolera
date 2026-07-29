@@ -27,7 +27,18 @@ src/Schoolera.Api/App_Data/private/**
 # Local runtime logs
 *.log
 
+# Playwright E2E artifacts (auth cookies, traces, videos)
+tests/Schoolera.E2E/.auth/
+**/test-results/
+**/playwright-report/
+**/Trace.zip
+**/*.webm
+
 # User/editor files
 .vs/
 .vscode/*.user
 *.csproj.user
+/.cursor/skills
+/.idea/.idea.Schoolera/.idea
+/.specify
+/specs

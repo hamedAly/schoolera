@@ -31,14 +31,17 @@ Provider `SettingsJson` is stored as **plaintext JSON** in SQL Server for Phase 
 
 ## Operational scope
 
-Implemented: Email, SMS, WhatsApp **configuration + simulated/development providers**,
-InApp channel, outbox worker, templates, Parent preferences/consent, admissions-open
-subscriptions, Platform Admin Integrations + Templates UI,
+Implemented: Email (SMTP production + Simulated), SMS (Twilio production + Simulated),
+WhatsApp (Meta Cloud API production + Simulated), InApp channel, outbox worker, templates,
+Parent preferences/consent (including STOP/opt-out on inbound), admissions-open
+subscriptions, Platform Admin Integrations + Templates + Inbound Messages UI,
+signature-verified webhooks for Twilio/Meta **status callbacks and inbound messages**,
 and **Map** integration type for School Search (Leaflet client + DB tile settings; Production tile provider Product-blocked — see `docs/map-based-school-search.md`).
 
-Not implemented in Prompt 10: courier delivery, school transfers, personal WhatsApp
+Not implemented in this messaging feature: school transfers, personal WhatsApp
 automation, message bus, notification microservice, SettingsJson encryption,
-bulk marketing, payment notifications, parent–school chat.
+bulk marketing, parent–school chat UI / staff reply composer, inbound email,
+provider cost caps.
 
 ## Meeting delivery foundation
 
@@ -65,9 +68,16 @@ appointment replacement/rescheduling workflow.
 
 ## Callbacks
 
-Real provider HTTP callbacks are **not applicable** until a production provider with a
-known signature contract is configured. Simulated providers do not expose callbacks.
-Do not invent fake callback verification.
+Real provider HTTP callbacks are supported for Twilio SMS and Meta WhatsApp Cloud API:
+
+| Provider | Endpoints | Purpose |
+|----------|-----------|---------|
+| Twilio | `POST /api/webhooks/sms/twilio` | Delivery status + inbound SMS |
+| Meta | `GET/POST /api/webhooks/whatsapp/meta` | Hub verify + status + inbound WhatsApp |
+
+Signatures are verified in handlers (`X-Twilio-Signature`, `X-Hub-Signature-256`). Invalid signatures return 403 without mutating outbox/inbound data. Simulated providers do not expose callbacks.
+
+Outbound worker rate limits are configurable via `Notifications:Worker:MaxPerRecipientChannelPerHour` (default 20).
 
 ## Courier foundation (Prompt v1.4-08)
 
