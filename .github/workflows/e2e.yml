@@ -22,13 +22,20 @@ jobs:
         env:
           ACCEPT_EULA: Y
           MSSQL_SA_PASSWORD: "Schoolera_E2E_Sql_Passw0rd!"
+          MSSQL_PID: Developer
         ports:
           - 1433:1433
+        options: >-
+          --health-cmd "echo > /dev/tcp/127.0.0.1/1433"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 30
+          --health-start-period 40s
 
     env:
       E2E_SEED_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD }}
       E2E_BASE_URL: http://127.0.0.1:5085
-      ConnectionStrings__DefaultConnection: "Server=127.0.0.1,1433;Database=SchooleraDb;User Id=sa;Password=Schoolera_E2E_Sql_Passw0rd!;TrustServerCertificate=True;Encrypt=False"
+      ConnectionStrings__DefaultConnection: "Server=127.0.0.1,1433;Database=SchooleraDb;User Id=sa;Password=Schoolera_E2E_Sql_Passw0rd!;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=true"
       Auth__SeedUsers__DefaultPassword: ${{ secrets.E2E_SEED_PASSWORD }}
       Database__ApplyMigrations: "true"
       Database__SeedData: "true"
@@ -36,6 +43,7 @@ jobs:
       ASPNETCORE_URLS: http://127.0.0.1:5085
       Nswag__Enabled: "false"
       HttpsRedirection__Enabled: "false"
+      Swagger__Enabled: "true"
 
     steps:
       - name: Checkout
@@ -62,18 +70,30 @@ jobs:
 
       - name: Wait for SQL Server
         run: |
+          echo "Waiting for SQL Server container to become healthy..."
           for i in $(seq 1 60); do
-            if docker ps >/dev/null 2>&1; then
-              echo "Waiting for SQL Server to accept connections... ($i)"
+            status="$(docker inspect --format='{{.State.Health.Status}}' "$(docker ps -q --filter ancestor=mcr.microsoft.com/mssql/server:2022-latest | head -n1)" 2>/dev/null || true)"
+            if [ "$status" = "healthy" ]; then
+              echo "SQL container is healthy"
+              # Extra settle time: TCP healthy != SQL ready to accept logins.
+              sleep 20
+              exit 0
             fi
             if timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433' 2>/dev/null; then
-              echo "SQL port is open"
-              sleep 10
-              exit 0
+              echo "SQL port is open (attempt $i); waiting for login readiness..."
+              sleep 5
+              # After port is open for a while, continue.
+              if [ "$i" -ge 12 ]; then
+                sleep 15
+                exit 0
+              fi
+            else
+              echo "Waiting for SQL port 1433... ($i)"
             fi
             sleep 2
           done
           echo "SQL Server did not become ready"
+          docker ps -a || true
           exit 1
 
       - name: Restore .NET
@@ -92,18 +112,40 @@ jobs:
 
       - name: Install Playwright Chromium
         working-directory: tests/Schoolera.E2E
-        run: pwsh bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+        run: |
+          dotnet build Schoolera.E2E.csproj -c Release --no-restore
+          pwsh bin/Release/net10.0/playwright.ps1 install chromium --with-deps
 
       - name: Start API
         run: |
-          nohup dotnet run --project src/Schoolera.Api/Schoolera.Api.csproj -c Release --no-build --launch-profile http > api.log 2>&1 &
+          # Avoid --launch-profile so ASPNETCORE_URLS from the job env is used.
+          # Migrate + seed on a cold SQL container often takes several minutes in CI.
+          nohup dotnet run \
+            --project src/Schoolera.Api/Schoolera.Api.csproj \
+            -c Release \
+            --no-build \
+            --no-launch-profile \
+            > api.log 2>&1 &
           echo $! > api.pid
-          for i in $(seq 1 90); do
+          echo "API PID=$(cat api.pid)"
+
+          # ~10 minutes: migrations + seed before Kestrel listens.
+          for i in $(seq 1 150); do
+            if ! kill -0 "$(cat api.pid)" 2>/dev/null; then
+              echo "API process exited early"
+              cat api.log || true
+              exit 1
+            fi
             if curl -fsS http://127.0.0.1:5085/swagger/v1/swagger.json >/dev/null; then
-              echo "API is ready"
+              echo "API is ready after ${i} attempts"
               exit 0
             fi
-            sleep 2
+            echo "Waiting for API migrate/seed/listen... ($i/150)"
+            if [ $((i % 10)) -eq 0 ]; then
+              echo "----- api.log (tail) -----"
+              tail -n 60 api.log || true
+            fi
+            sleep 4
           done
           echo "API failed to become ready"
           cat api.log || true
