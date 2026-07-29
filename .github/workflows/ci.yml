@@ -14,7 +14,30 @@ jobs:
   unit:
     name: unit
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+
+    # Schoolera.Tests uses WebApplicationFactory against real SQL (not in-memory).
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: "Schoolera_E2E_Sql_Passw0rd!"
+          MSSQL_PID: Developer
+        ports:
+          - 1433:1433
+        # No Docker health-cmd: mssql image shell lacks bash /dev/tcp and GHA
+        # marks the service failed even when SQL is ready. We wait in a step instead.
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=127.0.0.1,1433;Database=SchooleraDb;User Id=sa;Password=Schoolera_E2E_Sql_Passw0rd!;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=true"
+      # Must match AuthTestHelpers.DefaultPassword used by integration tests.
+      Auth__SeedUsers__DefaultPassword: "Schoolera@Dev1"
+      Database__ApplyMigrations: "true"
+      Database__SeedData: "true"
+      Nswag__Enabled: "false"
+      HttpsRedirection__Enabled: "false"
 
     steps:
       - name: Checkout
@@ -31,6 +54,24 @@ jobs:
           node-version: "24.18.0"
           cache: npm
           cache-dependency-path: src/Schoolera.Api/Schoolera-SPA/package-lock.json
+
+      - name: Wait for SQL Server
+        run: |
+          for i in $(seq 1 60); do
+            if timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433' 2>/dev/null; then
+              echo "SQL port is open (attempt $i)"
+              if [ "$i" -ge 10 ]; then
+                sleep 15
+                exit 0
+              fi
+            else
+              echo "Waiting for SQL port 1433... ($i)"
+            fi
+            sleep 2
+          done
+          echo "SQL Server did not become ready"
+          docker ps -a || true
+          exit 1
 
       - name: Restore and test .NET
         run: |
