@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Schoolera.Application.Common.Interfaces;
 using Schoolera.Domain.Entities;
 using Schoolera.Infrastructure.Persistence;
@@ -7,12 +8,9 @@ namespace Schoolera.Infrastructure.Admissions;
 
 /// <summary>
 /// Race-safe admission application number generator (APP-{yyyy}-{n:D6}).
-/// Locks the year row with SQL Server UPDLOCK/ROWLOCK/HOLDLOCK inside an execution-strategy
-/// transaction. When no ambient transaction exists, this class begins and commits its own so the
-/// increment is durable before the number is returned. When an ambient transaction is present
-/// (e.g. a future UnitOfWork transaction around SaveChanges), the sequence entity stays tracked
-/// and is persisted with that ambient SaveChanges — the lock is held until the outer commit.
-/// Sequence persistence never flushes unrelated pending aggregates on the shared DbContext.
+/// Allocates the next value with an atomic SQL UPDATE/INSERT under UPDLOCK so shared
+/// <see cref="SchooleraDbContext"/> change-tracker graphs (seed/admission flows) are never
+/// detached or flushed as a side effect.
 /// </summary>
 public sealed class AdmissionApplicationNumberGenerator(SchooleraDbContext dbContext)
     : IAdmissionApplicationNumberGenerator
@@ -32,27 +30,55 @@ public sealed class AdmissionApplicationNumberGenerator(SchooleraDbContext dbCon
 
             try
             {
-                var sequence = await dbContext.AdmissionApplicationNumberSequences
-                    .FromSqlInterpolated(
-                        $"""
-                        SELECT * FROM [AdmissionApplicationNumberSequences] WITH (UPDLOCK, ROWLOCK, HOLDLOCK)
-                        WHERE [Year] = {year}
-                        """)
-                    .AsTracking()
-                    .SingleOrDefaultAsync(cancellationToken);
+                // Ensure the year row exists (no-op if another allocator inserted it).
+                await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"""
+                    IF NOT EXISTS (
+                        SELECT 1 FROM [AdmissionApplicationNumberSequences] WITH (UPDLOCK, HOLDLOCK)
+                        WHERE [Year] = {year})
+                    BEGIN
+                        INSERT INTO [AdmissionApplicationNumberSequences] ([Year], [LastValue])
+                        VALUES ({year}, 0);
+                    END
+                    """,
+                    cancellationToken);
 
-                if (sequence is null)
+                long next;
+                await using (var command = dbContext.Database.GetDbConnection().CreateCommand())
                 {
-                    sequence = new AdmissionApplicationNumberSequence(year);
-                    dbContext.AdmissionApplicationNumberSequences.Add(sequence);
-                    await PersistSequenceOnlyAsync(sequence, cancellationToken);
+                    command.Transaction = dbContext.Database.CurrentTransaction?.GetDbTransaction();
+                    command.CommandText =
+                        """
+                        UPDATE [AdmissionApplicationNumberSequences] WITH (UPDLOCK, ROWLOCK, HOLDLOCK)
+                        SET [LastValue] = [LastValue] + 1
+                        OUTPUT INSERTED.[LastValue]
+                        WHERE [Year] = @year;
+                        """;
+                    var parameter = command.CreateParameter();
+                    parameter.ParameterName = "@year";
+                    parameter.Value = year;
+                    command.Parameters.Add(parameter);
+
+                    if (command.Connection!.State != System.Data.ConnectionState.Open)
+                    {
+                        await command.Connection.OpenAsync(cancellationToken);
+                    }
+
+                    var scalar = await command.ExecuteScalarAsync(cancellationToken);
+                    next = Convert.ToInt64(scalar);
                 }
 
-                var next = sequence.Next();
+                // Keep any tracked sequence entity in sync so later SaveChanges does not rewrite it.
+                var tracked = dbContext.ChangeTracker.Entries<AdmissionApplicationNumberSequence>()
+                    .FirstOrDefault(entry => entry.Entity.Year == year);
+                if (tracked is not null)
+                {
+                    tracked.Property(sequence => sequence.LastValue).CurrentValue = next;
+                    tracked.State = EntityState.Unchanged;
+                }
 
                 if (ownsTransaction)
                 {
-                    await PersistSequenceOnlyAsync(sequence, cancellationToken);
                     await dbContext.Database.CommitTransactionAsync(cancellationToken);
                 }
 
@@ -68,42 +94,5 @@ public sealed class AdmissionApplicationNumberGenerator(SchooleraDbContext dbCon
                 throw;
             }
         });
-    }
-
-    /// <summary>
-    /// Saves only the sequence row. Pending Added/Modified/Deleted entities for other aggregates
-    /// remain pending so a number allocation cannot insert a colliding admission application.
-    /// </summary>
-    private async Task PersistSequenceOnlyAsync(
-        AdmissionApplicationNumberSequence sequence,
-        CancellationToken cancellationToken)
-    {
-        var suspended = new List<(object Entity, EntityState State)>();
-
-        foreach (var entry in dbContext.ChangeTracker.Entries())
-        {
-            if (ReferenceEquals(entry.Entity, sequence))
-            {
-                continue;
-            }
-
-            if (entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
-            {
-                suspended.Add((entry.Entity, entry.State));
-                entry.State = EntityState.Detached;
-            }
-        }
-
-        try
-        {
-            await dbContext.SaveChangesAsync(cancellationToken);
-        }
-        finally
-        {
-            foreach (var (entity, state) in suspended)
-            {
-                dbContext.Entry(entity).State = state;
-            }
-        }
     }
 }
